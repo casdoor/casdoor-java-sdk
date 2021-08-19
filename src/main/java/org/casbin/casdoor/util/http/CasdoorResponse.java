@@ -1,4 +1,4 @@
-// Copyright 2020 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor;
+package org.casbin.casdoor.util.http;
 
-public class CasdoorException extends Exception {
+import lombok.Data;
 
-    static CasdoorException NETWORK_EXCEPTION = new CasdoorException("Connection timeout.");
-    static CasdoorException ENDPOINT_EXCEPTION = new CasdoorException("Unknown response data structure from endpoint. Please check whether the endpoint is a Casdoor instance, and is the same version of the SDK.");
-
-    private CasdoorException(String reason) {
-        super(reason);
-    }
+@Data
+public class CasdoorResponse {
+    private String status;
+    private String msg;
+    private String data;
+    private String data2;
 }
