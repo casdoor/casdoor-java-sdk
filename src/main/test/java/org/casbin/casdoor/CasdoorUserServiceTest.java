@@ -3,6 +3,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.service.CasdoorUserService;
+import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,12 +49,18 @@ public class CasdoorUserServiceTest {
         CasdoorUser user = new CasdoorUser();
         user.setOwner("built-in");
         user.setName("test-modify-user");
-        Assert.assertTrue(casdoorUserService.addUser(user));
+        CasdoorResponse response = casdoorUserService.addUser(user);
+        Assert.assertEquals("ok", response.getStatus());
+        Assert.assertEquals("Affected", response.getData());
 
         user.setDisplayName("test-display-name");
-        Assert.assertTrue(casdoorUserService.updateUser(user));
+        response = casdoorUserService.updateUser(user);
+        Assert.assertEquals("ok", response.getStatus());
+        Assert.assertEquals("Affected", response.getData());
 
-        Assert.assertTrue(casdoorUserService.deleteUser(user));
+        response = casdoorUserService.deleteUser(user);
+        Assert.assertEquals("ok", response.getStatus());
+        Assert.assertEquals("Affected", response.getData());
     }
 
 

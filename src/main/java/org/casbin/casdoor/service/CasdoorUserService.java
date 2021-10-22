@@ -29,7 +29,7 @@ public class CasdoorUserService {
     private final CasdoorConfig casdoorConfig;
     final private ObjectMapper objectMapper = new ObjectMapper();
 
-    public CasdoorUserService(CasdoorConfig casdoorConfig){
+    public CasdoorUserService(CasdoorConfig casdoorConfig) {
         this.casdoorConfig = casdoorConfig;
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -44,37 +44,36 @@ public class CasdoorUserService {
 
     public CasdoorUser getUser(String name) throws Exception {
         String targetUrl = String.format("%s/api/get-user?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),name,
+                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String response = getUserResponse(targetUrl);
         return objectMapper.readValue(response, CasdoorUser.class);
     }
 
-    private String getUserResponse (String targetUrl) throws Exception {
+    private String getUserResponse(String targetUrl) throws Exception {
         String response = HttpClient.syncGet(targetUrl);
         if (response == null) throw CasdoorException.NETWORK_EXCEPTION;
         return response;
     }
 
-    public boolean updateUser(CasdoorUser casdoorUser) throws IOException {
+    public CasdoorResponse updateUser(CasdoorUser casdoorUser) throws IOException {
         return modifyUser(UserOperations.UPDATE_USER, casdoorUser);
     }
 
-    public boolean addUser(CasdoorUser casdoorUser) throws IOException {
+    public CasdoorResponse addUser(CasdoorUser casdoorUser) throws IOException {
         return modifyUser(UserOperations.ADD_USER, casdoorUser);
     }
 
-    public boolean deleteUser(CasdoorUser casdoorUser) throws IOException {
+    public CasdoorResponse deleteUser(CasdoorUser casdoorUser) throws IOException {
         return modifyUser(UserOperations.DELETE_USER, casdoorUser);
     }
 
-    private boolean modifyUser(UserOperations method, CasdoorUser casdoorUser) throws IOException {
+    private CasdoorResponse modifyUser(UserOperations method, CasdoorUser casdoorUser) throws IOException {
         String targetUrl = String.format("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(),method.getOperation(),
+                casdoorConfig.getEndpoint(), method.getOperation(),
                 casdoorUser.getOwner(), casdoorUser.getName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String userStr = objectMapper.writeValueAsString(casdoorUser);
-        String responseStr = HttpClient.postString(targetUrl,userStr);
-        CasdoorResponse casdoorResponse = objectMapper.readValue(responseStr,CasdoorResponse.class);
-        return casdoorResponse.getData().equals("Affected");
+        String responseStr = HttpClient.postString(targetUrl, userStr);
+        return objectMapper.readValue(responseStr, CasdoorResponse.class);
     }
 }
