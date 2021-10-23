@@ -62,6 +62,4 @@ public class CasdoorUserServiceTest {
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }
-
-
 }
