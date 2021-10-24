@@ -24,7 +24,8 @@ public class CasdoorUserServiceTest {
                 "f485cd52dab369c8551a",
                 "1d7221b217ed3d12100da5e208aa93c8770e4a81",
                 "CasdoorSecret",
-                "built-in"
+                "built-in",
+                "app-built-in"
         );
     }
 

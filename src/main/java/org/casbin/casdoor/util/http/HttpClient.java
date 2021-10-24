@@ -14,8 +14,9 @@
 
 package org.casbin.casdoor.util.http;
 
-import com.squareup.okhttp.*;
+import okhttp3.*;
 
+import java.io.File;
 import java.io.IOException;
 
 public class HttpClient {
@@ -39,5 +40,22 @@ public class HttpClient {
             return response.body().string();
         }
         return null;
+    }
+
+    public static String postFile(String url, File file) throws IOException {
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(),
+                        RequestBody.create(MediaType.parse("multipart/form-data"), file))
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Unexpected code " + response);
+        }
+        return response.body().string();
     }
 }
