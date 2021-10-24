@@ -19,14 +19,58 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 
+/**
+ * User has the same definition as https://github.com/casbin/casdoor/blob/master/object/user.go#L24
+ * used to obtain user-related information from your Casdoor server.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CasdoorUser implements Serializable {
-    private String owner, name, createdTime, updatedTime;
-    private String id, type, password, passwordType, displayName, avatar, email, phone, affiliation, tag;
-    private boolean isAdmin, isGlobalAdmin, isForbidden;
-    private String hash, preHash;
-    private String github, google, qq, wechat;
+    private String owner;
+    private String name;
+    private String createdTime;
+    private String updatedTime;
+    private String id;
+    private String type;
+    private String password;
+    private String displayName;
+    private String avatar;
+    private String permanentAvatar;
+    private String email;
+    private String phone;
+    private String location;
+    private String[] address;
+    private String affiliation;
+    private String title;
+    private String homepage;
+    private String bio;
+    private String tag;
+    private String region;
+    private String language;
+    private int score;
+    private int ranking;
+    private boolean isOnline;
+    private boolean isAdmin;
+    private boolean isGlobalAdmin;
+    private boolean isForbidden;
+    private String signupApplication;
+    private String hash;
+    private String preHash;
+    private String github;
+    private String google;
+    private String qq;
+    private String wechat;
+    private String facebook;
+    private String dingtalk;
+    private String weibo;
+    private String gitee;
+    private String linkedin;
+    private String wecom;
+    private String lark;
+    private String gitlab;
+    private String ldap;
+    private Map<String, String> properties;
 }
