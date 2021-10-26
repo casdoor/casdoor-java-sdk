@@ -12,24 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor.config;
+package org.casbin.casdoor.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
- * CasdoorConfig is the core configuration.
- * The first step to use this SDK is to initialize the global casdoorConfig.
+ * Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
+ * used to obtain resource-related information from Casdoor
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class CasdoorConfig {
-    private String endpoint;
-    private String clientId;
-    private String clientSecret;
-    private String jwtSecret;
-    private String organizationName;
-    private String applicationName;
+@NoArgsConstructor
+@AllArgsConstructor
+public class CasdoorResource implements Serializable {
+    private String owner;
+    private String name;
 }
