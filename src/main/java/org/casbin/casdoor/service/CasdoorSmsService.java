@@ -36,7 +36,7 @@ public class CasdoorSmsService {
     public CasdoorResponse sendSms(String content, String... receivers) throws IOException {
         String targetUrl = String.format("%s/api/send-sms?clientId=%s&clientSecret=%s",
                 casdoorConfig.getEndpoint(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm(content, receivers);
+        CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm("admin/" + casdoorConfig.getOrganizationName(), content, receivers);
         String smsFormStr = objectMapper.writeValueAsString(casdoorSmsForm);
         String responseStr = HttpClient.postString(targetUrl, smsFormStr);
         return objectMapper.readValue(responseStr, CasdoorResponse.class);

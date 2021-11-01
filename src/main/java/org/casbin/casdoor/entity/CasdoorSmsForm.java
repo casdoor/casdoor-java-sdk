@@ -24,6 +24,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CasdoorSmsForm implements Serializable {
+    private String organizationId;
     private String content;
     private String[] receivers;
 }
