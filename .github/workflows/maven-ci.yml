@@ -22,7 +22,12 @@ jobs:
           gpg-passphrase: GPG_PASSPHRASE
 
       - name: Build with Maven
-        run: mvn package -Dmaven.test.skip=true
+        run: mvn package -Dmaven.test.skip=true cobertura:cobertura
+
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
