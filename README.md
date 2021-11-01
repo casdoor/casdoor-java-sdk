@@ -1,5 +1,13 @@
 # casdoor-java-sdk
 
+[![GitHub Actions](https://github.com/casdoor/casdoor-java-sdk/actions/workflows/maven-ci.yml/badge.svg)](https://github.com/casdoor/casdoor-java-sdk/actions/workflows/maven-ci.yml)
+[![codebeat badge](https://codebeat.co/badges/e3e92eff-8b71-4903-9764-5126e855b3b6)](https://codebeat.co/projects/github-com-casdoor-casdoor-java-sdk-master)
+[![codecov](https://codecov.io/gh/casdoor/casdoor-java-sdk/branch/master/graph/badge.svg?token=1C2FSTN4J8)](https://codecov.io/gh/casdoor/casdoor-java-sdk)
+[![Javadocs](https://www.javadoc.io/badge/org.casbin/casdoor-java-sdk.svg)](https://www.javadoc.io/doc/org.casbin/casdoor-java-sdk)
+[![Maven Central](https://img.shields.io/maven-central/v/org.casbin/casdoor-java-sdk.svg)](https://mvnrepository.com/artifact/org.casbin/casdoor-java-sdk/latest)
+[![Release](https://img.shields.io/github/release/casdoor/casdoor-java-sdk.svg)](https://github.com/casdoor/casdoor-java-sdk/releases/latest)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/casbin/lobby)
+
 This is Casdoor's SDK for java, which will allow you to easily connect your application to the Casdoor authentication system without having to implement it from scratch.
 
 Casdoor SDK is very simple to use. We will show you the steps below.
