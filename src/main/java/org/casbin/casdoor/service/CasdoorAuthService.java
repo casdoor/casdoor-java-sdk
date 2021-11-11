@@ -27,7 +27,10 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -59,5 +62,46 @@ public class CasdoorAuthService {
         CasdoorUser casdoorUser = new CasdoorUser();
         BeanUtils.copyProperties(casdoorUser,claims);
         return casdoorUser;
+    }
+
+    public String getSigninUrl(String redirectUrl) throws UnsupportedEncodingException {
+        String scope = "read";
+        String state = casdoorConfig.getApplicationName();
+        return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
+                casdoorConfig.getEndpoint(), casdoorConfig.getClientId(),
+                URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString()),
+                scope, state);
+    }
+
+    public String getSignupUrl() throws UnsupportedEncodingException {
+        return getSignupUrl(true, "");
+    }
+
+    public String getSignupUrl(String redirectUrl) throws UnsupportedEncodingException {
+        return getSignupUrl(false, redirectUrl);
+    }
+
+    private String getSignupUrl(boolean enablePassword, String redirectUrl) throws UnsupportedEncodingException {
+        if (enablePassword) {
+            return String.format("%s/signup/%s", casdoorConfig.getEndpoint(), casdoorConfig.getApplicationName());
+        } else {
+            return getSigninUrl(redirectUrl).replace("/login/oauth/authorize", "/signup/oauth/authorize");
+        }
+    }
+
+    public String getUserProfileUrl(String username, String accessToken) {
+        String param = "";
+        if (accessToken != null && accessToken.trim().length() != 0) {
+            param = "?access_token=" + accessToken;
+        }
+        return String.format("%s/users/%s/%s%s", casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), username, param);
+    }
+
+    public String getMyProfileUrl(String accessToken) {
+        String param = "";
+        if (accessToken != null && accessToken.trim().length() != 0) {
+            param = "?access_token=" + accessToken;
+        }
+        return String.format("%s/account%s", casdoorConfig.getEndpoint(), param);
     }
 }
