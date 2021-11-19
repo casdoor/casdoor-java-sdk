@@ -42,10 +42,37 @@ public class CasdoorUserService {
         return objectMapper.readValue(response, CasdoorUser[].class);
     }
 
+    public CasdoorUser[] getSortedUsers(String sorter, int limit) throws Exception {
+        String targetUrl = String.format("%s/api/get-sorted-users?owner=%s&clientId=%s&clientSecret=%s&sorter=%s&limit=%s",
+                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
+                casdoorConfig.getClientId(), casdoorConfig.getClientSecret(),
+                sorter, limit);
+        String response = getUserResponse(targetUrl);
+        return objectMapper.readValue(response, CasdoorUser[].class);
+    }
+
+    public int getUserCount(String isOnline) throws Exception {
+        String targetUrl = String.format("%s/api/get-user-count?owner=%s&clientId=%s&clientSecret=%s&isOnline=%s",
+                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
+                casdoorConfig.getClientId(), casdoorConfig.getClientSecret(),
+                isOnline);
+        String response = getUserResponse(targetUrl);
+        return objectMapper.readValue(response, Integer.class);
+    }
+
     public CasdoorUser getUser(String name) throws Exception {
         String targetUrl = String.format("%s/api/get-user?id=%s/%s&clientId=%s&clientSecret=%s",
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
+        String response = getUserResponse(targetUrl);
+        return objectMapper.readValue(response, CasdoorUser.class);
+    }
+
+    public CasdoorUser getUserByEmail(String email) throws Exception {
+        String targetUrl = String.format("%s/api/get-user?owner=%s&clientId=%s&clientSecret=%s&email=%s",
+                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
+                casdoorConfig.getClientId(), casdoorConfig.getClientSecret(),
+                email);
         String response = getUserResponse(targetUrl);
         return objectMapper.readValue(response, CasdoorUser.class);
     }
