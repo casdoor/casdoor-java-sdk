@@ -34,6 +34,8 @@ public class CasdoorUserServiceTest {
         CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         CasdoorUser casdoorUser = casdoorUserService.getUser("admin");
         Assert.assertNotNull(casdoorUser);
+        casdoorUser = casdoorUserService.getUserByEmail("admin@example.com");
+        Assert.assertNotNull(casdoorUser);
     }
 
     @Test
@@ -41,6 +43,16 @@ public class CasdoorUserServiceTest {
         CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         CasdoorUser[] casdoorUsers = casdoorUserService.getUsers();
         Assert.assertNotNull(casdoorUsers);
+        casdoorUsers = casdoorUserService.getSortedUsers("created_time", 5);
+        Assert.assertNotNull(casdoorUsers);
+        Assert.assertEquals(5, casdoorUsers.length);
+    }
+
+    @Test
+    public void testGetUserCount() throws Exception {
+        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
+        int count = casdoorUserService.getUserCount("0");
+        Assert.assertTrue(count >= 0);
     }
 
     @Test
