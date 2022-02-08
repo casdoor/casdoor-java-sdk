@@ -18,6 +18,8 @@ public class CasdoorException extends Exception {
 
     public static CasdoorException NETWORK_EXCEPTION = new CasdoorException("Connection timeout.");
     public static CasdoorException ENDPOINT_EXCEPTION = new CasdoorException("Unknown response data structure from endpoint. Please check whether the endpoint is a Casdoor instance, and is the same version of the SDK.");
+    public static CasdoorException PARSE_JWT_TOKEN_EXCEPTION = new CasdoorException("Cannot parse jwt token.");
+    public static CasdoorException VERIFY_JWT_PUBLIC_KEY_EXCEPTION = new CasdoorException("Cannot verify signature.");
 
     private CasdoorException(String reason) {
         super(reason);

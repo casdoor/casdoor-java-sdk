@@ -29,7 +29,7 @@ public class CasdoorConfig {
     private String endpoint;
     private String clientId;
     private String clientSecret;
-    private String jwtSecret;
+    private String jwtPublicKey;
     private String organizationName;
     private String applicationName;
 }
