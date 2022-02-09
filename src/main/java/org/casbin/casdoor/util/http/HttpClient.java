@@ -22,7 +22,7 @@ import java.io.IOException;
 public class HttpClient {
     private static final OkHttpClient okHttpClient = new OkHttpClient();
 
-    public static String syncGet(String url) throws Exception{
+    public static String syncGet(String url) throws IOException {
         Request request = new Request.Builder().url(url).build();
         Response casdoorResponse = okHttpClient.newCall(request).execute();
         if (casdoorResponse.isSuccessful()) {
@@ -34,7 +34,7 @@ public class HttpClient {
     public static String postString(String url, String objStr) throws IOException {
         MediaType MEDIA_TYPE = MediaType.parse("text/plain;charset=UTF-8");
         Request request = new Request.Builder().url(url)
-                .post(RequestBody.create(MEDIA_TYPE,objStr)).build();
+                .post(RequestBody.create(MEDIA_TYPE, objStr)).build();
         Response response = okHttpClient.newCall(request).execute();
         if (response.isSuccessful()) {
             return response.body().string();

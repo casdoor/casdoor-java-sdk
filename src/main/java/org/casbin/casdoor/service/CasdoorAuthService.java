@@ -29,7 +29,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.exception.CasdoorAuthException;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
@@ -50,30 +50,33 @@ public class CasdoorAuthService {
         this.casdoorConfig = casdoorConfig;
     }
 
-    public String getOAuthToken(String code, String state) throws OAuthSystemException, OAuthProblemException {
-        OAuthClientRequest oAuthClientRequest =
-                OAuthClientRequest
-                        .tokenLocation(String.format("%s/api/login/oauth/access_token", casdoorConfig.getEndpoint()))
-                        .setGrantType(GrantType.AUTHORIZATION_CODE)
-                        .setClientId(casdoorConfig.getClientId())
-                        .setClientSecret(casdoorConfig.getClientSecret())
-                        .setRedirectURI(String.format("%s/api/login/oauth/authorize", casdoorConfig.getEndpoint()))
-                        .setCode(code)
-                        .buildQueryMessage();
-        OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-        OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient.accessToken(oAuthClientRequest, OAuth.HttpMethod.POST);
-        return oAuthResponse.getAccessToken();
+    public String getOAuthToken(String code, String state) {
+        try {
+            OAuthClientRequest oAuthClientRequest = OAuthClientRequest
+                    .tokenLocation(String.format("%s/api/login/oauth/access_token", casdoorConfig.getEndpoint()))
+                    .setGrantType(GrantType.AUTHORIZATION_CODE)
+                    .setClientId(casdoorConfig.getClientId())
+                    .setClientSecret(casdoorConfig.getClientSecret())
+                    .setRedirectURI(String.format("%s/api/login/oauth/authorize", casdoorConfig.getEndpoint()))
+                    .setCode(code)
+                    .buildQueryMessage();
+            OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+            OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient.accessToken(oAuthClientRequest, OAuth.HttpMethod.POST);
+            return oAuthResponse.getAccessToken();
+        } catch (OAuthSystemException | OAuthProblemException e) {
+            throw new CasdoorAuthException("Cannot get OAuth token.", e);
+        }
     }
 
-    public CasdoorUser parseJwtToken(String token) throws CasdoorException, InvocationTargetException, IllegalAccessException {
+    public CasdoorUser parseJwtToken(String token) {
         // parse jwt token
-        SignedJWT parseJWT = null;
+        SignedJWT parseJwt = null;
         Map<String, Object> claims = null;
         try {
-            parseJWT = SignedJWT.parse(token);
-            claims = parseJWT.getJWTClaimsSet().getClaims();
+            parseJwt = SignedJWT.parse(token);
+            claims = parseJwt.getJWTClaimsSet().getClaims();
         } catch (ParseException e) {
-            throw CasdoorException.PARSE_JWT_TOKEN_EXCEPTION;
+            throw new CasdoorAuthException("Cannot parse jwt token.", e);
         }
 
         // verify the jwt public key
@@ -82,38 +85,46 @@ public class CasdoorAuthService {
             X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(casdoorConfig.getJwtPublicKey().getBytes()));
             RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
             JWSVerifier verifier = new RSASSAVerifier(publicKey);
-            boolean verify = parseJWT.verify(verifier);
+            boolean verify = parseJwt.verify(verifier);
             if (!verify) {
-                throw CasdoorException.VERIFY_JWT_PUBLIC_KEY_EXCEPTION;
+                throw new CasdoorAuthException("Cannot verify signature.");
             }
         } catch (CertificateException | JOSEException e) {
-            throw CasdoorException.VERIFY_JWT_PUBLIC_KEY_EXCEPTION;
+            throw new CasdoorAuthException("Cannot verify signature.", e);
         }
 
         // convert to CasdoorUser
-        CasdoorUser casdoorUser = new CasdoorUser();
-        BeanUtils.copyProperties(casdoorUser, claims);
-        return casdoorUser;
+        try {
+            CasdoorUser casdoorUser = new CasdoorUser();
+            BeanUtils.copyProperties(casdoorUser, claims);
+            return casdoorUser;
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new CasdoorAuthException("Cannot convert claims to CasdoorUser", e);
+        }
     }
 
-    public String getSigninUrl(String redirectUrl) throws UnsupportedEncodingException {
+    public String getSigninUrl(String redirectUrl) {
         String scope = "read";
         String state = casdoorConfig.getApplicationName();
-        return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getClientId(),
-                URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString()),
-                scope, state);
+        try {
+            return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
+                    casdoorConfig.getEndpoint(), casdoorConfig.getClientId(),
+                    URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString()),
+                    scope, state);
+        } catch (UnsupportedEncodingException e) {
+            throw new CasdoorAuthException(e);
+        }
     }
 
-    public String getSignupUrl() throws UnsupportedEncodingException {
+    public String getSignupUrl() {
         return getSignupUrl(true, "");
     }
 
-    public String getSignupUrl(String redirectUrl) throws UnsupportedEncodingException {
+    public String getSignupUrl(String redirectUrl) {
         return getSignupUrl(false, redirectUrl);
     }
 
-    private String getSignupUrl(boolean enablePassword, String redirectUrl) throws UnsupportedEncodingException {
+    private String getSignupUrl(boolean enablePassword, String redirectUrl) {
         if (enablePassword) {
             return String.format("%s/signup/%s", casdoorConfig.getEndpoint(), casdoorConfig.getApplicationName());
         } else {

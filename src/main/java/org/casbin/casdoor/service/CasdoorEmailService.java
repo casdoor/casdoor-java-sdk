@@ -28,7 +28,7 @@ public class CasdoorEmailService {
     private final CasdoorConfig casdoorConfig;
     final private ObjectMapper objectMapper = new ObjectMapper();
 
-    public CasdoorEmailService(CasdoorConfig casdoorConfig){
+    public CasdoorEmailService(CasdoorConfig casdoorConfig) {
         this.casdoorConfig = casdoorConfig;
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }

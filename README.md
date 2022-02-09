@@ -19,13 +19,14 @@ Initialization requires 5 parameters, which are all string type:
 | Name (in order)  | Must | Description                                         |
 | ---------------- | ---- | --------------------------------------------------- |
 | endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
-| clientId         | Yes  | Application.client_id                               |
-| clientSecret     | Yes  | Application.client_secret                           |
-| jwtSecret        | Yes  | Same as Casdoor JWT secret.                         |
-| organizationName | Yes  | Application.organization                            |
+| clientId         | Yes  | Client ID for the Casdoor application               |
+| clientSecret     | Yes  | Client secret for the Casdoor application           |
+| jwtPublicKey     | Yes  | The public key for the Casdoor application's cert   |
+| organizationName | Yes  | The name for the Casdoor organization               |
+| applicationName  | No   | The name for the Casdoor application                |
 
-```go
-CasdoorConfig casdoorConfig = new CasdoorConfig(endpoint, clientId, clientSecret, jwtSecret, organizationName);
+```java
+CasdoorConfig casdoorConfig = new CasdoorConfig(endpoint, clientId, clientSecret, jwtPublicKey, organizationName, applicationName);
 ```
 
 ## Step2. Get Service and use
@@ -56,18 +57,19 @@ Your web application can get the `code`,`state` and call `GetOAuthToken(code, st
 
 The general process is as follows:
 
-```go
-token = casdoorAuthService.getOAuthToken(code, state)
+```java
+String token = casdoorAuthService.getOAuthToken(code, state);
 
-casdoorUser = casdoorAuthService.parseJwtToken(token)
+CasdoorUser casdoorUser = casdoorAuthService.parseJwtToken(token);
 ```
 
 2. **Set Session in your app**
 
 `casdoorUser` contains the basic information about the user provided by casdoor, you can use it as a keyword to set the session in your application, like this:
 
-```go
-req.getSession.setAttribute("user", casdoorUser)
+```java
+HttpSession session = request.getSession();
+session.setAttribute("user", user);
 ```
 
 ## SpringBoot Support
