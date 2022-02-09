@@ -11,26 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 package org.casbin.casdoor.exception;
 
 /**
  * @author Yixiang Zhao (@seriouszyx)
- */
-public class CasdoorException extends RuntimeException {
-    public CasdoorException() {
+ **/
+public class CasdoorAuthException extends CasdoorException {
+    public CasdoorAuthException() {
         super();
     }
 
-    public CasdoorException(String message, Throwable cause) {
+    public CasdoorAuthException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CasdoorException(String message) {
+    public CasdoorAuthException(String message) {
         super(message);
     }
 
-    public CasdoorException(Throwable cause) {
+    public CasdoorAuthException(Throwable cause) {
         super(cause);
     }
 }
