@@ -14,6 +14,9 @@
 
 package org.casbin.casdoor.entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,9 +55,13 @@ public class CasdoorUser implements Serializable {
     private String language;
     private int score;
     private int ranking;
+    @JsonProperty("isOnline")
     private boolean isOnline;
+    @JsonProperty("isAdmin")
     private boolean isAdmin;
+    @JsonProperty("isGlobalAdmin")
     private boolean isGlobalAdmin;
+    @JsonProperty("isForbidden")
     private boolean isForbidden;
     private String signupApplication;
     private String hash;
@@ -73,4 +80,44 @@ public class CasdoorUser implements Serializable {
     private String gitlab;
     private String ldap;
     private Map<String, String> properties;
+
+    @JsonGetter("isOnline")
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    @JsonSetter("setOnline")
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    @JsonGetter("isAdmin")
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    @JsonSetter("isAdmin")
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    @JsonGetter("isGlobalAdmin")
+    public boolean isGlobalAdmin() {
+        return isGlobalAdmin;
+    }
+
+    @JsonSetter("setGlobalAdmin")
+    public void setGlobalAdmin(boolean globalAdmin) {
+        isGlobalAdmin = globalAdmin;
+    }
+
+    @JsonGetter("isForbidden")
+    public boolean isForbidden() {
+        return isForbidden;
+    }
+
+    @JsonSetter("setForbidden")
+    public void setForbidden(boolean forbidden) {
+        isForbidden = forbidden;
+    }
 }
