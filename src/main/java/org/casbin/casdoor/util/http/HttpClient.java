@@ -18,6 +18,8 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class HttpClient {
     private static final OkHttpClient okHttpClient = new OkHttpClient();
@@ -57,5 +59,33 @@ public class HttpClient {
             throw new IOException("Unexpected code " + response);
         }
         return response.body().string();
+    }
+
+    /**
+     * Post a request of type "application/x-www-form-urlencoded"
+     * @param url url
+     * @param fromData form data stored in Map
+     * @return result as String
+     * @throws IOException when request fails
+     */
+    public static String postForm(String url, Map<String, String> fromData) throws IOException {
+
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        fromData.forEach(formBodyBuilder::addEncoded);
+        RequestBody formBody = formBodyBuilder.build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            return Objects.requireNonNull(response.body()).string();
+        }
+
     }
 }
