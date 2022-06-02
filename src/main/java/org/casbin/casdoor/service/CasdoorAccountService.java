@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.util.Map;
  * Service Related to Account API
  */
 public class CasdoorAccountService {
-
     private final CasdoorConfig casdoorConfig;
     final private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -47,7 +46,6 @@ public class CasdoorAccountService {
      * @throws IOException when JSON unmarshalling fails or HTTP requests fails
      */
     public CasdoorResponse setPassword(String userName, String oldPassword, String newPassword) throws IOException {
-
         String targetUrl = String.format("%s/api/set-password?owner=%s&clientId=%s&clientSecret=%s",
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
