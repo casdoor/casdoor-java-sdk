@@ -82,7 +82,7 @@ public class CasdoorAuthService {
         // verify the jwt public key
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(casdoorConfig.getJwtPublicKey().getBytes()));
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(casdoorConfig.getCertificate().getBytes()));
             RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
             JWSVerifier verifier = new RSASSAVerifier(publicKey);
             boolean verify = parseJwt.verify(verifier);

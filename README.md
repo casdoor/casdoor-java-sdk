@@ -21,12 +21,12 @@ Initialization requires 5 parameters, which are all string type:
 | endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
 | clientId         | Yes  | Client ID for the Casdoor application               |
 | clientSecret     | Yes  | Client secret for the Casdoor application           |
-| jwtPublicKey     | Yes  | The public key for the Casdoor application's cert   |
+| certificate     | Yes  | The public key for the Casdoor application's cert   |
 | organizationName | Yes  | The name for the Casdoor organization               |
 | applicationName  | No   | The name for the Casdoor application                |
 
 ```java
-CasdoorConfig casdoorConfig = new CasdoorConfig(endpoint, clientId, clientSecret, jwtPublicKey, organizationName, applicationName);
+CasdoorConfig casdoorConfig = new CasdoorConfig(endpoint, clientId, clientSecret, certificate, organizationName, applicationName);
 ```
 
 ## Step2. Get Service and use
