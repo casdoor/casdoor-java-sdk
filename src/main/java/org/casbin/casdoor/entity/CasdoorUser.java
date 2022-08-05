@@ -80,6 +80,8 @@ public class CasdoorUser implements Serializable {
     private String gitlab;
     private String ldap;
     private Map<String, String> properties;
+    private CasdoorRole[] roles;
+    private CasdoorPermission[] permissions;
 
     @JsonGetter("isOnline")
     public boolean isOnline() {
