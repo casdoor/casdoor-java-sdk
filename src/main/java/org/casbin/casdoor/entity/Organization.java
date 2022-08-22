@@ -14,13 +14,92 @@
 
 package org.casbin.casdoor.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Organization {
     private String owner, name, createdTime, displayName, websiteUrl, favicon, passwordType, passwordSalt, phonePrefix;
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getWebsiteUrl() {
+        return websiteUrl;
+    }
+
+    public void setWebsiteUrl(String websiteUrl) {
+        this.websiteUrl = websiteUrl;
+    }
+
+    public String getFavicon() {
+        return favicon;
+    }
+
+    public void setFavicon(String favicon) {
+        this.favicon = favicon;
+    }
+
+    public String getPasswordType() {
+        return passwordType;
+    }
+
+    public void setPasswordType(String passwordType) {
+        this.passwordType = passwordType;
+    }
+
+    public String getPasswordSalt() {
+        return passwordSalt;
+    }
+
+    public void setPasswordSalt(String passwordSalt) {
+        this.passwordSalt = passwordSalt;
+    }
+
+    public String getPhonePrefix() {
+        return phonePrefix;
+    }
+
+    public void setPhonePrefix(String phonePrefix) {
+        this.phonePrefix = phonePrefix;
+    }
+
+    @Override public String toString() {
+        return "Organization{" +
+            "owner='" + owner + '\'' +
+            ", name='" + name + '\'' +
+            ", createdTime='" + createdTime + '\'' +
+            ", displayName='" + displayName + '\'' +
+            ", websiteUrl='" + websiteUrl + '\'' +
+            ", favicon='" + favicon + '\'' +
+            ", passwordType='" + passwordType + '\'' +
+            ", passwordSalt='" + passwordSalt + '\'' +
+            ", phonePrefix='" + phonePrefix + '\'' +
+            '}';
+    }
 }

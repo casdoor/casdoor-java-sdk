@@ -14,20 +14,41 @@
 
 package org.casbin.casdoor.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 
 /**
  * Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
  * used to obtain resource-related information from Casdoor
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CasdoorResource implements Serializable {
     private String owner;
     private String name;
+
+    public CasdoorResource(String owner, String name) {
+        this.owner = owner;
+        this.name = name;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override public String toString() {
+        return "CasdoorResource{" +
+            "owner='" + owner + '\'' +
+            ", name='" + name + '\'' +
+            '}';
+    }
 }
