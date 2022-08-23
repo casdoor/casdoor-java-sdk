@@ -17,6 +17,7 @@ package org.casbin.casdoor.entity;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -80,8 +81,8 @@ public class CasdoorUser implements Serializable {
     private String gitlab;
     private String ldap;
     private Map<String, String> properties;
-    private CasdoorRole[] roles;
-    private CasdoorPermission[] permissions;
+    private List<CasdoorRole> roles;
+    private List<CasdoorPermission> permissions;
 
     @JsonGetter("isOnline")
     public boolean isOnline() {
