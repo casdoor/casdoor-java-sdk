@@ -14,6 +14,7 @@
 
 package org.casbin.casdoor.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,6 @@ public class CasdoorRole implements Serializable {
     private String displayName;
     private String[] users;
     private String[] roles;
+    @JsonProperty("isEnabled")
     private boolean isEnabled;
 }

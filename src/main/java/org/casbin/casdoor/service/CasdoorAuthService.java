@@ -14,11 +14,14 @@
 
 package org.casbin.casdoor.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.SignedJWT;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -33,7 +36,6 @@ import org.casbin.casdoor.exception.CasdoorAuthException;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
@@ -41,13 +43,14 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
-import java.util.Map;
 
 public class CasdoorAuthService {
     private final CasdoorConfig casdoorConfig;
+    final private ObjectMapper objectMapper = new ObjectMapper();
 
-    public CasdoorAuthService(CasdoorConfig casdoorConfig){
+    public CasdoorAuthService(CasdoorConfig casdoorConfig) {
         this.casdoorConfig = casdoorConfig;
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public String getOAuthToken(String code, String state) {
@@ -71,14 +74,11 @@ public class CasdoorAuthService {
     public CasdoorUser parseJwtToken(String token) {
         // parse jwt token
         SignedJWT parseJwt = null;
-        Map<String, Object> claims = null;
         try {
             parseJwt = SignedJWT.parse(token);
-            claims = parseJwt.getJWTClaimsSet().getClaims();
         } catch (ParseException e) {
             throw new CasdoorAuthException("Cannot parse jwt token.", e);
         }
-
         // verify the jwt public key
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -95,10 +95,9 @@ public class CasdoorAuthService {
 
         // convert to CasdoorUser
         try {
-            CasdoorUser casdoorUser = new CasdoorUser();
-            BeanUtils.copyProperties(casdoorUser, claims);
-            return casdoorUser;
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            Payload payloadJson = parseJwt.getPayload();
+            return objectMapper.readValue(payloadJson.toString(), CasdoorUser.class);
+        } catch (JsonProcessingException e) {
             throw new CasdoorAuthException("Cannot convert claims to CasdoorUser", e);
         }
     }
