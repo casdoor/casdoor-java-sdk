@@ -14,17 +14,10 @@
 
 package org.casbin.casdoor.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * CasdoorConfig is the core configuration.
  * The first step to use this SDK is to initialize the global casdoorConfig.
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 public class CasdoorConfig {
     private String endpoint;
     private String clientId;
@@ -32,4 +25,73 @@ public class CasdoorConfig {
     private String certificate;
     private String organizationName;
     private String applicationName;
+
+    public CasdoorConfig(String endpoint, String clientId, String clientSecret, String certificate, String organizationName, String applicationName) {
+        this.endpoint = endpoint;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.certificate = certificate;
+        this.organizationName = organizationName;
+        this.applicationName = applicationName;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    @Override
+    public String toString() {
+        return "CasdoorConfig{" +
+                "endpoint='" + endpoint + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", certificate='" + certificate + '\'' +
+                ", organizationName='" + organizationName + '\'' +
+                ", applicationName='" + applicationName + '\'' +
+                '}';
+    }
 }

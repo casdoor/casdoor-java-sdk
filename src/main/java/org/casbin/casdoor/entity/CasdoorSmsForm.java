@@ -14,17 +14,40 @@
 
 package org.casbin.casdoor.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CasdoorSmsForm implements Serializable {
     private String organizationId;
     private String content;
     private String[] receivers;
+
+    public CasdoorSmsForm(String organizationId, String content, String[] receivers) {
+        this.organizationId = organizationId;
+        this.content = content;
+        this.receivers = receivers;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String[] getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(String[] receivers) {
+        this.receivers = receivers;
+    }
 }
