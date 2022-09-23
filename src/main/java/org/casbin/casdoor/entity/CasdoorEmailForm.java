@@ -14,18 +14,62 @@
 
 package org.casbin.casdoor.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
+import java.util.Arrays;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class CasdoorEmailForm implements Serializable {
     private String title;
     private String content;
     private String sender;
     private String[] receivers;
+
+    public CasdoorEmailForm(String title, String content, String sender, String[] receivers) {
+        this.title = title;
+        this.content = content;
+        this.sender = sender;
+        this.receivers = receivers;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String[] getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(String[] receivers) {
+        this.receivers = receivers;
+    }
+
+    @Override
+    public String toString() {
+        return "CasdoorEmailForm{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", sender='" + sender + '\'' +
+                ", receivers=" + Arrays.toString(receivers) +
+                '}';
+    }
 }
