@@ -33,8 +33,10 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.exception.CasdoorAuthException;
+import org.casbin.casdoor.util.QueryUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +45,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
+import java.util.LinkedHashMap;
 
 public class CasdoorAuthService {
     private final CasdoorConfig casdoorConfig;
@@ -132,18 +135,25 @@ public class CasdoorAuthService {
     }
 
     public String getUserProfileUrl(String username, String accessToken) {
-        String param = "";
-        if (accessToken != null && accessToken.trim().length() != 0) {
-            param = "?access_token=" + accessToken;
+        return this.getUserProfileUrl(username, accessToken, null);
+    }
+
+    public String getUserProfileUrl(String username, String accessToken, String returnUrl) {
+        LinkedHashMap<String, Serializable> params = new LinkedHashMap<>();
+        if (accessToken != null && accessToken.trim().length() > 0) params.put("access_token", accessToken);
+        if (returnUrl != null && returnUrl.trim().length() > 0) params.put("returnUrl", returnUrl);
+        if (username == null || username.trim().length() == 0) {
+            return String.format("%s/account%s", casdoorConfig.getEndpoint(), params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
+        } else {
+            return String.format("%s/user/%s%s", casdoorConfig.getEndpoint(), username, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
         }
-        return String.format("%s/users/%s/%s%s", casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), username, param);
     }
 
     public String getMyProfileUrl(String accessToken) {
-        String param = "";
-        if (accessToken != null && accessToken.trim().length() != 0) {
-            param = "?access_token=" + accessToken;
-        }
-        return String.format("%s/account%s", casdoorConfig.getEndpoint(), param);
+        return this.getMyProfileUrl(accessToken, null);
+    }
+
+    public String getMyProfileUrl(String accessToken, String returnUrl) {
+        return this.getUserProfileUrl(null, accessToken, returnUrl);
     }
 }
