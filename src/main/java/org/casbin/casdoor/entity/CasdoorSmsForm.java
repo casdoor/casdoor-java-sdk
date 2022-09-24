@@ -22,6 +22,9 @@ public class CasdoorSmsForm implements Serializable {
     private String content;
     private String[] receivers;
 
+    public CasdoorSmsForm() {
+    }
+
     public CasdoorSmsForm(String organizationId, String content, String[] receivers) {
         this.organizationId = organizationId;
         this.content = content;

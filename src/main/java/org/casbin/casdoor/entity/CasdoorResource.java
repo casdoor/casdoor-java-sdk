@@ -27,6 +27,9 @@ public class CasdoorResource implements Serializable {
     private String owner;
     private String name;
 
+    public CasdoorResource() {
+    }
+
     public CasdoorResource(String owner, String name) {
         this.owner = owner;
         this.name = name;

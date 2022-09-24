@@ -26,6 +26,9 @@ public class CasdoorConfig {
     private String organizationName;
     private String applicationName;
 
+    public CasdoorConfig() {
+    }
+
     public CasdoorConfig(String endpoint, String clientId, String clientSecret, String certificate, String organizationName, String applicationName) {
         this.endpoint = endpoint;
         this.clientId = clientId;
