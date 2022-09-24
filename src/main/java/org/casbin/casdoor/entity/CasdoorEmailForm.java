@@ -24,6 +24,9 @@ public class CasdoorEmailForm implements Serializable {
     private String sender;
     private String[] receivers;
 
+    public CasdoorEmailForm() {
+    }
+
     public CasdoorEmailForm(String title, String content, String sender, String[] receivers) {
         this.title = title;
         this.content = content;
