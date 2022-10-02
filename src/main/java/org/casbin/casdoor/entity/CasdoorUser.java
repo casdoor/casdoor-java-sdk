@@ -37,18 +37,18 @@ public class CasdoorUser implements Serializable {
 
     private String id;
     private String type;
-    private String password;
-    private String passwordSalt;
+    private String password = "";
+    private String passwordSalt = "";
     private String displayName = "";
     private String firstName = "";
     private String lastName = "";
-    private String avatar;
-    private String permanentAvatar;
+    private String avatar = "";
+    private String permanentAvatar = "";
     private String email;
     @JsonProperty("emailVerified")
     private boolean emailVerified = false;
-    private String phone;
-    private String location;
+    private String phone = "";
+    private String location = "";
     private String[] address;
     private String affiliation = "";
     private String title = "";
@@ -110,7 +110,7 @@ public class CasdoorUser implements Serializable {
     private String okta = "";
     private String douyin = "";
     private String custom = "";
-    private String ldap;
+    private String ldap = "";
     private Map<String, String> properties;
     private List<CasdoorRole> roles;
     private List<CasdoorPermission> permissions;
