@@ -34,25 +34,39 @@ public class CasdoorUser implements Serializable {
     private String name;
     private String createdTime;
     private String updatedTime;
+
     private String id;
     private String type;
     private String password;
-    private String displayName;
+    private String passwordSalt;
+    private String displayName = "";
+    private String firstName = "";
+    private String lastName = "";
     private String avatar;
     private String permanentAvatar;
     private String email;
+    @JsonProperty("emailVerified")
+    private boolean emailVerified = false;
     private String phone;
     private String location;
     private String[] address;
-    private String affiliation;
-    private String title;
-    private String homepage;
-    private String bio;
-    private String tag;
-    private String region;
+    private String affiliation = "";
+    private String title = "";
+    private String idCardType = "";
+    private String idCard = "";
+    private String homepage = "";
+    private String bio = "";
+    private String tag = "";
+    private String region = "";
     private String language;
+    private String gender = "";
+    private String birthday = "";
+    private String education = "";
     private int score;
+    private int karma;
     private int ranking;
+    @JsonProperty("isDefaultAvatar")
+    private boolean isDefaultAvatar;
     @JsonProperty("isOnline")
     private boolean isOnline;
     @JsonProperty("isAdmin")
@@ -61,9 +75,16 @@ public class CasdoorUser implements Serializable {
     private boolean isGlobalAdmin;
     @JsonProperty("isForbidden")
     private boolean isForbidden;
+    @JsonProperty("isDeleted")
+    private boolean isDeleted;
     private String signupApplication;
-    private String hash;
-    private String preHash;
+    private String hash = "";
+    private String preHash = "";
+
+    private String createdIp = "";
+	private String lastSigninTime = "";
+	private String lastSigninIp = "";
+
     private String github = "";
     private String google = "";
     private String qq = "";
@@ -76,6 +97,19 @@ public class CasdoorUser implements Serializable {
     private String wecom = "";
     private String lark = "";
     private String gitlab = "";
+    private String adfs = "";
+    private String baidu = "";
+    private String alipay = "";
+    private String casdoor = "";
+    private String infoflow = "";
+    private String apple = "";
+    private String azuread = "";
+    private String slack = "";
+    private String steam = "";
+    private String bilibili = "";
+    private String okta = "";
+    private String douyin = "";
+    private String custom = "";
     private String ldap;
     private Map<String, String> properties;
     private List<CasdoorRole> roles;
@@ -119,6 +153,36 @@ public class CasdoorUser implements Serializable {
     @JsonSetter("setForbidden")
     public void setForbidden(boolean forbidden) {
         isForbidden = forbidden;
+    }
+
+    @JsonGetter("isEmailVerified")
+    public boolean isEmailVerified() {
+      return emailVerified;
+    }
+
+    @JsonSetter("setEmailVerified")
+    public void setEmailVerified(boolean emailVerified) {
+      this.emailVerified = emailVerified;
+    }
+
+    @JsonGetter("isDefaultAvatar")
+    public boolean isDefaultAvatar() {
+      return isDefaultAvatar;
+    }
+
+    @JsonSetter("setDefaultAvatar")
+    public void setDefaultAvatar(boolean isDefaultAvatar) {
+      this.isDefaultAvatar = isDefaultAvatar;
+    }
+
+    @JsonGetter("isDeleted")
+    public boolean isDeleted() {
+      return isDeleted;
+    }
+
+    @JsonSetter("setDeleted")
+    public void setDeleted(boolean isDeleted) {
+      this.isDeleted = isDeleted;
     }
 
     public String getOwner() {
@@ -425,6 +489,110 @@ public class CasdoorUser implements Serializable {
         this.gitlab = gitlab;
     }
 
+    public String getAdfs() {
+      return adfs;
+    }
+
+    public void setAdfs(String adfs) {
+      this.adfs = adfs;
+    }
+
+    public String getBaidu() {
+      return baidu;
+    }
+
+    public void setBaidu(String baidu) {
+      this.baidu = baidu;
+    }
+
+    public String getAlipay() {
+      return alipay;
+    }
+
+    public void setAlipay(String alipay) {
+      this.alipay = alipay;
+    }
+
+    public String getCasdoor() {
+      return casdoor;
+    }
+
+    public void setCasdoor(String casdoor) {
+      this.casdoor = casdoor;
+    }
+
+    public String getInfoflow() {
+      return infoflow;
+    }
+
+    public void setInfoflow(String infoflow) {
+      this.infoflow = infoflow;
+    }
+
+    public String getApple() {
+      return apple;
+    }
+
+    public void setApple(String apple) {
+      this.apple = apple;
+    }
+
+    public String getAzuread() {
+      return azuread;
+    }
+
+    public void setAzuread(String azuread) {
+      this.azuread = azuread;
+    }
+
+    public String getSlack() {
+      return slack;
+    }
+
+    public void setSlack(String slack) {
+      this.slack = slack;
+    }
+
+    public String getSteam() {
+      return steam;
+    }
+
+    public void setSteam(String steam) {
+      this.steam = steam;
+    }
+
+    public String getBilibili() {
+      return bilibili;
+    }
+
+    public void setBilibili(String bilibili) {
+      this.bilibili = bilibili;
+    }
+
+    public String getOkta() {
+      return okta;
+    }
+
+    public void setOkta(String okta) {
+      this.okta = okta;
+    }
+
+    public String getDouyin() {
+      return douyin;
+    }
+
+    public void setDouyin(String douyin) {
+      this.douyin = douyin;
+    }
+
+    public String getCustom() {
+      return custom;
+    }
+
+    public void setCustom(String custom) {
+      this.custom = custom;
+    }
+
     public String getLdap() {
         return ldap;
     }
@@ -457,6 +625,102 @@ public class CasdoorUser implements Serializable {
         this.permissions = permissions;
     }
 
+    public String getPasswordSalt() {
+      return passwordSalt;
+    }
+
+    public void setPasswordSalt(String passwordSalt) {
+      this.passwordSalt = passwordSalt;
+    }
+
+    public String getFirstName() {
+      return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+      this.firstName = firstName;
+    }
+
+    public String getLastName() {
+      return lastName;
+    }
+
+    public void setLastName(String lastName) {
+      this.lastName = lastName;
+    }
+
+    public String getIdCardType() {
+      return idCardType;
+    }
+
+    public void setIdCardType(String idCardType) {
+      this.idCardType = idCardType;
+    }
+
+    public String getIdCard() {
+      return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+      this.idCard = idCard;
+    }
+
+    public String getGender() {
+      return gender;
+    }
+
+    public void setGender(String gender) {
+      this.gender = gender;
+    }
+
+    public String getBirthday() {
+      return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+      this.birthday = birthday;
+    }
+
+    public String getEducation() {
+      return education;
+    }
+
+    public void setEducation(String education) {
+      this.education = education;
+    }
+
+    public int getKarma() {
+      return karma;
+    }
+
+    public void setKarma(int karma) {
+      this.karma = karma;
+    }
+
+    public String getCreatedIp() {
+        return createdIp;
+    }
+
+    public void setCreatedIp(String createdIp) {
+        this.createdIp = createdIp;
+    }
+
+    public String getLastSigninTime() {
+        return lastSigninTime;
+    }
+
+    public void setLastSigninTime(String lastSigninTime) {
+        this.lastSigninTime = lastSigninTime;
+    }
+
+    public String getLastSigninIp() {
+        return lastSigninIp;
+    }
+
+    public void setLastSigninIp(String lastSigninIp) {
+        this.lastSigninIp = lastSigninIp;
+    }
+
     @Override
     public String toString() {
         return "CasdoorUser{" +
@@ -467,29 +731,44 @@ public class CasdoorUser implements Serializable {
                 ", id='" + id + '\'' +
                 ", type='" + type + '\'' +
                 ", password='" + password + '\'' +
+                ", passwordSalt='" + passwordSalt + '\'' +
                 ", displayName='" + displayName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", avatar='" + avatar + '\'' +
                 ", permanentAvatar='" + permanentAvatar + '\'' +
                 ", email='" + email + '\'' +
+                ", emailVerified=" + emailVerified +
                 ", phone='" + phone + '\'' +
                 ", location='" + location + '\'' +
                 ", address=" + Arrays.toString(address) +
                 ", affiliation='" + affiliation + '\'' +
                 ", title='" + title + '\'' +
+                ", idCardType='" + idCardType + '\'' +
+                ", idCard='" + idCard + '\'' +
                 ", homepage='" + homepage + '\'' +
                 ", bio='" + bio + '\'' +
                 ", tag='" + tag + '\'' +
                 ", region='" + region + '\'' +
                 ", language='" + language + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", education='" + education + '\'' +
                 ", score=" + score +
+                ", karma=" + karma +
                 ", ranking=" + ranking +
+                ", isDefaultAvatar=" + isDefaultAvatar +
                 ", isOnline=" + isOnline +
                 ", isAdmin=" + isAdmin +
                 ", isGlobalAdmin=" + isGlobalAdmin +
                 ", isForbidden=" + isForbidden +
+                ", isDeleted=" + isDeleted +
                 ", signupApplication='" + signupApplication + '\'' +
                 ", hash='" + hash + '\'' +
                 ", preHash='" + preHash + '\'' +
+                ", createdIp='" + createdIp + '\'' +
+                ", lastSigninTime='" + lastSigninTime + '\'' +
+                ", lastSigninIp='" + lastSigninIp + '\'' +
                 ", github='" + github + '\'' +
                 ", google='" + google + '\'' +
                 ", qq='" + qq + '\'' +
@@ -502,6 +781,19 @@ public class CasdoorUser implements Serializable {
                 ", wecom='" + wecom + '\'' +
                 ", lark='" + lark + '\'' +
                 ", gitlab='" + gitlab + '\'' +
+                ", adfs='" + adfs + '\'' +
+                ", baidu='" + baidu + '\'' +
+                ", alipay='" + alipay + '\'' +
+                ", casdoor='" + casdoor + '\'' +
+                ", infoflow='" + infoflow + '\'' +
+                ", apple='" + apple + '\'' +
+                ", azuread='" + azuread + '\'' +
+                ", slack='" + slack + '\'' +
+                ", steam='" + steam + '\'' +
+                ", bilibili='" + bilibili + '\'' +
+                ", okta='" + okta + '\'' +
+                ", douyin='" + douyin + '\'' +
+                ", custom='" + custom + '\'' +
                 ", ldap='" + ldap + '\'' +
                 ", properties=" + properties +
                 ", roles=" + roles +
