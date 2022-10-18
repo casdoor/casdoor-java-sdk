@@ -46,6 +46,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
+import java.util.UUID;
 
 public class CasdoorAuthService {
     private final CasdoorConfig casdoorConfig;
@@ -105,9 +106,8 @@ public class CasdoorAuthService {
         }
     }
 
-    public String getSigninUrl(String redirectUrl) {
+    public String getSigninUrl(String redirectUrl, String state) {
         String scope = "read";
-        String state = casdoorConfig.getApplicationName();
         try {
             return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
                     casdoorConfig.getEndpoint(), casdoorConfig.getClientId(),
@@ -130,7 +130,7 @@ public class CasdoorAuthService {
         if (enablePassword) {
             return String.format("%s/signup/%s", casdoorConfig.getEndpoint(), casdoorConfig.getApplicationName());
         } else {
-            return getSigninUrl(redirectUrl).replace("/login/oauth/authorize", "/signup/oauth/authorize");
+            return getSigninUrl(redirectUrl, UUID.randomUUID().toString()).replace("/login/oauth/authorize", "/signup/oauth/authorize");
         }
     }
 
