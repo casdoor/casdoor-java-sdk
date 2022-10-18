@@ -106,8 +106,11 @@ public class CasdoorAuthService {
     }
 
     public String getSigninUrl(String redirectUrl) {
+        return this.getSigninUrl(redirectUrl, casdoorConfig.getApplicationName());
+    }
+
+    public String getSigninUrl(String redirectUrl, String state) {
         String scope = "read";
-        String state = casdoorConfig.getApplicationName();
         try {
             return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
                     casdoorConfig.getEndpoint(), casdoorConfig.getClientId(),
