@@ -148,7 +148,7 @@ public class CasdoorAuthService {
         if (username == null || username.trim().length() == 0) {
             return String.format("%s/account%s", casdoorConfig.getEndpoint(), params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
         } else {
-            return String.format("%s/user/%s%s", casdoorConfig.getEndpoint(), username, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
+            return String.format("%s/user/%s/%s%s", casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), username, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
         }
     }
 
