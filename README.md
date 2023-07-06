@@ -6,7 +6,7 @@
 [![Javadocs](https://www.javadoc.io/badge/org.casbin/casdoor-java-sdk.svg)](https://www.javadoc.io/doc/org.casbin/casdoor-java-sdk)
 [![Maven Central](https://img.shields.io/maven-central/v/org.casbin/casdoor-java-sdk.svg)](https://mvnrepository.com/artifact/org.casbin/casdoor-java-sdk/latest)
 [![Release](https://img.shields.io/github/release/casdoor/casdoor-java-sdk.svg)](https://github.com/casdoor/casdoor-java-sdk/releases/latest)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/casbin/lobby)
+[![Discord](https://img.shields.io/discord/1022748306096537660?logo=discord&label=discord&color=5865F2)](https://discord.gg/5rPsrAzK7S)
 
 This is Casdoor's SDK for java, which will allow you to easily connect your application to the Casdoor authentication system without having to implement it from scratch.
 
