@@ -18,11 +18,12 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 
 public class HttpClient {
-    private static final OkHttpClient okHttpClient = new OkHttpClient();
+    private static OkHttpClient okHttpClient = new OkHttpClient();
 
     public static String syncGet(String url) throws IOException {
         Request request = new Request.Builder().url(url).build();
@@ -88,4 +89,12 @@ public class HttpClient {
         }
 
     }
+
+    /**
+     * SetHttpClient sets custom http Client.
+     */
+    public static void setHttpClient(OkHttpClient customClient) {
+        okHttpClient = customClient;
+    }
+
 }
