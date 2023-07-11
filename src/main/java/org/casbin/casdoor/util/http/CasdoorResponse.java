@@ -15,10 +15,12 @@
 package org.casbin.casdoor.util.http;
 
 
+import java.util.List;
+
 public class CasdoorResponse {
     private String status;
     private String msg;
-    private String data;
+    private List data;
     private String data2;
 
     public String getStatus() {
@@ -37,11 +39,11 @@ public class CasdoorResponse {
         this.msg = msg;
     }
 
-    public String getData() {
+    public List getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(List data) {
         this.data = data;
     }
 

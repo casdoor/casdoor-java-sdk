@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.entity.CasdoorPermission;
 import org.casbin.casdoor.entity.CasdoorRole;
 import org.casbin.casdoor.exception.CasdoorException;
 import org.casbin.casdoor.util.MapToUrlUtils;
@@ -54,34 +55,27 @@ public class CasdoorRoleService {
         return casdoorRole;
 
     }
-
     public Map<String, Object> getPaginationRoles(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMap.put("owner", casdoorConfig.getOrganizationName());
-        queryMap.put("clientId", casdoorConfig.getClientId());
-        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
-        queryMap.put("p", Integer.toString(p));
-        queryMap.put("pageSize", Integer.toString(pageSize));
+        MapToUrlUtils.queryMapInit(p, pageSize, queryMap,casdoorConfig);
 
         String url = casdoorConfig.getEndpoint() + "/api/get-roles?" + MapToUrlUtils.mapToUrlParams(queryMap);
         String response = HttpClient.syncGet(url);
-        Map<String, Object> resMap = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {
-        });
 
-        if (!"ok".equals(resMap.get("status"))) {
-            throw new CasdoorException((String) resMap.get("msg"));
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException(casdoorResponse.getMsg());
         }
 
-        List<CasdoorRole> casdoorRoles = objectMapper.convertValue(resMap.get("data"), new TypeReference<List<CasdoorRole>>() {
-        });
-        int data2 = objectMapper.convertValue(resMap.get("data2"), Integer.class);
+        List<CasdoorPermission> permissions = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});
+        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
 
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorRoles", casdoorRoles);
-        resultMap.put("data2", data2);
+        return new HashMap<String, Object>() {{
+            put("casdoorRoles", permissions);
+            put("data2", data2);
+        }};
 
-        return resultMap;
     }
-
     public CasdoorResponse updateRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
@@ -107,4 +101,5 @@ public class CasdoorRoleService {
         return objectMapper.readValue(response, CasdoorResponse.class);
 
     }
+
 }
