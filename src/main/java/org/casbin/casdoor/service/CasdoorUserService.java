@@ -114,25 +114,48 @@ public class CasdoorUserService {
     }
 
     public Map<String, Object> getPaginationUsers(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        MapToUrlUtils.queryMapInit(p, pageSize, queryMap,casdoorConfig);
+        queryMapInit(p, pageSize, queryMap);
 
-        String url = casdoorConfig.getEndpoint() + "/api/get-users?" + MapToUrlUtils.mapToUrlParams(queryMap);
-        String response = HttpClient.syncGet(url);
+        String url = buildUsersUrl(queryMap);
+        CasdoorResponse casdoorResponse = getCasdoorResponse(url);
 
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+        List<CasdoorUser> users = getCasdoorUsers(casdoorResponse);
+        int data2 = getCasdoorData2(casdoorResponse);
 
-        if (!casdoorResponse.getStatus().equals("ok")) {
-            throw new CasdoorException(casdoorResponse.getMsg());
+        return buildResultMap(users, data2);
+    }
+
+    private void queryMapInit(int p, int pageSize, Map<String, String> queryMap) {
+        String[] keys = {"owner", "clientId", "clientSecret", "p", "pageSize"};
+        String[] values = {casdoorConfig.getOrganizationName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret(), Integer.toString(p), Integer.toString(pageSize)};
+
+        for (int i = 0; i < keys.length; i++) {
+            queryMap.put(keys[i], values[i]);
         }
+    }
 
-        List<CasdoorPermission> permissions = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});
-        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+    private String buildUsersUrl(Map<String, String> queryMap) {
+        return casdoorConfig.getEndpoint() + "/api/get-users?" + MapToUrlUtils.mapToUrlParams(queryMap);
+    }
 
+    private CasdoorResponse getCasdoorResponse(String url) throws IOException {
+        String response = HttpClient.syncGet(url);
+        return objectMapper.readValue(response, CasdoorResponse.class);
+    }
+    private List<CasdoorUser> getCasdoorUsers(CasdoorResponse casdoorResponse) {
+        return objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorUser>>() {});
+    }
+
+    private int getCasdoorData2(CasdoorResponse casdoorResponse) {
+        return objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+    }
+
+    private Map<String, Object> buildResultMap(List<CasdoorUser> users, int data2) {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorUsers", permissions);
+        resultMap.put("casdoorUsers", users);
         resultMap.put("data2", data2);
-
         return resultMap;
     }
+
 
 }

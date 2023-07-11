@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorPermission;
-import org.casbin.casdoor.exception.CasdoorException;
 import org.casbin.casdoor.util.MapToUrlUtils;
 import org.casbin.casdoor.util.PermissionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
@@ -92,25 +91,47 @@ public class CasdoorPermissionService {
     }
 
     public Map<String, Object> getPaginationPermissions(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        MapToUrlUtils.queryMapInit(p, pageSize, queryMap,casdoorConfig);
+        queryMapInit(p, pageSize, queryMap);
 
-        String url = casdoorConfig.getEndpoint() + "/api/get-permissions?" + MapToUrlUtils.mapToUrlParams(queryMap);
-        String response = HttpClient.syncGet(url);
+        String url = buildPermissionsUrl(queryMap);
+        CasdoorResponse casdoorResponse = getCasdoorResponse(url);
 
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+        List<CasdoorPermission> permissions = getCasdoorPermissions(casdoorResponse);
+        int data2 = getCasdoorData2(casdoorResponse);
 
-        if (!casdoorResponse.getStatus().equals("ok")) {
-            throw new CasdoorException(casdoorResponse.getMsg());
+        return buildResultMap(permissions, data2);
+    }
+
+    private void queryMapInit(int p, int pageSize, Map<String, String> queryMap) {
+        String[] keys = {"owner", "clientId", "clientSecret", "p", "pageSize"};
+        String[] values = {casdoorConfig.getOrganizationName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret(), Integer.toString(p), Integer.toString(pageSize)};
+
+        for (int i = 0; i < keys.length; i++) {
+            queryMap.put(keys[i], values[i]);
         }
+    }
 
-        List<CasdoorPermission> permissions = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});
-        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+    private String buildPermissionsUrl(Map<String, String> queryMap) {
+        return casdoorConfig.getEndpoint() + "/api/get-permissions?" + MapToUrlUtils.mapToUrlParams(queryMap);
+    }
 
-        return new HashMap<String, Object>() {{
-            put("permissions", permissions);
-            put("data2", data2);
-        }};
+    private CasdoorResponse getCasdoorResponse(String url) throws IOException {
+        String response = HttpClient.syncGet(url);
+        return objectMapper.readValue(response, CasdoorResponse.class);
+    }
+    private List<CasdoorPermission> getCasdoorPermissions(CasdoorResponse casdoorResponse) {
+        return objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});
+    }
 
+    private int getCasdoorData2(CasdoorResponse casdoorResponse) {
+        return objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+    }
+
+    private Map<String, Object> buildResultMap(List<CasdoorPermission> permissions, int data2) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("casdoorPermissions", permissions);
+        resultMap.put("data2", data2);
+        return resultMap;
     }
 
 }
