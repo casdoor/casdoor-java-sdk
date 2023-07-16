@@ -1,10 +1,8 @@
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorRole;
-import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.service.CasdoorRoleService;
-import org.casbin.casdoor.service.CasdoorUserService;
+import org.casbin.casdoor.entity.CasdoorPermission;
+import org.casbin.casdoor.service.CasdoorPermissionService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,16 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class CasdoorUserServiceTest {
-
+public class CasdoorPermissionServiceTest {
     private CasdoorConfig casdoorConfig;
 
-    /**
-     * You should replace the initConfig() method's content with your own Casdoor instance.
-     */
     @Before
     public void init() {
         casdoorConfig = new CasdoorConfig();
@@ -64,67 +57,65 @@ public class CasdoorUserServiceTest {
                 "-----END CERTIFICATE-----");
     }
 
+
+
     @Test
-    public void testGetUser() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        CasdoorUser casdoorUser = casdoorUserService.getUser("admin");
-        Assert.assertNotNull(casdoorUser);
-        casdoorUser = casdoorUserService.getUserByEmail("admin@example.com");
-        Assert.assertNotNull(casdoorUser);
+    public void testGetPermission() throws IOException {
+        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
+        CasdoorPermission permission = casdoorPermissionService.getPermission("permission-built-in");
+        assertNotNull(permission);
+
     }
 
     @Test
-    public void testGetUsers() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        CasdoorUser[] casdoorUsers = casdoorUserService.getUsers();
-        Assert.assertNotNull(casdoorUsers);
-        casdoorUsers = casdoorUserService.getSortedUsers("created_time", 5);
-        Assert.assertNotNull(casdoorUsers);
-        Assert.assertEquals(5, casdoorUsers.length);
+    public void testGetPermissions() throws IOException {
+        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
+        CasdoorPermission[] permissions = casdoorPermissionService.getPermissions();
+        assertNotNull(permissions);
+
     }
 
     @Test
-    public void testGetUserCount() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        int count = casdoorUserService.getUserCount("0");
-        Assert.assertTrue(count >= 0);
-    }
+    public void testModifyPermission() throws IOException {
+        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
 
-    @Test
-    public void testModifyUser() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-
-        CasdoorUser user = new CasdoorUser();
-        user.setOwner("built-in");
-        user.setName("test-modify-user");
-        CasdoorResponse response = casdoorUserService.addUser(user);
+        CasdoorPermission permission = new CasdoorPermission();
+        permission.setOwner("built-in");
+        permission.setName("test-modify-permission");
+        CasdoorResponse response = casdoorPermissionService.addPermission(permission);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        user.setDisplayName("test-display-name");
-        response = casdoorUserService.updateUser(user);
+        permission.setDisplayName("test-display-name");
+        response = casdoorPermissionService.updatePermission(permission);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        response = casdoorUserService.deleteUser(user);
+        response = casdoorPermissionService.deletePermission(permission);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }
 
     @Test
-    public void testGetPaginationUsers() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
+    public void testGetPaginationPermissions() throws IOException {
+        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
         Map<String, String> queryMap = new HashMap<>();
-        Map<String, Object> result = casdoorUserService.getPaginationUsers(1, 10, queryMap);
+        Map<String, Object> result = casdoorPermissionService.getPaginationPermissions(1, 10, queryMap);
         assertNotNull(result);
-        assertTrue(result.containsKey("casdoorUsers"));
+        assertTrue(result.containsKey("casdoorPermissions"));
         assertTrue(result.containsKey("data2"));
 
-        List<CasdoorRole> roles = (List<CasdoorRole>) result.get("casdoorUsers");
+        List<CasdoorPermission> permissions = (List<CasdoorPermission>) result.get("casdoorPermissions");
         int data2 = (int) result.get("data2");
 
-        assertTrue(!roles.isEmpty());
+        assertTrue(!permissions.isEmpty());
         assertTrue(data2 > 0);
-    }
 
+    }
+    @Test
+    public void testGetPermissionsByRole() throws IOException {
+        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
+        CasdoorResponse response = casdoorPermissionService.getPermissionsByRole("permission-built-in");
+        Assert.assertEquals("ok", response.getStatus());
+    }
 }

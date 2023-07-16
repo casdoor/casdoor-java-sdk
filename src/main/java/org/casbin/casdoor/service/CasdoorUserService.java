@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -9,21 +9,27 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing CasdoorPermissions and
 // limitations under the License.
 
 package org.casbin.casdoor.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.entity.CasdoorPermission;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.util.MapToUrlUtils;
 import org.casbin.casdoor.util.UserOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CasdoorUserService {
     private final CasdoorConfig casdoorConfig;
@@ -94,7 +100,10 @@ public class CasdoorUserService {
     public CasdoorResponse deleteUser(CasdoorUser casdoorUser) throws IOException {
         return modifyUser(UserOperations.DELETE_USER, casdoorUser);
     }
-
+    public CasdoorResponse updateUserById(String id, CasdoorUser casdoorUser) throws IOException {
+        casdoorUser.setId(id);
+        return updateUser(casdoorUser);
+    }
     private CasdoorResponse modifyUser(UserOperations method, CasdoorUser casdoorUser) throws IOException {
         String targetUrl = String.format("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s",
                 casdoorConfig.getEndpoint(), method.getOperation(),
@@ -103,4 +112,30 @@ public class CasdoorUserService {
         String responseStr = HttpClient.postString(targetUrl, userStr);
         return objectMapper.readValue(responseStr, CasdoorResponse.class);
     }
+
+    public Map<String, Object> getPaginationUsers(int p, int pageSize, Map<String, String> queryMap) throws IOException {
+        queryMap.put("owner", casdoorConfig.getOrganizationName());
+        queryMap.put("clientId", casdoorConfig.getClientId());
+        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
+        queryMap.put("p", Integer.toString(p));
+        queryMap.put("pageSize", Integer.toString(pageSize));
+
+        String url = casdoorConfig.getEndpoint() + "/api/get-users?" + MapToUrlUtils.mapToUrlParams(queryMap);
+        String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);;
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException("Failed to unmarshal JSON");
+        }
+        List<CasdoorUser> users = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorUser>>() {});;
+        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);;
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("casdoorUsers", users);
+        resultMap.put("data2", data2);
+        return resultMap;
+    }
+
+
 }

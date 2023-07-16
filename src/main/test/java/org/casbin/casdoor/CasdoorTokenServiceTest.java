@@ -1,10 +1,10 @@
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorRole;
-import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.service.CasdoorRoleService;
-import org.casbin.casdoor.service.CasdoorUserService;
+import org.casbin.casdoor.entity.CasdoorPermission;
+import org.casbin.casdoor.entity.CasdoorToken;
+import org.casbin.casdoor.service.CasdoorPermissionService;
+import org.casbin.casdoor.service.CasdoorTokenService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,13 +18,9 @@ import java.util.Map;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CasdoorUserServiceTest {
-
+public class CasdoorTokenServiceTest {
     private CasdoorConfig casdoorConfig;
 
-    /**
-     * You should replace the initConfig() method's content with your own Casdoor instance.
-     */
     @Before
     public void init() {
         casdoorConfig = new CasdoorConfig();
@@ -64,67 +60,37 @@ public class CasdoorUserServiceTest {
                 "-----END CERTIFICATE-----");
     }
 
-    @Test
-    public void testGetUser() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        CasdoorUser casdoorUser = casdoorUserService.getUser("admin");
-        Assert.assertNotNull(casdoorUser);
-        casdoorUser = casdoorUserService.getUserByEmail("admin@example.com");
-        Assert.assertNotNull(casdoorUser);
-    }
+
 
     @Test
-    public void testGetUsers() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        CasdoorUser[] casdoorUsers = casdoorUserService.getUsers();
-        Assert.assertNotNull(casdoorUsers);
-        casdoorUsers = casdoorUserService.getSortedUsers("created_time", 5);
-        Assert.assertNotNull(casdoorUsers);
-        Assert.assertEquals(5, casdoorUsers.length);
-    }
+    public void testDeleteTokens() throws IOException {
+        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
+        CasdoorToken token = new CasdoorToken();
+        token.setAccessToken("string");
+        token.setApplication("string");
+        token.setCodeChallenge("string");
+        token.setCreatedTime("string");
+        token.setOrganization("string");
+        token.setRefreshToken("string");
+        token.setUser("string");
+        token.setScope("string");
+        token.setTokenType("string");
+        token.setExpiresIn(0);
+        token.setCodeIsUsed(true);
+        token.setExpiresIn(0);
 
-    @Test
-    public void testGetUserCount() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        int count = casdoorUserService.getUserCount("0");
-        Assert.assertTrue(count >= 0);
-    }
-
-    @Test
-    public void testModifyUser() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-
-        CasdoorUser user = new CasdoorUser();
-        user.setOwner("built-in");
-        user.setName("test-modify-user");
-        CasdoorResponse response = casdoorUserService.addUser(user);
-        Assert.assertEquals("ok", response.getStatus());
-        Assert.assertEquals("Affected", response.getData());
-
-        user.setDisplayName("test-display-name");
-        response = casdoorUserService.updateUser(user);
-        Assert.assertEquals("ok", response.getStatus());
-        Assert.assertEquals("Affected", response.getData());
-
-        response = casdoorUserService.deleteUser(user);
+        token.setName("test-delete-token");
+        token.setOwner("admin");
+        CasdoorResponse response = casdoorTokenService.deleteToken(token);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }
 
     @Test
-    public void testGetPaginationUsers() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
-        Map<String, String> queryMap = new HashMap<>();
-        Map<String, Object> result = casdoorUserService.getPaginationUsers(1, 10, queryMap);
-        assertNotNull(result);
-        assertTrue(result.containsKey("casdoorUsers"));
-        assertTrue(result.containsKey("data2"));
-
-        List<CasdoorRole> roles = (List<CasdoorRole>) result.get("casdoorUsers");
-        int data2 = (int) result.get("data2");
-
-        assertTrue(!roles.isEmpty());
-        assertTrue(data2 > 0);
+    public void testGetTokens() throws IOException {
+        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
+        CasdoorResponse tokens = casdoorTokenService.getTokens(1, 10);
+        assertNotNull(tokens);
     }
 
 }
