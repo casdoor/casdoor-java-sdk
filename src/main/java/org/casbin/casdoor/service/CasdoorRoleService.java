@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorRole;
+import org.casbin.casdoor.exception.CasdoorException;
 import org.casbin.casdoor.util.MapToUrlUtils;
 import org.casbin.casdoor.util.RoleOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
@@ -40,6 +41,9 @@ public class CasdoorRoleService {
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
         return objectMapper.readValue(response, CasdoorRole.class);
 
     }
@@ -49,9 +53,36 @@ public class CasdoorRoleService {
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
         CasdoorRole[] casdoorRole = objectMapper.readValue(response, CasdoorRole[].class);
         return casdoorRole;
 
+    }
+    public Map<String, Object> getPaginationRoles(int p, int pageSize, Map<String, String> queryMap) throws IOException {
+        queryMap.put("owner", casdoorConfig.getOrganizationName());
+        queryMap.put("clientId", casdoorConfig.getClientId());
+        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
+        queryMap.put("p", Integer.toString(p));
+        queryMap.put("pageSize", Integer.toString(pageSize));
+
+        String url = casdoorConfig.getEndpoint() + "/api/get-roles?" + MapToUrlUtils.mapToUrlParams(queryMap);
+        String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException("Failed to unmarshal JSON");
+        }
+        List<CasdoorRole> roles = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorRole>>() {});
+        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("casdoorRoles", roles);
+        resultMap.put("data2", data2);
+        return resultMap;
     }
     public CasdoorResponse updateRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
@@ -71,6 +102,9 @@ public class CasdoorRoleService {
     private CasdoorResponse modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
         String url = buildUrl(method, role);
         String response = HttpClient.postString(url, objectMapper.writeValueAsString(role));
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
         return objectMapper.readValue(response, CasdoorResponse.class);
     }
 
@@ -79,48 +113,6 @@ public class CasdoorRoleService {
                 casdoorConfig.getEndpoint(), method.getOperation(), role.getOwner(),
                 role.getName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
     }
-    public Map<String, Object> getPaginationRoles(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMapInit(p, pageSize, queryMap);
 
-        String url = buildRolesUrl(queryMap);
-        CasdoorResponse casdoorResponse = getCasdoorResponse(url);
-
-        List<CasdoorRole> Roles = getCasdoorRoles(casdoorResponse);
-        int data2 = getCasdoorData2(casdoorResponse);
-
-        return buildResultMap(Roles, data2);
-    }
-
-    private void queryMapInit(int p, int pageSize, Map<String, String> queryMap) {
-        String[] keys = {"owner", "clientId", "clientSecret", "p", "pageSize"};
-        String[] values = {casdoorConfig.getOrganizationName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret(), Integer.toString(p), Integer.toString(pageSize)};
-
-        for (int i = 0; i < keys.length; i++) {
-            queryMap.put(keys[i], values[i]);
-        }
-    }
-
-    private String buildRolesUrl(Map<String, String> queryMap) {
-        return casdoorConfig.getEndpoint() + "/api/get-roles?" + MapToUrlUtils.mapToUrlParams(queryMap);
-    }
-
-    private CasdoorResponse getCasdoorResponse(String url) throws IOException {
-        String response = HttpClient.syncGet(url);
-        return objectMapper.readValue(response, CasdoorResponse.class);
-    }
-    private List<CasdoorRole> getCasdoorRoles(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorRole>>() {});
-    }
-
-    private int getCasdoorData2(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
-    }
-
-    private Map<String, Object> buildResultMap(List<CasdoorRole> roles, int data2) {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorRoles", roles);
-        resultMap.put("data2", data2);
-        return resultMap;
-    }
 
 }

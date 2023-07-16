@@ -2,7 +2,9 @@ package org.casbin.casdoor;
 
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorPermission;
+import org.casbin.casdoor.entity.CasdoorToken;
 import org.casbin.casdoor.service.CasdoorPermissionService;
+import org.casbin.casdoor.service.CasdoorTokenService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,9 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class CasdoorPermissionServiceTest {
+public class CasdoorTokenServiceTest {
     private CasdoorConfig casdoorConfig;
 
     @Before
@@ -60,62 +63,34 @@ public class CasdoorPermissionServiceTest {
 
 
     @Test
-    public void testGetPermission() throws IOException {
-        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
-        CasdoorPermission permission = casdoorPermissionService.getPermission("permission-built-in");
-        assertNotNull(permission);
+    public void testDeleteTokens() throws IOException {
+        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
+        CasdoorToken token = new CasdoorToken();
+        token.setAccessToken("string");
+        token.setApplication("string");
+        token.setCodeChallenge("string");
+        token.setCreatedTime("string");
+        token.setOrganization("string");
+        token.setRefreshToken("string");
+        token.setUser("string");
+        token.setScope("string");
+        token.setTokenType("string");
+        token.setExpiresIn(0);
+        token.setCodeIsUsed(true);
+        token.setExpiresIn(0);
 
-    }
-
-    @Test
-    public void testGetPermissions() throws IOException {
-        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
-        CasdoorPermission[] permissions = casdoorPermissionService.getPermissions();
-        assertNotNull(permissions);
-
-    }
-
-    @Test
-    public void testModifyPermission() throws IOException {
-        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
-
-        CasdoorPermission permission = new CasdoorPermission();
-        permission.setOwner("built-in");
-        permission.setName("test-modify-permission");
-        CasdoorResponse response = casdoorPermissionService.addPermission(permission);
-        Assert.assertEquals("ok", response.getStatus());
-        Assert.assertEquals("Affected", response.getData());
-
-        permission.setDisplayName("test-display-name");
-        response = casdoorPermissionService.updatePermission(permission);
-        Assert.assertEquals("ok", response.getStatus());
-        Assert.assertEquals("Affected", response.getData());
-
-        response = casdoorPermissionService.deletePermission(permission);
+        token.setName("test-delete-token");
+        token.setOwner("admin");
+        CasdoorResponse response = casdoorTokenService.deleteToken(token);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }
 
     @Test
-    public void testGetPaginationPermissions() throws IOException {
-        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
-        Map<String, String> queryMap = new HashMap<>();
-        Map<String, Object> result = casdoorPermissionService.getPaginationPermissions(1, 10, queryMap);
-        assertNotNull(result);
-        assertTrue(result.containsKey("casdoorPermissions"));
-        assertTrue(result.containsKey("data2"));
-
-        List<CasdoorPermission> permissions = (List<CasdoorPermission>) result.get("casdoorPermissions");
-        int data2 = (int) result.get("data2");
-
-        assertTrue(!permissions.isEmpty());
-        assertTrue(data2 > 0);
-
+    public void testGetTokens() throws IOException {
+        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
+        CasdoorResponse tokens = casdoorTokenService.getTokens(1, 10);
+        assertNotNull(tokens);
     }
-    @Test
-    public void testGetPermissionsByRole() throws IOException {
-        CasdoorPermissionService casdoorPermissionService = new CasdoorPermissionService(this.casdoorConfig);
-        CasdoorResponse response = casdoorPermissionService.getPermissionsByRole("permission-built-in");
-        Assert.assertEquals("ok", response.getStatus());
-    }
+
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorPermission;
+import org.casbin.casdoor.exception.CasdoorException;
 import org.casbin.casdoor.util.MapToUrlUtils;
 import org.casbin.casdoor.util.PermissionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
@@ -43,6 +44,9 @@ public class CasdoorPermissionService {
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
         return objectMapper.readValue(response, CasdoorPermission.class);
 
     }
@@ -52,9 +56,55 @@ public class CasdoorPermissionService {
                 casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
                 casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         String response = HttpClient.syncGet(url);
-        CasdoorPermission[] permission = objectMapper.readValue(response, CasdoorPermission[].class);
-        return permission;
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+        return objectMapper.readValue(response, CasdoorPermission[].class);
 
+    }
+    public CasdoorResponse getPermissionsByRole(String name) throws IOException {
+        Map<String, String> queryMap = new HashMap<>();
+        String format = casdoorConfig.getOrganizationName() +"/" + name + "&";
+        queryMap.put("owner", casdoorConfig.getOrganizationName());
+        queryMap.put("clientId", casdoorConfig.getClientId());
+        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
+        String url = casdoorConfig.getEndpoint() + "/api/get-permissions-by-role?id="+ format + MapToUrlUtils.mapToUrlParams(queryMap);
+
+        String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException("Failed to unmarshal JSON");
+        }
+        return casdoorResponse;
+    }
+    public Map<String, Object> getPaginationPermissions(int p, int pageSize, Map<String, String> queryMap) throws IOException {
+        queryMap.put("owner", casdoorConfig.getOrganizationName());
+        queryMap.put("clientId", casdoorConfig.getClientId());
+        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
+        queryMap.put("p", Integer.toString(p));
+        queryMap.put("pageSize", Integer.toString(pageSize));
+
+        String url = casdoorConfig.getEndpoint() + "/api/get-permissions?" + MapToUrlUtils.mapToUrlParams(queryMap);
+        String response = HttpClient.syncGet(url);
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
+
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException("Failed to unmarshal JSON");
+        }
+        List<CasdoorPermission> permissions = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});;
+        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("casdoorPermissions", permissions);
+        resultMap.put("data2", data2);
+        return resultMap;
     }
 
 
@@ -81,6 +131,9 @@ public class CasdoorPermissionService {
     private CasdoorResponse modifyPermission(PermissionOperations method, CasdoorPermission permission) throws IOException {
         String url = buildUrl(method, permission);
         String response = HttpClient.postString(url, objectMapper.writeValueAsString(permission));
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
         return objectMapper.readValue(response, CasdoorResponse.class);
     }
 
@@ -90,48 +143,5 @@ public class CasdoorPermissionService {
                 permission.getName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
     }
 
-    public Map<String, Object> getPaginationPermissions(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMapInit(p, pageSize, queryMap);
-
-        String url = buildPermissionsUrl(queryMap);
-        CasdoorResponse casdoorResponse = getCasdoorResponse(url);
-
-        List<CasdoorPermission> permissions = getCasdoorPermissions(casdoorResponse);
-        int data2 = getCasdoorData2(casdoorResponse);
-
-        return buildResultMap(permissions, data2);
-    }
-
-    private void queryMapInit(int p, int pageSize, Map<String, String> queryMap) {
-        String[] keys = {"owner", "clientId", "clientSecret", "p", "pageSize"};
-        String[] values = {casdoorConfig.getOrganizationName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret(), Integer.toString(p), Integer.toString(pageSize)};
-
-        for (int i = 0; i < keys.length; i++) {
-            queryMap.put(keys[i], values[i]);
-        }
-    }
-
-    private String buildPermissionsUrl(Map<String, String> queryMap) {
-        return casdoorConfig.getEndpoint() + "/api/get-permissions?" + MapToUrlUtils.mapToUrlParams(queryMap);
-    }
-
-    private CasdoorResponse getCasdoorResponse(String url) throws IOException {
-        String response = HttpClient.syncGet(url);
-        return objectMapper.readValue(response, CasdoorResponse.class);
-    }
-    private List<CasdoorPermission> getCasdoorPermissions(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});
-    }
-
-    private int getCasdoorData2(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
-    }
-
-    private Map<String, Object> buildResultMap(List<CasdoorPermission> permissions, int data2) {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorPermissions", permissions);
-        resultMap.put("data2", data2);
-        return resultMap;
-    }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,43 +114,23 @@ public class CasdoorUserService {
     }
 
     public Map<String, Object> getPaginationUsers(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMapInit(p, pageSize, queryMap);
+        queryMap.put("owner", casdoorConfig.getOrganizationName());
+        queryMap.put("clientId", casdoorConfig.getClientId());
+        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
+        queryMap.put("p", Integer.toString(p));
+        queryMap.put("pageSize", Integer.toString(pageSize));
 
-        String url = buildUsersUrl(queryMap);
-        CasdoorResponse casdoorResponse = getCasdoorResponse(url);
-
-        List<CasdoorUser> users = getCasdoorUsers(casdoorResponse);
-        int data2 = getCasdoorData2(casdoorResponse);
-
-        return buildResultMap(users, data2);
-    }
-
-    private void queryMapInit(int p, int pageSize, Map<String, String> queryMap) {
-        String[] keys = {"owner", "clientId", "clientSecret", "p", "pageSize"};
-        String[] values = {casdoorConfig.getOrganizationName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret(), Integer.toString(p), Integer.toString(pageSize)};
-
-        for (int i = 0; i < keys.length; i++) {
-            queryMap.put(keys[i], values[i]);
-        }
-    }
-
-    private String buildUsersUrl(Map<String, String> queryMap) {
-        return casdoorConfig.getEndpoint() + "/api/get-users?" + MapToUrlUtils.mapToUrlParams(queryMap);
-    }
-
-    private CasdoorResponse getCasdoorResponse(String url) throws IOException {
+        String url = casdoorConfig.getEndpoint() + "/api/get-users?" + MapToUrlUtils.mapToUrlParams(queryMap);
         String response = HttpClient.syncGet(url);
-        return objectMapper.readValue(response, CasdoorResponse.class);
-    }
-    private List<CasdoorUser> getCasdoorUsers(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorUser>>() {});
-    }
-
-    private int getCasdoorData2(CasdoorResponse casdoorResponse) {
-        return objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
-    }
-
-    private Map<String, Object> buildResultMap(List<CasdoorUser> users, int data2) {
+        if (response == null) {
+            throw new CasdoorException("Failed to get bytes from URL");
+        }
+        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);;
+        if (!casdoorResponse.getStatus().equals("ok")) {
+            throw new CasdoorException("Failed to unmarshal JSON");
+        }
+        List<CasdoorUser> users = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorUser>>() {});;
+        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);;
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("casdoorUsers", users);
         resultMap.put("data2", data2);
