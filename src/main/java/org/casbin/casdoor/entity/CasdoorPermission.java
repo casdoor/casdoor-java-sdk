@@ -28,15 +28,25 @@ public class CasdoorPermission implements Serializable {
     private String name;
     private String createdTime;
     private String displayName;
+    private String description;
+
     private String[] users;
     private String[] roles;
+    private String[] domains;
+
     private String model;
+    private String adapter;
     private String resourceType;
     private String[] resources;
     private String[] actions;
     private String effect;
     @JsonProperty("isEnabled")
     private boolean isEnabled;
+
+    private String submitter;
+    private String approver;
+    private String approveTime;
+    private String state;
 
     public String getOwner() {
         return owner;
@@ -70,6 +80,14 @@ public class CasdoorPermission implements Serializable {
         this.displayName = displayName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String[] getUsers() {
         return users;
     }
@@ -86,12 +104,28 @@ public class CasdoorPermission implements Serializable {
         this.roles = roles;
     }
 
+    public String[] getDomains() {
+        return domains;
+    }
+
+    public void setDomains(String[] domains) {
+        this.domains = domains;
+    }
+
     public String getModel() {
         return model;
     }
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(String adapter) {
+        this.adapter = adapter;
     }
 
     public String getResourceType() {
@@ -134,6 +168,38 @@ public class CasdoorPermission implements Serializable {
         isEnabled = enabled;
     }
 
+    public String getSubmitter() {
+        return submitter;
+    }
+
+    public void setSubmitter(String submitter) {
+        this.submitter = submitter;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public void setApprover(String approver) {
+        this.approver = approver;
+    }
+
+    public String getApproveTime() {
+        return approveTime;
+    }
+
+    public void setApproveTime(String approveTime) {
+        this.approveTime = approveTime;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     @Override
     public String toString() {
         return "CasdoorPermission{" +
@@ -141,14 +207,20 @@ public class CasdoorPermission implements Serializable {
                 ", name='" + name + '\'' +
                 ", createdTime='" + createdTime + '\'' +
                 ", displayName='" + displayName + '\'' +
+                ", description='" + description + '\'' +
                 ", users=" + Arrays.toString(users) +
                 ", roles=" + Arrays.toString(roles) +
+                ", domains=" + Arrays.toString(domains) +
                 ", model='" + model + '\'' +
                 ", resourceType='" + resourceType + '\'' +
                 ", resources=" + Arrays.toString(resources) +
                 ", actions=" + Arrays.toString(actions) +
                 ", effect='" + effect + '\'' +
                 ", isEnabled=" + isEnabled +
+                ", submitter='" + submitter + '\'' +
+                ", approver='" + approver + '\'' +
+                ", approveTime='" + approveTime + '\'' +
+                ", state='" + state + '\'' +
                 '}';
     }
 }
