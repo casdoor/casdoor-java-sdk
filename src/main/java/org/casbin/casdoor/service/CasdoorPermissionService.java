@@ -16,111 +16,67 @@ package org.casbin.casdoor.service;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorPermission;
-import org.casbin.casdoor.exception.CasdoorException;
-import org.casbin.casdoor.util.MapToUrlUtils;
+import org.casbin.casdoor.util.MapUtils;
 import org.casbin.casdoor.util.PermissionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 
-public class CasdoorPermissionService {
-    private final CasdoorConfig casdoorConfig;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorPermissionService extends CasdoorService {
     public CasdoorPermissionService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
     public CasdoorPermission getPermission(String name) throws IOException {
-        String url = String.format("%s/api/get-permission?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        return objectMapper.readValue(response, CasdoorPermission.class);
-
+        CasdoorResponse<CasdoorPermission> response = doGet("get-permission",
+                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<>() {});
+        return response.getData();
     }
 
-    public CasdoorPermission[] getPermissions() throws IOException {
-        String url = String.format("%s/api/get-permissions?owner=%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        return objectMapper.readValue(response, CasdoorPermission[].class);
-
+    public List<CasdoorPermission> getPermissions() throws IOException {
+        CasdoorResponse<List<CasdoorPermission>> resp = doGet("get-permissions",
+                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<>() {});
+        return resp.getData();
     }
-    public CasdoorResponse getPermissionsByRole(String name) throws IOException {
-        Map<String, String> queryMap = new HashMap<>();
-        String format = casdoorConfig.getOrganizationName() +"/" + name + "&";
-        queryMap.put("owner", casdoorConfig.getOrganizationName());
-        queryMap.put("clientId", casdoorConfig.getClientId());
-        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
-        String url = casdoorConfig.getEndpoint() + "/api/get-permissions-by-role?id="+ format + MapToUrlUtils.mapToUrlParams(queryMap);
 
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
+    public List<CasdoorPermission> getPermissionsByRole(String name) throws IOException {
+        CasdoorResponse<List<CasdoorPermission>> resp = doGet("get-permissions-by-role",
+                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name,
+                        "owner", casdoorConfig.getOrganizationName()), new TypeReference<>() {});
 
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
-        if (!casdoorResponse.getStatus().equals("ok")) {
-            throw new CasdoorException("Failed to unmarshal JSON");
-        }
-        return casdoorResponse;
+        return resp.getData();
     }
-    public Map<String, Object> getPaginationPermissions(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMap.put("owner", casdoorConfig.getOrganizationName());
-        queryMap.put("clientId", casdoorConfig.getClientId());
-        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
-        queryMap.put("p", Integer.toString(p));
-        queryMap.put("pageSize", Integer.toString(pageSize));
+    public Map<String, Object> getPaginationPermissions(int p, int pageSize, @Nullable Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<CasdoorPermission[]> resp = doGet("get-permissions",
+                MapUtils.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<>() {});
 
-        String url = casdoorConfig.getEndpoint() + "/api/get-permissions?" + MapToUrlUtils.mapToUrlParams(queryMap);
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
-
-        if (!casdoorResponse.getStatus().equals("ok")) {
-            throw new CasdoorException("Failed to unmarshal JSON");
-        }
-        List<CasdoorPermission> permissions = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorPermission>>() {});;
-        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorPermissions", permissions);
-        resultMap.put("data2", data2);
-        return resultMap;
+        return Map.of("casdoorPermissions", resp.getData(), "data2", resp.getData2());
     }
 
 
-    public CasdoorResponse updatePermission(CasdoorPermission permission) throws IOException {
+    public CasdoorResponse<String> updatePermission(CasdoorPermission permission) throws IOException {
         return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission);
     }
 
-    public CasdoorResponse updatePermissionForColumns(CasdoorPermission permission, String... columns) throws IOException {
+    public CasdoorResponse<String> updatePermissionForColumns(CasdoorPermission permission, String... columns) throws IOException {
         return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission);
     }
 
-    public CasdoorResponse addPermission(CasdoorPermission permission) throws IOException {
+    public CasdoorResponse<String> addPermission(CasdoorPermission permission) throws IOException {
         return modifyPermission(PermissionOperations.ADD_PERMISSION, permission);
     }
 
-    public CasdoorResponse deletePermission(CasdoorPermission permission) throws IOException {
+    public CasdoorResponse<String> deletePermission(CasdoorPermission permission) throws IOException {
         return modifyPermission(PermissionOperations.DELETE_PERMISSION, permission);
     }
 
@@ -128,20 +84,9 @@ public class CasdoorPermissionService {
      * modifyPermission is an encapsulation of permission CUD(Create, Update, Delete) operations.
      * possible actions are `add-permission`, `update-permission`, `delete-permission`,
      */
-    private CasdoorResponse modifyPermission(PermissionOperations method, CasdoorPermission permission) throws IOException {
-        String url = buildUrl(method, permission);
-        String response = HttpClient.postString(url, objectMapper.writeValueAsString(permission));
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        return objectMapper.readValue(response, CasdoorResponse.class);
+    private <T> CasdoorResponse<T> modifyPermission(PermissionOperations method, CasdoorPermission permission) throws IOException {
+        return doPost(method.getOperation(),
+                Map.of("id", permission.getOwner() + "/" + permission.getName()),
+                objectMapper.writeValueAsString(permission), new TypeReference<>() {});
     }
-
-    private String buildUrl(PermissionOperations method, CasdoorPermission permission) {
-        return String.format("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), method.getOperation(), permission.getOwner(),
-                permission.getName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-    }
-
-
 }

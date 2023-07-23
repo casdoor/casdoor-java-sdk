@@ -14,6 +14,7 @@
 
 package org.casbin.casdoor.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
@@ -22,23 +23,17 @@ import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
+import java.util.Map;
 
-public class CasdoorSmsService {
-
-    private final CasdoorConfig casdoorConfig;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorSmsService extends CasdoorService {
     public CasdoorSmsService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
     public CasdoorResponse sendSms(String content, String... receivers) throws IOException {
-        String targetUrl = String.format("%s/api/send-sms?clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
         CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm("admin/" + casdoorConfig.getOrganizationName(), content, receivers);
         String smsFormStr = objectMapper.writeValueAsString(casdoorSmsForm);
-        String responseStr = HttpClient.postString(targetUrl, smsFormStr);
-        return objectMapper.readValue(responseStr, CasdoorResponse.class);
+
+        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<>() {});
     }
 }

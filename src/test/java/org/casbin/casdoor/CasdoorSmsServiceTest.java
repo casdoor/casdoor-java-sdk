@@ -10,25 +10,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Random;
 
-public class CasdoorSmsServiceTest {
-
-    private CasdoorConfig casdoorConfig;
-
-    /**
-     * You should replace the initConfig() method's content with your own Casdoor instance.
-     */
-    @Before
-    public void initConfig() {
-        this.casdoorConfig = new CasdoorConfig(
-                "http://localhost:8000",
-                "f485cd52dab369c8551a",
-                "1d7221b217ed3d12100da5e208aa93c8770e4a81",
-                "CasdoorSecret",
-                "built-in",
-                "app-built-in"
-        );
-    }
-
+public class CasdoorSmsServiceTest extends CasdoorServiceTest {
     @Test
     public void testSendSms() throws IOException {
         String receiver = "";

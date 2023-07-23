@@ -15,104 +15,60 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorRole;
-import org.casbin.casdoor.exception.CasdoorException;
-import org.casbin.casdoor.util.MapToUrlUtils;
+import org.casbin.casdoor.util.MapUtils;
 import org.casbin.casdoor.util.RoleOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-public class CasdoorRoleService {
-    private final CasdoorConfig casdoorConfig;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorRoleService extends CasdoorService {
     public CasdoorRoleService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
+
     public CasdoorRole getRole(String name) throws IOException {
-        String url = String.format("%s/api/get-role?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(), name,
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        return objectMapper.readValue(response, CasdoorRole.class);
-
+        CasdoorResponse<CasdoorRole> resp = doGet("get-role",
+                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<>() {});
+        return resp.getData();
     }
 
-    public CasdoorRole[] getRoles() throws IOException {
-        String url = String.format("%s/api/get-roles?owner=%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        CasdoorRole[] casdoorRole = objectMapper.readValue(response, CasdoorRole[].class);
-        return casdoorRole;
-
+    public List<CasdoorRole> getRoles() throws IOException {
+        CasdoorResponse<List<CasdoorRole>> resp = doGet("get-roles",
+                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<>() {});
+        return resp.getData();
     }
-    public Map<String, Object> getPaginationRoles(int p, int pageSize, Map<String, String> queryMap) throws IOException {
-        queryMap.put("owner", casdoorConfig.getOrganizationName());
-        queryMap.put("clientId", casdoorConfig.getClientId());
-        queryMap.put("clientSecret",casdoorConfig.getClientSecret());
-        queryMap.put("p", Integer.toString(p));
-        queryMap.put("pageSize", Integer.toString(pageSize));
 
-        String url = casdoorConfig.getEndpoint() + "/api/get-roles?" + MapToUrlUtils.mapToUrlParams(queryMap);
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
-        if (!casdoorResponse.getStatus().equals("ok")) {
-            throw new CasdoorException("Failed to unmarshal JSON");
-        }
-        List<CasdoorRole> roles = objectMapper.convertValue(casdoorResponse.getData(), new TypeReference<List<CasdoorRole>>() {});
-        int data2 = objectMapper.convertValue(casdoorResponse.getData2(), Integer.class);
+    public Map<String, Object> getPaginationRoles(int p, int pageSize, @Nullable Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<CasdoorRole[]> casdoorResponse = doGet("get-roles",
+                MapUtils.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<>() {});
 
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("casdoorRoles", roles);
-        resultMap.put("data2", data2);
-        return resultMap;
+        return Map.of("casdoorRoles", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
-    public CasdoorResponse updateRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String> updateRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
 
-    public CasdoorResponse updateRoleForColumns(CasdoorRole role, String... columns) throws IOException {
+    public CasdoorResponse<String> updateRoleForColumns(CasdoorRole role, String... columns) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
 
-    public CasdoorResponse addRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String> addRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.ADD_ROLE, role);
     }
 
-    public CasdoorResponse deleteRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String> deleteRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.DELETE_ROLE, role);
     }
-    private CasdoorResponse modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
-        String url = buildUrl(method, role);
-        String response = HttpClient.postString(url, objectMapper.writeValueAsString(role));
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        return objectMapper.readValue(response, CasdoorResponse.class);
+    private <T> CasdoorResponse<T> modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
+       return doPost(method.getOperation(),
+                Map.of("id", role.getOwner() + "/" + role.getName()),
+                objectMapper.writeValueAsString(role), new TypeReference<>() {});
     }
-
-    private String buildUrl(RoleOperations method, CasdoorRole role) {
-        return String.format("%s/api/%s?id=%s/%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), method.getOperation(), role.getOwner(),
-                role.getName(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-    }
-
-
 }

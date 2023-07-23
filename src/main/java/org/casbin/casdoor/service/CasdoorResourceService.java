@@ -14,41 +14,34 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorResource;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
-public class CasdoorResourceService {
-
-    private final CasdoorConfig casdoorConfig;
-    final private ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorResourceService extends CasdoorService {
     public CasdoorResourceService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
-    public CasdoorResponse uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
-        String targetUrl = String.format("%s/api/upload-resource?owner=%s&user=%s&application=%s&tag=%s&parent=%s&fullFilePath=%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
-                user, casdoorConfig.getApplicationName(), tag, parent, fullFilePath,
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String responseStr = HttpClient.postFile(targetUrl, file);
-        return objectMapper.readValue(responseStr, CasdoorResponse.class);
+    public CasdoorResponse<String> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
+        return doPost("upload-resource",
+                Map.of("owner", casdoorConfig.getOrganizationName(),
+                        "user", user,
+                        "application", casdoorConfig.getApplicationName(),
+                        "tag", tag,
+                        "parent", parent,
+                        "fullFilePath", fullFilePath),
+                file, new TypeReference<>() {});
     }
 
-    public CasdoorResponse deleteResource(String name) throws IOException {
-        String targetUrl = String.format("%s/api/delete-resource?clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
+    public CasdoorResponse<String> deleteResource(String name) throws IOException {
         CasdoorResource casdoorResource = new CasdoorResource(casdoorConfig.getOrganizationName(), name);
         String userStr = objectMapper.writeValueAsString(casdoorResource);
-        String responseStr = HttpClient.postString(targetUrl, userStr);
-        return objectMapper.readValue(responseStr, CasdoorResponse.class);
+        return doPost("delete-resource", null, userStr, new TypeReference<>() {});
     }
 }

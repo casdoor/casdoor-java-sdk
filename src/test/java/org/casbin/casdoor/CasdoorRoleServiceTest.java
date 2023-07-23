@@ -1,10 +1,8 @@
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorRole;
 import org.casbin.casdoor.service.CasdoorRoleService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,22 +12,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class CasdoorRoleServiceTest {
-    private CasdoorConfig casdoorConfig;
-
-    @Before
-    public void init() {
-        casdoorConfig = new CasdoorConfig();
-        casdoorConfig.setEndpoint("http://localhost:8000");
-        casdoorConfig.setClientId("bfe69a0520b1e476e704");
-        casdoorConfig.setClientSecret("fdb3cf0a9ccfbaacabc67fec91d15aba62f28432");
-        casdoorConfig.setOrganizationName("built-in");
-        casdoorConfig.setApplicationName("app-built-in");
-        casdoorConfig.setCertificate("-----BEGIN CERTIFICATE-----\n" +
-                "MIIE+TCCAuGgAwIBAgIDAeJAMA0GCSqGSIb3DQEBCwUAMDYxHTAbBgNVBAoTFENh\n" +
-                "-----END CERTIFICATE-----");
-    }
-
+public class CasdoorRoleServiceTest extends CasdoorServiceTest {
     @Test
     public void testGetRole() throws IOException {
         CasdoorRoleService casdoorRoleService = new CasdoorRoleService(this.casdoorConfig);
@@ -40,7 +23,7 @@ public class CasdoorRoleServiceTest {
     @Test
     public void testGetRoles() throws IOException {
         CasdoorRoleService casdoorRoleService = new CasdoorRoleService(this.casdoorConfig);
-        CasdoorRole[] roles = casdoorRoleService.getRoles();
+        List<CasdoorRole> roles = casdoorRoleService.getRoles();
         assertNotNull(roles);
     }
 
@@ -51,7 +34,7 @@ public class CasdoorRoleServiceTest {
         CasdoorRole role = new CasdoorRole();
         role.setOwner("built-in");
         role.setName("test-modify-role");
-        CasdoorResponse response = casdoorRoleService.addRole(role);
+        CasdoorResponse<String> response = casdoorRoleService.addRole(role);
         assertEquals("ok", response.getStatus());
         assertEquals("Affected", response.getData());
 

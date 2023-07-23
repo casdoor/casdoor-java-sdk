@@ -15,8 +15,6 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
@@ -47,13 +45,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
 
-public class CasdoorAuthService {
-    private final CasdoorConfig casdoorConfig;
-    final private ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorAuthService extends CasdoorService {
     public CasdoorAuthService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
     public String getOAuthToken(String code, String state) {
