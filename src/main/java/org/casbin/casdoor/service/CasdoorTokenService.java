@@ -34,17 +34,17 @@ public class CasdoorTokenService extends CasdoorService {
      * @return the list of tokens
      * @throws IOException if fails.
      */
-    public CasdoorResponse<List<CasdoorToken>> getTokens(int p, int pageSize) throws IOException {
+    public CasdoorResponse<List<CasdoorToken>, Object> getTokens(int p, int pageSize) throws IOException {
         return doGet("get-tokens", p > -1 ? Map.of(
                 "owner", casdoorConfig.getOrganizationName(),
                 "p", Integer.toString(p),
                 "pageSize", Integer.toString(pageSize)
         ) : Map.of(
                 "owner", casdoorConfig.getOrganizationName()
-        ), new TypeReference<CasdoorResponse<List<CasdoorToken>>>() {});
+        ), new TypeReference<CasdoorResponse<List<CasdoorToken>, Object>>() {});
     }
 
-    public CasdoorResponse<Boolean> deleteToken(CasdoorToken casdoorToken) throws IOException {
-        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<CasdoorResponse<Boolean>>() {});
+    public CasdoorResponse<Boolean, Object> deleteToken(CasdoorToken casdoorToken) throws IOException {
+        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<CasdoorResponse<Boolean, Object>>() {});
     }
 }

@@ -34,7 +34,7 @@ public class CasdoorRoleServiceTest extends CasdoorServiceTest {
         CasdoorRole role = new CasdoorRole();
         role.setOwner("built-in");
         role.setName("test-modify-role");
-        CasdoorResponse<String> response = casdoorRoleService.addRole(role);
+        CasdoorResponse<String, Object> response = casdoorRoleService.addRole(role);
         assertEquals("ok", response.getStatus());
         assertEquals("Affected", response.getData());
 

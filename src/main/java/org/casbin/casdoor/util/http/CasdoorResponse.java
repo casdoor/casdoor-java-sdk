@@ -16,11 +16,11 @@ package org.casbin.casdoor.util.http;
 
 
 
-public class CasdoorResponse <T>{
+public class CasdoorResponse <T1, T2> {
     private String status;
     private String msg;
-    private T data;
-    private String data2;
+    private T1 data;
+    private T2 data2;
 
     public String getStatus() {
         return status;
@@ -38,19 +38,19 @@ public class CasdoorResponse <T>{
         this.msg = msg;
     }
 
-    public T getData() {
+    public T1 getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(T1 data) {
         this.data = data;
     }
 
-    public String getData2() {
+    public T2 getData2() {
         return data2;
     }
 
-    public void setData2(String data2) {
+    public void setData2(T2 data2) {
         this.data2 = data2;
     }
 

@@ -30,6 +30,6 @@ public class CasdoorEmailService extends CasdoorService {
         CasdoorEmailForm casdoorEmailForm = new CasdoorEmailForm(title, content, sender, receivers);
         String emailFormStr = objectMapper.writeValueAsString(casdoorEmailForm);
 
-        return doPost("send-email", null, emailFormStr, new TypeReference<CasdoorResponse<Object>>() {});
+        return doPost("send-email", null, emailFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
     }
 }
