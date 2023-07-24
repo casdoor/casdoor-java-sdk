@@ -31,43 +31,43 @@ public class CasdoorRoleService extends CasdoorService {
     }
 
     public CasdoorRole getRole(String name) throws IOException {
-        CasdoorResponse<CasdoorRole> resp = doGet("get-role",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorRole>>() {});
+        CasdoorResponse<CasdoorRole, Object> resp = doGet("get-role",
+                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorRole, Object>>() {});
         return resp.getData();
     }
 
     public List<CasdoorRole> getRoles() throws IOException {
-        CasdoorResponse<List<CasdoorRole>> resp = doGet("get-roles",
-                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorRole>>>() {});
+        CasdoorResponse<List<CasdoorRole>, Object> resp = doGet("get-roles",
+                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorRole>, Object>>() {});
         return resp.getData();
     }
 
     public java.util.Map<String, Object> getPaginationRoles(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<CasdoorRole[]> casdoorResponse = doGet("get-roles",
+        CasdoorResponse<CasdoorRole[], Object> casdoorResponse = doGet("get-roles",
                 Map.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
                         "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<CasdoorRole[]>>() {});
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<CasdoorRole[], Object>>() {});
 
         return Map.of("casdoorRoles", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
-    public CasdoorResponse<String> updateRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String, Object> updateRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
 
-    public CasdoorResponse<String> updateRoleForColumns(CasdoorRole role, String... columns) throws IOException {
+    public CasdoorResponse<String, Object> updateRoleForColumns(CasdoorRole role, String... columns) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
 
-    public CasdoorResponse<String> addRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String, Object> addRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.ADD_ROLE, role);
     }
 
-    public CasdoorResponse<String> deleteRole(CasdoorRole role) throws IOException {
+    public CasdoorResponse<String, Object> deleteRole(CasdoorRole role) throws IOException {
         return modifyRole(RoleOperations.DELETE_ROLE, role);
     }
-    private <T> CasdoorResponse<T> modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
+    private <T1, T2> CasdoorResponse<T1, T2> modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
        return doPost(method.getOperation(),
                 Map.of("id", role.getOwner() + "/" + role.getName()),
-                objectMapper.writeValueAsString(role), new TypeReference<CasdoorResponse<T>>() {});
+                objectMapper.writeValueAsString(role), new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 }

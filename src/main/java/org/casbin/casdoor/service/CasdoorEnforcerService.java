@@ -34,14 +34,14 @@ public class CasdoorEnforcerService extends CasdoorService {
         if (postBytes == null) {
             throw new CasdoorException("Failed to get bytes from URL");
         }
-        CasdoorResponse<Boolean[]> response = doPost("enforce",
+        CasdoorResponse<Boolean[], Object> response = doPost("enforce",
                 Map.of(
                         "permissionId", casdoorConfig.getOrganizationName() + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
                 new String(postBytes, StandardCharsets.UTF_8),
-                new TypeReference<CasdoorResponse<Boolean[]>>() {}
+                new TypeReference<CasdoorResponse<Boolean[], Object>>() {}
         );
 
         // All true
@@ -52,14 +52,14 @@ public class CasdoorEnforcerService extends CasdoorService {
         if (postBytes == null) {
             throw new CasdoorException("Failed to get bytes from URL");
         }
-        CasdoorResponse<Boolean[][]> response = doPost("batch-enforce",
+        CasdoorResponse<Boolean[][], Object> response = doPost("batch-enforce",
                 Map.of(
                         "permissionId", casdoorConfig.getOrganizationName() + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
                 new String(postBytes, StandardCharsets.UTF_8),
-                new TypeReference<CasdoorResponse<Boolean[][]>>() {}
+                new TypeReference<CasdoorResponse<Boolean[][], Object>>() {}
         );
 
         return response.getData();

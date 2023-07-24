@@ -28,10 +28,10 @@ public abstract class CasdoorService {
         this.credential = Credentials.basic(casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
     }
 
-    protected <T> CasdoorResponse<T> doGet(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, TypeReference<CasdoorResponse<T>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doGet(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", casdoorConfig.getEndpoint(), action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.syncGet(url, credential);
-        CasdoorResponse<T> resp = objectMapper.readValue(response, typeReference);
+        CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
         if (!Objects.equals(resp.getStatus(), "ok")) {
             throw new CasdoorException(String.format("Failed fetching %s : %s", url, resp.getMsg()));
         }
@@ -39,10 +39,10 @@ public abstract class CasdoorService {
         return resp;
     }
 
-    protected <T> CasdoorResponse<T> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, java.util.Map<String, String> postForm, TypeReference<CasdoorResponse<T>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, java.util.Map<String, String> postForm, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", casdoorConfig.getEndpoint(), action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.postForm(url, postForm, credential);
-        CasdoorResponse<T> resp = objectMapper.readValue(response, typeReference);
+        CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
         if (!Objects.equals(resp.getStatus(), "ok")) {
             throw new CasdoorException(String.format("Failed fetching %s : %s", url, resp.getMsg()));
         }
@@ -50,10 +50,10 @@ public abstract class CasdoorService {
         return resp;
     }
 
-    protected <T> CasdoorResponse<T> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, String postString, TypeReference<CasdoorResponse<T>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, String postString, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", casdoorConfig.getEndpoint(), action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.postString(url, postString, credential);
-        CasdoorResponse<T> resp = objectMapper.readValue(response, typeReference);
+        CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
         if (!Objects.equals(resp.getStatus(), "ok")) {
             throw new CasdoorException(String.format("Failed fetching %s : %s", url, resp.getMsg()));
         }
@@ -61,10 +61,10 @@ public abstract class CasdoorService {
         return resp;
     }
 
-    protected <T> CasdoorResponse<T> doPost(String action, @Nullable java.util.Map<String, String> queryParams, File postFile, TypeReference<CasdoorResponse<T>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doPost(String action, @Nullable java.util.Map<String, String> queryParams, File postFile, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", casdoorConfig.getEndpoint(), action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.postFile(url, postFile, credential);
-        CasdoorResponse<T> resp = objectMapper.readValue(response, typeReference);
+        CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
         if (!Objects.equals(resp.getStatus(), "ok")) {
             throw new CasdoorException(String.format("Failed fetching %s : %s", url, resp.getMsg()));
         }

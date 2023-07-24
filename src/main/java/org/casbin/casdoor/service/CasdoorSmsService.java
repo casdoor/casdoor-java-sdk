@@ -31,6 +31,6 @@ public class CasdoorSmsService extends CasdoorService {
         CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm("admin/" + casdoorConfig.getOrganizationName(), content, receivers);
         String smsFormStr = objectMapper.writeValueAsString(casdoorSmsForm);
 
-        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object>>() {});
+        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
     }
 }

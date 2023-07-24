@@ -28,7 +28,7 @@ public class CasdoorResourceService extends CasdoorService {
         super(casdoorConfig);
     }
 
-    public CasdoorResponse<String> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
+    public CasdoorResponse<String, Object> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
         return doPost("upload-resource",
                 Map.of("owner", casdoorConfig.getOrganizationName(),
                         "user", user,
@@ -36,12 +36,12 @@ public class CasdoorResourceService extends CasdoorService {
                         "tag", tag,
                         "parent", parent,
                         "fullFilePath", fullFilePath),
-                file, new TypeReference<CasdoorResponse<String>>() {});
+                file, new TypeReference<CasdoorResponse<String, Object>>() {});
     }
 
-    public CasdoorResponse<String> deleteResource(String name) throws IOException {
+    public CasdoorResponse<String, Object> deleteResource(String name) throws IOException {
         CasdoorResource casdoorResource = new CasdoorResource(casdoorConfig.getOrganizationName(), name);
         String userStr = objectMapper.writeValueAsString(casdoorResource);
-        return doPost("delete-resource", null, userStr, new TypeReference<CasdoorResponse<String>>() {});
+        return doPost("delete-resource", null, userStr, new TypeReference<CasdoorResponse<String, Object>>() {});
     }
 }

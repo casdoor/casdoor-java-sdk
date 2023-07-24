@@ -18,7 +18,7 @@ public class CasdoorResourceServiceTest extends CasdoorServiceTest {
         String fullFilePath = String.format("%s/%s/%s", tag, casdoorConfig.getOrganizationName(), file.getName());
         CasdoorResourceService casdoorResourceService = new CasdoorResourceService(casdoorConfig);
 
-        CasdoorResponse<String> response = casdoorResourceService.uploadResource(user, tag, parent, fullFilePath, file);
+        CasdoorResponse<String, Object> response = casdoorResourceService.uploadResource(user, tag, parent, fullFilePath, file);
         Assert.assertEquals("ok", response.getStatus());
 
         //response = casdoorResourceService.deleteResource(file.getName());
