@@ -14,8 +14,6 @@
 
 package org.casbin.casdoor.service;
 
-import java.io.IOException;
-
 import org.casbin.casdoor.annotation.RequireOwnerInQuery;
 import org.casbin.casdoor.entity.CasdoorOrganization;
 import org.casbin.casdoor.entity.CasdoorUser;
@@ -38,8 +36,7 @@ public interface CasdoorAccountService {
      * @param userName    username
      * @param oldPassword old password
      * @param newPassword new password
-     * @return CasdoorResponse
-     * @throws IOException when JSON unmarshalling fails or HTTP requests fails
+     * @return CasdoorActionResponse
      */
     @FormUrlEncoded
     @RequireOwnerInQuery
@@ -51,9 +48,8 @@ public interface CasdoorAccountService {
     /**
      * Get current user
      *
-     * @param accessToken access token of current user
+     * @param token access token of current user
      * @return user and organization info of current user
-     * @throws IOException when JSON unmarshalling fails or HTTP requests fails
      */
     @GET("get-account")
     Call<CasdoorResponse<CasdoorUser, CasdoorOrganization>> getAccount(@Query("access_token") String token);
