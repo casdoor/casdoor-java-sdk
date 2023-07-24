@@ -14,23 +14,14 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorSmsForm;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
+import org.casbin.casdoor.command.SendSmsCommand;
+import org.casbin.casdoor.response.CasdoorActionResponse;
 
-import java.io.IOException;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
-public class CasdoorSmsService extends CasdoorService {
-    public CasdoorSmsService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
-
-    public CasdoorResponse sendSms(String content, String... receivers) throws IOException {
-        CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm("admin/" + casdoorConfig.getOrganizationName(), content, receivers);
-        String smsFormStr = objectMapper.writeValueAsString(casdoorSmsForm);
-
-        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
-    }
+public interface CasdoorSmsService {
+    @POST("send-sms")
+    Call<CasdoorActionResponse> sendSms(@Body SendSmsCommand command);
 }

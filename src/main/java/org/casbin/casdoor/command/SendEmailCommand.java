@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor.entity;
+package org.casbin.casdoor.command;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 
-public class CasdoorEmailForm implements Serializable {
+public class SendEmailCommand implements Serializable {
     private String title;
     private String content;
     private String sender;
     private String[] receivers;
 
-    public CasdoorEmailForm() {
+    public SendEmailCommand() {
     }
 
-    public CasdoorEmailForm(String title, String content, String sender, String[] receivers) {
+    public SendEmailCommand(String title, String content, String sender, String... receivers) {
         this.title = title;
         this.content = content;
         this.sender = sender;
@@ -68,7 +68,7 @@ public class CasdoorEmailForm implements Serializable {
 
     @Override
     public String toString() {
-        return "CasdoorEmailForm{" +
+        return "SendEmailCommand{" +
                 "title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", sender='" + sender + '\'' +

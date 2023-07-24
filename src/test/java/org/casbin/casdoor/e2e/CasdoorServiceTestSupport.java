@@ -1,8 +1,8 @@
-package org.casbin.casdoor;
+package org.casbin.casdoor.e2e;
 
 import org.casbin.casdoor.config.CasdoorConfig;
 
-public abstract class CasdoorServiceTest {
+public abstract class CasdoorServiceTestSupport {
     protected CasdoorConfig casdoorConfig = new CasdoorConfig(
             "http://localhost:8000",
             "108a9909661cc7631d01",

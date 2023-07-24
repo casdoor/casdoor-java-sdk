@@ -1,5 +1,8 @@
-package org.casbin.casdoor;
+package org.casbin.casdoor.e2e;
 
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -9,10 +12,7 @@ import org.casbin.casdoor.service.CasdoorAuthService;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-
-public class CasdoorAuthServiceTest extends CasdoorServiceTest {
+public class CasdoorAuthServiceTest extends CasdoorServiceTestSupport {
     @Test
     public void testAuthService() throws OAuthProblemException, OAuthSystemException, CasdoorException, InvocationTargetException, IllegalAccessException {
         String code = "71b645e73381caeb2c66";

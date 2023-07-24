@@ -14,34 +14,25 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
 import org.casbin.casdoor.entity.CasdoorResource;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
+import org.casbin.casdoor.response.CasdoorActionResponse;
 
-import java.io.File;
-import java.io.IOException;
+import okhttp3.MultipartBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Query;
 
-public class CasdoorResourceService extends CasdoorService {
-    public CasdoorResourceService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+public interface CasdoorResourceService {
 
-    public CasdoorResponse<String, Object> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
-        return doPost("upload-resource",
-                Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "user", user,
-                        "application", casdoorConfig.getApplicationName(),
-                        "tag", tag,
-                        "parent", parent,
-                        "fullFilePath", fullFilePath),
-                file, new TypeReference<CasdoorResponse<String, Object>>() {});
-    }
+    @POST
+    @RequireOwnerInQuery
+    Call<CasdoorActionResponse> uploadResource(@Query("user") String user,
+            @Query("application") String applicationName, @Query("tag") String tag, @Query("parent") String parent,
+            @Query("fullFilePath") String fullFilePath, @Part MultipartBody.Part file);
 
-    public CasdoorResponse<String, Object> deleteResource(String name) throws IOException {
-        CasdoorResource casdoorResource = new CasdoorResource(casdoorConfig.getOrganizationName(), name);
-        String userStr = objectMapper.writeValueAsString(casdoorResource);
-        return doPost("delete-resource", null, userStr, new TypeReference<CasdoorResponse<String, Object>>() {});
-    }
+    @POST("delete-resource")
+    Call<CasdoorActionResponse> deleteResource(@Body CasdoorResource resource);
 }

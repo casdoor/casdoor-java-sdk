@@ -14,76 +14,48 @@
 
 package org.casbin.casdoor.service;
 
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorPermission;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.PermissionOperations;
-import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import org.casbin.casdoor.annotation.CasdoorId;
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
+import org.casbin.casdoor.entity.CasdoorPermission;
+import org.casbin.casdoor.response.CasdoorActionResponse;
+import org.casbin.casdoor.response.CasdoorResponse;
 
-public class CasdoorPermissionService extends CasdoorService {
-    public CasdoorPermissionService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Tag;
 
-    public CasdoorPermission getPermission(String name) throws IOException {
-        CasdoorResponse<CasdoorPermission, Object> response = doGet("get-permission",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorPermission, Object>>() {});
-        return response.getData();
-    }
+public interface CasdoorPermissionService {
 
-    public List<CasdoorPermission> getPermissions() throws IOException {
-        CasdoorResponse<List<CasdoorPermission>, Object> resp = doGet("get-permissions",
-                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorPermission>, Object>>() {});
-        return resp.getData();
-    }
+        @GET("get-permission")
+        Call<CasdoorResponse<CasdoorPermission, Object>> getPermission(@CasdoorId @Tag String name);
 
-    public List<CasdoorPermission> getPermissionsByRole(String name) throws IOException {
-        CasdoorResponse<List<CasdoorPermission>, Object> resp = doGet("get-permissions-by-role",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name,
-                        "owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorPermission>, Object>>() {});
+        @GET("get-permissions")
+        @RequireOwnerInQuery
+        Call<CasdoorResponse<List<CasdoorPermission>, Object>> getPermissions();
 
-        return resp.getData();
-    }
-    public java.util.Map<String, Object> getPaginationPermissions(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<CasdoorPermission[], Object> resp = doGet("get-permissions",
-                Map.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<CasdoorPermission[], Object>>() {});
+        @GET("get-permissions-by-role")
+        Call<CasdoorResponse<List<CasdoorPermission>, Integer>> getPermissionsByRole(@CasdoorId @Tag String name,
+                        @Query("owner") String owner);
 
-        return Map.of("casdoorPermissions", resp.getData(), "data2", resp.getData2());
-    }
+        @GET("get-permissions")
+        @RequireOwnerInQuery
+        Call<CasdoorResponse<List<CasdoorPermission>, Integer>> getPaginationPermissions(
+                        @Query("p") int p, @Query("pageSize") int pageSize, @QueryMap Map<String, String> query);
 
+        @POST("add-permission")
+        Call<CasdoorActionResponse> addPermission(@Body CasdoorPermission permission);
 
-    public CasdoorResponse<String, Object> updatePermission(CasdoorPermission permission) throws IOException {
-        return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission);
-    }
+        @POST("update-permission")
+        Call<CasdoorActionResponse> updatePermission(@CasdoorId @Tag String name, @Body CasdoorPermission permission);
 
-    public CasdoorResponse<String, Object> updatePermissionForColumns(CasdoorPermission permission, String... columns) throws IOException {
-        return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission);
-    }
+        @POST("delete-permission")
+        Call<CasdoorActionResponse> deletePermission(@Body CasdoorPermission permission);
 
-    public CasdoorResponse<String, Object> addPermission(CasdoorPermission permission) throws IOException {
-        return modifyPermission(PermissionOperations.ADD_PERMISSION, permission);
-    }
-
-    public CasdoorResponse<String, Object> deletePermission(CasdoorPermission permission) throws IOException {
-        return modifyPermission(PermissionOperations.DELETE_PERMISSION, permission);
-    }
-
-    /**
-     * modifyPermission is an encapsulation of permission CUD(Create, Update, Delete) operations.
-     * possible actions are `add-permission`, `update-permission`, `delete-permission`,
-     */
-    private <T1, T2> CasdoorResponse<T1, T2> modifyPermission(PermissionOperations method, CasdoorPermission permission) throws IOException {
-        return doPost(method.getOperation(),
-                Map.of("id", permission.getOwner() + "/" + permission.getName()),
-                objectMapper.writeValueAsString(permission), new TypeReference<CasdoorResponse<T1, T2>>() {});
-    }
 }

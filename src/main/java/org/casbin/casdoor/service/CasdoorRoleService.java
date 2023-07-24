@@ -14,60 +14,44 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorRole;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.RoleOperations;
-import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-public class CasdoorRoleService extends CasdoorService {
-    public CasdoorRoleService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+import org.casbin.casdoor.annotation.CasdoorId;
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
+import org.casbin.casdoor.entity.CasdoorRole;
+import org.casbin.casdoor.response.CasdoorActionResponse;
+import org.casbin.casdoor.response.CasdoorResponse;
 
-    public CasdoorRole getRole(String name) throws IOException {
-        CasdoorResponse<CasdoorRole, Object> resp = doGet("get-role",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorRole, Object>>() {});
-        return resp.getData();
-    }
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Tag;
 
-    public List<CasdoorRole> getRoles() throws IOException {
-        CasdoorResponse<List<CasdoorRole>, Object> resp = doGet("get-roles",
-                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorRole>, Object>>() {});
-        return resp.getData();
-    }
+public interface CasdoorRoleService {
 
-    public java.util.Map<String, Object> getPaginationRoles(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<CasdoorRole[], Object> casdoorResponse = doGet("get-roles",
-                Map.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<CasdoorRole[], Object>>() {});
+    @GET("get-role")
+    Call<CasdoorResponse<CasdoorRole, Object>> getRole(@CasdoorId @Tag String name);
 
-        return Map.of("casdoorRoles", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
-    }
-    public CasdoorResponse<String, Object> updateRole(CasdoorRole role) throws IOException {
-        return modifyRole(RoleOperations.UPDATE_ROLE, role);
-    }
+    @GET("get-roles")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorRole>, Object>> getRoles();
 
-    public CasdoorResponse<String, Object> updateRoleForColumns(CasdoorRole role, String... columns) throws IOException {
-        return modifyRole(RoleOperations.UPDATE_ROLE, role);
-    }
+    @GET("get-roles")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorRole>, Integer>> getPaginationRoles(
+            @Query("p") int p, @Query("pageSize") int pageSize, @QueryMap Map<String, String> query);
 
-    public CasdoorResponse<String, Object> addRole(CasdoorRole role) throws IOException {
-        return modifyRole(RoleOperations.ADD_ROLE, role);
-    }
+    @POST("add-role")
+    Call<CasdoorActionResponse> addRole(@Body CasdoorRole role);
 
-    public CasdoorResponse<String, Object> deleteRole(CasdoorRole role) throws IOException {
-        return modifyRole(RoleOperations.DELETE_ROLE, role);
-    }
-    private <T1, T2> CasdoorResponse<T1, T2> modifyRole(RoleOperations method, CasdoorRole role) throws IOException {
-       return doPost(method.getOperation(),
-                Map.of("id", role.getOwner() + "/" + role.getName()),
-                objectMapper.writeValueAsString(role), new TypeReference<CasdoorResponse<T1, T2>>() {});
-    }
+    @POST("update-role")
+    Call<CasdoorActionResponse> updateRole(@CasdoorId @Tag String name, @Body CasdoorRole role);
+
+    @POST("delete-role")
+    Call<CasdoorActionResponse> deleteRole(@Body CasdoorRole role);
+
 }

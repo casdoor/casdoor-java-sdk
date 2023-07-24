@@ -14,92 +14,56 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.UserOperations;
-import org.casbin.casdoor.util.http.CasdoorResponse;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-public class CasdoorUserService extends CasdoorService {
-    public CasdoorUserService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+import org.casbin.casdoor.annotation.CasdoorId;
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
+import org.casbin.casdoor.entity.CasdoorUser;
+import org.casbin.casdoor.response.CasdoorActionResponse;
+import org.casbin.casdoor.response.CasdoorResponse;
 
-    public List<CasdoorUser> getUsers() throws IOException {
-        CasdoorResponse<List<CasdoorUser>, Object> resp = doGet("get-users",
-                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorUser>, Object>>() {});
-        return resp.getData();
-    }
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Tag;
 
-    /**
-     * Get users with pagination.
-     * @param sorter sorter of users
-     * @param limit limit of users to return. If limit is 0, then return all users.
-     * @return list of users
-     * @throws IOException if failed to get users
-     */
-    public List<CasdoorUser> getSortedUsers(String sorter, int limit) throws IOException {
-        CasdoorResponse<List<CasdoorUser>, Object> resp = doGet("get-users",
-                Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "sorter", sorter,
-                        "limit", limit > 0 ? Integer.toString(limit) : ""), new TypeReference<CasdoorResponse<List<CasdoorUser>, Object>>() {});
-        return resp.getData();
-    }
+public interface CasdoorUserService {
+    @GET("get-users")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorUser>, Object>> getUsers();
 
-    public int getUserCount(String isOnline) throws IOException {
-        CasdoorResponse<Integer, Object> resp = doGet("get-user-count",
-                Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "isOnline", isOnline), new TypeReference<CasdoorResponse<Integer, Object>>() {});
-        return resp.getData();
-    }
+    @GET("get-sorted-users")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorUser>, Object>> getSortedUsers(@Query("sorter") String sorter,
+            @Query("limit") int limit);
 
-    public CasdoorUser getUser(String name) throws IOException {
-        CasdoorResponse<CasdoorUser, Object> resp = doGet("get-user",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorUser, Object>>() {});
-        return objectMapper.convertValue(resp.getData(), CasdoorUser.class);
-    }
+    @GET("get-users")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorUser>, Integer>> getPaginationUsers(
+            @Query("p") int p, @Query("pageSize") int pageSize, @QueryMap Map<String, Object> query);
 
-    public CasdoorUser getUserByEmail(String email) throws IOException {
-        CasdoorResponse<CasdoorUser, Object> resp = doGet("get-user",
-                Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "email", email), new TypeReference<CasdoorResponse<CasdoorUser, Object>>() {});
-        return resp.getData();
-    }
+    @GET("get-user-count")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<Integer, Object>> getUserCount(@Query("isOnline") String isOnline);
 
-    public CasdoorResponse<String, Object> updateUser(CasdoorUser casdoorUser) throws IOException {
-        return modifyUser(UserOperations.UPDATE_USER, casdoorUser);
-    }
+    @GET("get-user")
+    Call<CasdoorResponse<CasdoorUser, Object>> getUser(@CasdoorId @Tag String name);
 
-    public CasdoorResponse<String, Object> addUser(CasdoorUser casdoorUser) throws IOException {
-        return modifyUser(UserOperations.ADD_USER, casdoorUser);
-    }
+    @GET("get-user")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<CasdoorUser, Object>> getUserByEmail(@Query("email") String email);
 
-    public CasdoorResponse<String, Object> deleteUser(CasdoorUser casdoorUser) throws IOException {
-        return modifyUser(UserOperations.DELETE_USER, casdoorUser);
-    }
+    @POST("add-user")
+    Call<CasdoorActionResponse> addUser(@Body CasdoorUser user);
 
-    public CasdoorResponse<String, Object> updateUserById(String id, CasdoorUser casdoorUser) throws IOException {
-        casdoorUser.setId(id);
-        return updateUser(casdoorUser);
-    }
+    @POST("update-user")
+    Call<CasdoorActionResponse> updateUser(@CasdoorId @Tag String name, @Body CasdoorUser user);
 
-    private <T1, T2> CasdoorResponse<T1, T2> modifyUser(UserOperations method, CasdoorUser casdoorUser) throws IOException {
-        String userStr = objectMapper.writeValueAsString(casdoorUser);
-        return doPost(method.getOperation(), Map.of(
-                "id", casdoorUser.getOwner() + "/" + casdoorUser.getName()
-        ), userStr, new TypeReference<CasdoorResponse<T1, T2>>() {});
-    }
+    @POST("delete-user")
+    Call<CasdoorActionResponse> deleteUser(@Body CasdoorUser user);
 
-    public java.util.Map<String, Object> getPaginationUsers(int p, int pageSize, java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<List<CasdoorUser>, Object> resp = doGet("get-users",
-                Map.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<List<CasdoorUser>, Object>>() {});
-
-        return Map.of("casdoorUsers", resp.getData(), "data2", resp.getData2());
-    }
 }

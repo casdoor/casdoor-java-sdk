@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,42 +16,37 @@ package org.casbin.casdoor.service;
 
 import java.io.IOException;
 
-import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
 import org.casbin.casdoor.entity.CasdoorOrganization;
 import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
+import org.casbin.casdoor.response.CasdoorActionResponse;
+import org.casbin.casdoor.response.CasdoorResponse;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 
-/**
- * Service Related to Account API
- */
-public class CasdoorAccountService extends CasdoorService {
-    public CasdoorAccountService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+public interface CasdoorAccountService {
 
     /**
      * Set user password by username, old and new passwords
      *
+     * @param userOwner   user owner
      * @param userName    username
      * @param oldPassword old password
      * @param newPassword new password
      * @return CasdoorResponse
      * @throws IOException when JSON unmarshalling fails or HTTP requests fails
      */
-    public CasdoorResponse setPassword(String userName, String oldPassword, String newPassword) throws IOException {
-        return doPost("set-password",
-                Map.of("owner", casdoorConfig.getOrganizationName()),
-                Map.of(
-                        "userOwner", casdoorConfig.getOrganizationName(),
-                        "userName", userName,
-                        "oldPassword", oldPassword,
-                        "newPassword", newPassword),
-                new TypeReference<CasdoorResponse<Object, Object>>() {
-                });
-    }
+    @FormUrlEncoded
+    @RequireOwnerInQuery
+    @POST("set-password")
+    Call<CasdoorActionResponse> setPassword(@Field("userOwner") String userOwner,
+            @Field("userName") String userName, @Field("oldPassword") String oldPassword,
+            @Field("newPassword") String newPassword);
 
     /**
      * Get current user
@@ -60,9 +55,7 @@ public class CasdoorAccountService extends CasdoorService {
      * @return user and organization info of current user
      * @throws IOException when JSON unmarshalling fails or HTTP requests fails
      */
-    public CasdoorResponse<CasdoorUser, CasdoorOrganization> getAccount(String accessToken) throws IOException {
-        return doGet("get-account", Map.of("access_token", accessToken),
-                new TypeReference<CasdoorResponse<CasdoorUser, CasdoorOrganization>>() {
-                });
-    }
+    @GET("get-account")
+    Call<CasdoorResponse<CasdoorUser, CasdoorOrganization>> getAccount(@Query("access_token") String token);
+
 }

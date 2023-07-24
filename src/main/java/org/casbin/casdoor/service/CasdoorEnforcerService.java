@@ -17,8 +17,8 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.response.CasdoorResponse;
 import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

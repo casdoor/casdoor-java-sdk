@@ -13,38 +13,31 @@
 // limitations under the License.
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorToken;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-public class CasdoorTokenService extends CasdoorService {
-    public CasdoorTokenService(CasdoorConfig casdoorConfig) {
-        super(casdoorConfig);
-    }
+import org.casbin.casdoor.annotation.RequireOwnerInQuery;
+import org.casbin.casdoor.entity.CasdoorToken;
+import org.casbin.casdoor.response.CasdoorActionResponse;
+import org.casbin.casdoor.response.CasdoorResponse;
 
-    /*** Get Tokens
-     *
-     * @param p index of page. pass -1 if not enable pageable search
-     * @param pageSize size of page
-     * @return the list of tokens
-     * @throws IOException if fails.
-     */
-    public CasdoorResponse<List<CasdoorToken>, Object> getTokens(int p, int pageSize) throws IOException {
-        return doGet("get-tokens", p > -1 ? Map.of(
-                "owner", casdoorConfig.getOrganizationName(),
-                "p", Integer.toString(p),
-                "pageSize", Integer.toString(pageSize)
-        ) : Map.of(
-                "owner", casdoorConfig.getOrganizationName()
-        ), new TypeReference<CasdoorResponse<List<CasdoorToken>, Object>>() {});
-    }
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
-    public CasdoorResponse<Boolean, Object> deleteToken(CasdoorToken casdoorToken) throws IOException {
-        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<CasdoorResponse<Boolean, Object>>() {});
-    }
+public interface CasdoorTokenService {
+    @GET("get-tokens")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorToken>, Object>> getTokens();
+
+    @GET("get-tokens")
+    @RequireOwnerInQuery
+    Call<CasdoorResponse<List<CasdoorToken>, Integer>> getPaginationTokens(@Query("p") int page,
+            @Query("pageSize") int pageSize, @QueryMap Map<String, Object> query);
+
+    @POST("delete-token")
+    Call<CasdoorActionResponse> deleteToken(@Body CasdoorToken token);
 }
