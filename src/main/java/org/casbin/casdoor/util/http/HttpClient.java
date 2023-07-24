@@ -18,15 +18,17 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 
 public class HttpClient {
     private static OkHttpClient okHttpClient = new OkHttpClient();
 
-    public static String syncGet(String url) throws IOException {
-        Request request = new Request.Builder().url(url).build();
+    public static String syncGet(String url, String credential) throws IOException {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", credential)
+                .build();
         Response casdoorResponse = okHttpClient.newCall(request).execute();
         if (casdoorResponse.isSuccessful()) {
             return casdoorResponse.body().string();
@@ -34,10 +36,12 @@ public class HttpClient {
         return null;
     }
 
-    public static String postString(String url, String objStr) throws IOException {
+    public static String postString(String url, String objStr, String credential) throws IOException {
         MediaType MEDIA_TYPE = MediaType.parse("text/plain;charset=UTF-8");
         Request request = new Request.Builder().url(url)
-                .post(RequestBody.create(MEDIA_TYPE, objStr)).build();
+                .post(RequestBody.create(MEDIA_TYPE, objStr))
+                .header("Authorization", credential)
+                .build();
         Response response = okHttpClient.newCall(request).execute();
         if (response.isSuccessful()) {
             return response.body().string();
@@ -45,7 +49,7 @@ public class HttpClient {
         return null;
     }
 
-    public static String postFile(String url, File file) throws IOException {
+    public static String postFile(String url, File file, String credential) throws IOException {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", file.getName(),
@@ -54,6 +58,7 @@ public class HttpClient {
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
+                .header("Authorization", credential)
                 .build();
         Response response = okHttpClient.newCall(request).execute();
         if (!response.isSuccessful()) {
@@ -66,10 +71,11 @@ public class HttpClient {
      * Post a request of type "application/x-www-form-urlencoded"
      * @param url url
      * @param fromData form data stored in Map
+     * @param credential credential
      * @return result as String
      * @throws IOException when request fails
      */
-    public static String postForm(String url, Map<String, String> fromData) throws IOException {
+    public static String postForm(String url, Map<String, String> fromData, String credential) throws IOException {
 
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
         fromData.forEach(formBodyBuilder::addEncoded);
@@ -78,6 +84,7 @@ public class HttpClient {
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
+                .header("Authorization", credential)
                 .build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
@@ -92,9 +99,9 @@ public class HttpClient {
 
     /**
      * SetHttpClient sets custom http Client.
+     * @param customClient custom http client
      */
     public static void setHttpClient(OkHttpClient customClient) {
         okHttpClient = customClient;
     }
-
 }

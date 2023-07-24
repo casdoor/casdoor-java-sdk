@@ -13,54 +13,38 @@
 // limitations under the License.
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorToken;
-import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
+import java.util.List;
 
-public class CasdoorTokenService {
-    private final CasdoorConfig casdoorConfig;
-    final private ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorTokenService extends CasdoorService {
     public CasdoorTokenService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
-    public CasdoorResponse getTokens(int p, int pageSize) throws IOException {
-        String url = String.format("%s/api/get-tokens?owner=%s&p=%d&pageSize=%d&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
-                p, pageSize, casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-        String response = HttpClient.syncGet(url);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
-        if(!casdoorResponse.getStatus().equals("ok")){
-            throw new CasdoorException("Failed to unmarshal JSON");
-        }
-        return casdoorResponse;
+    /*** Get Tokens
+     *
+     * @param p index of page. pass -1 if not enable pageable search
+     * @param pageSize size of page
+     * @return the list of tokens
+     * @throws IOException if fails.
+     */
+    public CasdoorResponse<List<CasdoorToken>> getTokens(int p, int pageSize) throws IOException {
+        return doGet("get-tokens", p > -1 ? Map.of(
+                "owner", casdoorConfig.getOrganizationName(),
+                "p", Integer.toString(p),
+                "pageSize", Integer.toString(pageSize)
+        ) : Map.of(
+                "owner", casdoorConfig.getOrganizationName()
+        ), new TypeReference<CasdoorResponse<List<CasdoorToken>>>() {});
     }
 
-    public CasdoorResponse deleteToken(CasdoorToken casdoorToken) throws IOException {
-        String targetUrl = String.format("%s/api/delete-token?clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-
-        String tokenStr = objectMapper.writeValueAsString(casdoorToken);
-        String response = HttpClient.postString(targetUrl, tokenStr);
-        if (response == null) {
-            throw new CasdoorException("Failed to get bytes from URL");
-        }
-        CasdoorResponse casdoorResponse = objectMapper.readValue(response, CasdoorResponse.class);
-        if(!casdoorResponse.getStatus().equals("ok")){
-            throw new CasdoorException("Failed to unmarshal JSON");
-        }
-        return casdoorResponse;
+    public CasdoorResponse<Boolean> deleteToken(CasdoorToken casdoorToken) throws IOException {
+        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<CasdoorResponse<Boolean>>() {});
     }
-
 }

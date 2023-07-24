@@ -14,26 +14,20 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  * Service Related to Account API
  */
-public class CasdoorAccountService {
-    private final CasdoorConfig casdoorConfig;
-    final private ObjectMapper objectMapper = new ObjectMapper();
-
+public class CasdoorAccountService extends CasdoorService {
     public CasdoorAccountService(CasdoorConfig casdoorConfig) {
-        this.casdoorConfig = casdoorConfig;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        super(casdoorConfig);
     }
 
     /**
@@ -46,17 +40,13 @@ public class CasdoorAccountService {
      * @throws IOException when JSON unmarshalling fails or HTTP requests fails
      */
     public CasdoorResponse setPassword(String userName, String oldPassword, String newPassword) throws IOException {
-        String targetUrl = String.format("%s/api/set-password?owner=%s&clientId=%s&clientSecret=%s",
-                casdoorConfig.getEndpoint(), casdoorConfig.getOrganizationName(),
-                casdoorConfig.getClientId(), casdoorConfig.getClientSecret());
-
-        Map<String, String> formData = new HashMap<>(4);
-        formData.put("userOwner", casdoorConfig.getOrganizationName());
-        formData.put("userName", userName);
-        formData.put("oldPassword", oldPassword);
-        formData.put("newPassword", newPassword);
-
-        String responseStr = HttpClient.postForm(targetUrl, formData);
-        return objectMapper.readValue(responseStr, CasdoorResponse.class);
+        return doPost("set-password",
+                Map.of("owner", casdoorConfig.getOrganizationName()),
+                Map.of(
+                        "userOwner", casdoorConfig.getOrganizationName(),
+                        "userName", userName,
+                        "oldPassword", oldPassword,
+                        "newPassword", newPassword
+                ), new TypeReference<CasdoorResponse<Object>>() {});
     }
 }
