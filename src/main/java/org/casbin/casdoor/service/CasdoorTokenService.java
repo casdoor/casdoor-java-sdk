@@ -31,7 +31,7 @@ public class CasdoorTokenService extends CasdoorService {
      *
      * @param p index of page. pass -1 if not enable pageable search
      * @param pageSize size of page
-     * @return CasdoorResponse<List<CasdoorToken>>
+     * @return the list of tokens
      * @throws IOException if fails.
      */
     public CasdoorResponse<List<CasdoorToken>> getTokens(int p, int pageSize) throws IOException {

@@ -71,6 +71,7 @@ public class HttpClient {
      * Post a request of type "application/x-www-form-urlencoded"
      * @param url url
      * @param fromData form data stored in Map
+     * @param credential credential
      * @return result as String
      * @throws IOException when request fails
      */
@@ -98,6 +99,7 @@ public class HttpClient {
 
     /**
      * SetHttpClient sets custom http Client.
+     * @param customClient custom http client
      */
     public static void setHttpClient(OkHttpClient customClient) {
         okHttpClient = customClient;
