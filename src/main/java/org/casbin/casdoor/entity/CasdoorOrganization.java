@@ -14,7 +14,7 @@
 
 package org.casbin.casdoor.entity;
 
-public class Organization {
+public class CasdoorOrganization {
     private String owner, name, createdTime, displayName, websiteUrl, favicon, passwordType, passwordSalt, phonePrefix;
 
     public String getOwner() {
