@@ -14,13 +14,15 @@
 
 package org.casbin.casdoor.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.IOException;
+
 import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.entity.CasdoorOrganization;
+import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
-import java.io.IOException;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Service Related to Account API
@@ -46,7 +48,21 @@ public class CasdoorAccountService extends CasdoorService {
                         "userOwner", casdoorConfig.getOrganizationName(),
                         "userName", userName,
                         "oldPassword", oldPassword,
-                        "newPassword", newPassword
-                ), new TypeReference<CasdoorResponse<Object>>() {});
+                        "newPassword", newPassword),
+                new TypeReference<CasdoorResponse<Object, Object>>() {
+                });
+    }
+
+    /**
+     * Get current user
+     *
+     * @param accessToken access token of current user
+     * @return user and organization info of current user
+     * @throws IOException when JSON unmarshalling fails or HTTP requests fails
+     */
+    public CasdoorResponse<CasdoorUser, CasdoorOrganization> getAccount(String accessToken) throws IOException {
+        return doGet("get-account", Map.of("access_token", accessToken),
+                new TypeReference<CasdoorResponse<CasdoorUser, CasdoorOrganization>>() {
+                });
     }
 }
