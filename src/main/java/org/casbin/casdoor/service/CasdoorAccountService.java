@@ -16,10 +16,11 @@ package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
-import java.util.Map;
+
 
 /**
  * Service Related to Account API
@@ -46,6 +47,6 @@ public class CasdoorAccountService extends CasdoorService {
                         "userName", userName,
                         "oldPassword", oldPassword,
                         "newPassword", newPassword
-                ), new TypeReference<>() {});
+                ), new TypeReference<CasdoorResponse<Object>>() {});
     }
 }

@@ -1,13 +1,10 @@
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorRole;
 import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.service.CasdoorRoleService;
 import org.casbin.casdoor.service.CasdoorUserService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;

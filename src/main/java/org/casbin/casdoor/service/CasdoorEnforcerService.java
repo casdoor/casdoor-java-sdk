@@ -17,12 +17,12 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Map;
 
 public class CasdoorEnforcerService extends CasdoorService {
     public CasdoorEnforcerService(CasdoorConfig casdoorConfig) {
@@ -41,7 +41,7 @@ public class CasdoorEnforcerService extends CasdoorService {
                         "resourceId", resourceId
                 ),
                 new String(postBytes, StandardCharsets.UTF_8),
-                new TypeReference<>() {}
+                new TypeReference<CasdoorResponse<Boolean[]>>() {}
         );
 
         // All true
@@ -59,7 +59,7 @@ public class CasdoorEnforcerService extends CasdoorService {
                         "resourceId", resourceId
                 ),
                 new String(postBytes, StandardCharsets.UTF_8),
-                new TypeReference<>() {}
+                new TypeReference<CasdoorResponse<Boolean[][]>>() {}
         );
 
         return response.getData();

@@ -14,17 +14,13 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorToken;
-import org.casbin.casdoor.exception.CasdoorException;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class CasdoorTokenService extends CasdoorService {
     public CasdoorTokenService(CasdoorConfig casdoorConfig) {
@@ -45,10 +41,10 @@ public class CasdoorTokenService extends CasdoorService {
                 "pageSize", Integer.toString(pageSize)
         ) : Map.of(
                 "owner", casdoorConfig.getOrganizationName()
-        ), new TypeReference<>() {});
+        ), new TypeReference<CasdoorResponse<List<CasdoorToken>>>() {});
     }
 
     public CasdoorResponse<Boolean> deleteToken(CasdoorToken casdoorToken) throws IOException {
-        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<>() {});
+        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(casdoorToken), new TypeReference<CasdoorResponse<Boolean>>() {});
     }
 }

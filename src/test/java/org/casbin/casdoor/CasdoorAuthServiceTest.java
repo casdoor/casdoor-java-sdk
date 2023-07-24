@@ -3,12 +3,10 @@ package org.casbin.casdoor;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.exception.CasdoorException;
 import org.casbin.casdoor.service.CasdoorAuthService;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

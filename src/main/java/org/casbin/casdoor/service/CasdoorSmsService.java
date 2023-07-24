@@ -15,15 +15,12 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorSmsForm;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class CasdoorSmsService extends CasdoorService {
     public CasdoorSmsService(CasdoorConfig casdoorConfig) {
@@ -34,6 +31,6 @@ public class CasdoorSmsService extends CasdoorService {
         CasdoorSmsForm casdoorSmsForm = new CasdoorSmsForm("admin/" + casdoorConfig.getOrganizationName(), content, receivers);
         String smsFormStr = objectMapper.writeValueAsString(casdoorSmsForm);
 
-        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<>() {});
+        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object>>() {});
     }
 }

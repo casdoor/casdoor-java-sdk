@@ -17,13 +17,12 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.CasdoorConfig;
 import org.casbin.casdoor.entity.CasdoorUser;
-import org.casbin.casdoor.util.MapUtils;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.UserOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class CasdoorUserService extends CasdoorService {
     public CasdoorUserService(CasdoorConfig casdoorConfig) {
@@ -32,7 +31,7 @@ public class CasdoorUserService extends CasdoorService {
 
     public List<CasdoorUser> getUsers() throws IOException {
         CasdoorResponse<List<CasdoorUser>> resp = doGet("get-users",
-                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<>() {});
+                Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorUser>>>() {});
         return resp.getData();
     }
 
@@ -47,27 +46,27 @@ public class CasdoorUserService extends CasdoorService {
         CasdoorResponse<List<CasdoorUser>> resp = doGet("get-users",
                 Map.of("owner", casdoorConfig.getOrganizationName(),
                         "sorter", sorter,
-                        "limit", limit > 0 ? Integer.toString(limit) : ""), new TypeReference<>() {});
+                        "limit", limit > 0 ? Integer.toString(limit) : ""), new TypeReference<CasdoorResponse<List<CasdoorUser>>>() {});
         return resp.getData();
     }
 
     public int getUserCount(String isOnline) throws IOException {
         CasdoorResponse<Integer> resp = doGet("get-user-count",
                 Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "isOnline", isOnline), new TypeReference<>() {});
+                        "isOnline", isOnline), new TypeReference<CasdoorResponse<Integer>>() {});
         return resp.getData();
     }
 
     public CasdoorUser getUser(String name) throws IOException {
         CasdoorResponse<CasdoorUser> resp = doGet("get-user",
-                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<>() {});
+                Map.of("id", casdoorConfig.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<CasdoorUser>>() {});
         return objectMapper.convertValue(resp.getData(), CasdoorUser.class);
     }
 
     public CasdoorUser getUserByEmail(String email) throws IOException {
         CasdoorResponse<CasdoorUser> resp = doGet("get-user",
                 Map.of("owner", casdoorConfig.getOrganizationName(),
-                        "email", email), new TypeReference<>() {});
+                        "email", email), new TypeReference<CasdoorResponse<CasdoorUser>>() {});
         return resp.getData();
     }
 
@@ -92,14 +91,14 @@ public class CasdoorUserService extends CasdoorService {
         String userStr = objectMapper.writeValueAsString(casdoorUser);
         return doPost(method.getOperation(), Map.of(
                 "id", casdoorUser.getOwner() + "/" + casdoorUser.getName()
-        ), userStr, new TypeReference<>() {});
+        ), userStr, new TypeReference<CasdoorResponse<T>>() {});
     }
 
-    public Map<String, Object> getPaginationUsers(int p, int pageSize, Map<String, String> queryMap) throws IOException {
+    public java.util.Map<String, Object> getPaginationUsers(int p, int pageSize, java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<List<CasdoorUser>> resp = doGet("get-users",
-                MapUtils.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
+                Map.mergeMap(Map.of("owner", casdoorConfig.getOrganizationName(),
                         "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<>() {});
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<List<CasdoorUser>>>() {});
 
         return Map.of("casdoorUsers", resp.getData(), "data2", resp.getData2());
     }

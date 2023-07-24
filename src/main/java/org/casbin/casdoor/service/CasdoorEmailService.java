@@ -20,7 +20,6 @@ import org.casbin.casdoor.entity.CasdoorEmailForm;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class CasdoorEmailService extends CasdoorService {
     public CasdoorEmailService(CasdoorConfig casdoorConfig) {
@@ -31,6 +30,6 @@ public class CasdoorEmailService extends CasdoorService {
         CasdoorEmailForm casdoorEmailForm = new CasdoorEmailForm(title, content, sender, receivers);
         String emailFormStr = objectMapper.writeValueAsString(casdoorEmailForm);
 
-        return doPost("send-email", null, emailFormStr, new TypeReference<>() {});
+        return doPost("send-email", null, emailFormStr, new TypeReference<CasdoorResponse<Object>>() {});
     }
 }
