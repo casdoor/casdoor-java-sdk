@@ -17,8 +17,8 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -90,12 +90,18 @@ public class CasdoorAuthService extends CasdoorService {
             throw new CasdoorAuthException("Cannot verify signature.", e);
         }
 
-        // convert to CasdoorUser
+        // read "access_token" from payload and convert to CasdoorUser
         try {
-            Payload payloadJson = parseJwt.getPayload();
-            return objectMapper.readValue(payloadJson.toString(), CasdoorUser.class);
-        } catch (JsonProcessingException e) {
-            throw new CasdoorAuthException("Cannot convert claims to CasdoorUser", e);
+            JWTClaimsSet claimsSet = parseJwt.getJWTClaimsSet();
+            String accessToken = claimsSet.getStringClaim("access_token");
+
+            if (accessToken == null || accessToken.isEmpty()) {
+                throw new CasdoorAuthException("Access token not found in JWT payload.");
+            }
+
+            return objectMapper.readValue(claimsSet.toString(), CasdoorUser.class);
+        } catch (JsonProcessingException | java.text.ParseException e) {
+            throw new CasdoorAuthException("Cannot read access token from JWT payload.", e);
         }
     }
 
