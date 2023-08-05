@@ -15,10 +15,13 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
@@ -92,6 +95,7 @@ public class CasdoorAuthService extends CasdoorService {
 
         // read "access_token" from payload and convert to CasdoorUser
         try {
+
             JWTClaimsSet claimsSet = parseJwt.getJWTClaimsSet();
             String accessToken = claimsSet.getStringClaim("access_token");
 
@@ -99,10 +103,11 @@ public class CasdoorAuthService extends CasdoorService {
                 throw new CasdoorAuthException("Access token not found in JWT payload.");
             }
 
-            return objectMapper.readValue(claimsSet.toString(), CasdoorUser.class);
+            return objectMapper.readValue(accessToken, CasdoorUser.class);
         } catch (JsonProcessingException | java.text.ParseException e) {
             throw new CasdoorAuthException("Cannot read access token from JWT payload.", e);
         }
+
     }
 
     public String getSigninUrl(String redirectUrl) {
