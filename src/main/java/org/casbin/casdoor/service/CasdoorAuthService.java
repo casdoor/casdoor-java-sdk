@@ -99,7 +99,7 @@ public class CasdoorAuthService extends CasdoorService {
                 throw new CasdoorAuthException("Access token not found in JWT payload.");
             }
 
-            return objectMapper.readValue(claimsSet.toString(), CasdoorUser.class);
+            return objectMapper.readValue(accessToken, CasdoorUser.class);
         } catch (JsonProcessingException | java.text.ParseException e) {
             throw new CasdoorAuthException("Cannot read access token from JWT payload.", e);
         }
