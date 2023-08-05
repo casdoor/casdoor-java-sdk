@@ -92,7 +92,6 @@ public class CasdoorAuthService extends CasdoorService {
 
         // read "access_token" from payload and convert to CasdoorUser
         try {
-
             JWTClaimsSet claimsSet = parseJwt.getJWTClaimsSet();
             String accessToken = claimsSet.getStringClaim("access_token");
 
@@ -104,7 +103,6 @@ public class CasdoorAuthService extends CasdoorService {
         } catch (JsonProcessingException | java.text.ParseException e) {
             throw new CasdoorAuthException("Cannot read access token from JWT payload.", e);
         }
-
     }
 
     public String getSigninUrl(String redirectUrl) {
