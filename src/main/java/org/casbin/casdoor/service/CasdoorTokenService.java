@@ -34,13 +34,13 @@ public class CasdoorTokenService extends CasdoorService {
      * @return the list of tokens
      * @throws IOException if fails.
      */
-    public CasdoorResponse<List<CasdoorToken>, Object> getTokens(int p, int pageSize) throws IOException {
+    public CasdoorResponse<List<CasdoorToken>, Object> getTokens(String userName,int p, int pageSize) throws IOException {
         return doGet("get-tokens", p > -1 ? Map.of(
-                "owner", casdoorConfig.getOrganizationName(),
+                "owner", userName,
                 "p", Integer.toString(p),
                 "pageSize", Integer.toString(pageSize)
         ) : Map.of(
-                "owner", casdoorConfig.getOrganizationName()
+                "owner", userName
         ), new TypeReference<CasdoorResponse<List<CasdoorToken>, Object>>() {});
     }
 
