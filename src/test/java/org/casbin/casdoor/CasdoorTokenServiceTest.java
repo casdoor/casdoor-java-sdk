@@ -38,7 +38,7 @@ public class CasdoorTokenServiceTest extends CasdoorServiceTest {
     @Test
     public void testGetTokens() throws IOException {
         CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
-        CasdoorResponse tokens = casdoorTokenService.getTokens(1, 10);
+        CasdoorResponse tokens = casdoorTokenService.getTokens("admin",1, 10);
         assertNotNull(tokens);
     }
 
