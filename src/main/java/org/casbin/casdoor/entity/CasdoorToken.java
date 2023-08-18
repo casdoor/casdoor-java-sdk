@@ -15,7 +15,9 @@ package org.casbin.casdoor.entity;
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
 
-public class CasdoorToken {
+import java.io.Serializable;
+
+public class CasdoorToken implements Serializable {
 
     private String owner;
     private String name;

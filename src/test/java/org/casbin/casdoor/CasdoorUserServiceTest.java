@@ -1,10 +1,25 @@
+// Copyright 2023 The casbin Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.CasdoorRole;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.service.CasdoorUserService;
+import org.casbin.casdoor.support.ConfigFactory;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,9 +31,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CasdoorUserServiceTest extends CasdoorServiceTest {
+
+    private CasdoorUserService casdoorUserService;
+
+    @Before
+    public void init() {
+        casdoorUserService = new CasdoorUserService(ConfigFactory.getConfig());
+    }
+
     @Test
     public void testGetUser() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         CasdoorUser casdoorUser = casdoorUserService.getUser("admin");
         Assert.assertNotNull(casdoorUser);
         casdoorUser = casdoorUserService.getUserByEmail("admin@example.com");
@@ -27,7 +49,6 @@ public class CasdoorUserServiceTest extends CasdoorServiceTest {
 
     @Test
     public void testGetUsers() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         List<CasdoorUser> casdoorUsers = casdoorUserService.getUsers();
         Assert.assertNotNull(casdoorUsers);
         casdoorUsers = casdoorUserService.getSortedUsers("created_time", 5);
@@ -38,14 +59,12 @@ public class CasdoorUserServiceTest extends CasdoorServiceTest {
 
     @Test
     public void testGetUserCount() throws Exception {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         int count = casdoorUserService.getUserCount("");
         Assert.assertTrue(count >= 0);
     }
 
     @Test
     public void testModifyUser() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
 
         CasdoorUser user = new CasdoorUser();
         user.setOwner("built-in");
@@ -66,7 +85,6 @@ public class CasdoorUserServiceTest extends CasdoorServiceTest {
 
     @Test
     public void testGetPaginationUsers() throws IOException {
-        CasdoorUserService casdoorUserService = new CasdoorUserService(this.casdoorConfig);
         Map<String, String> queryMap = new HashMap<>();
         Map<String, Object> result = casdoorUserService.getPaginationUsers(1, 10, queryMap);
         assertNotNull(result);
@@ -78,6 +96,12 @@ public class CasdoorUserServiceTest extends CasdoorServiceTest {
 
         assertTrue(!roles.isEmpty());
         assertTrue(data2 > 0);
+    }
+
+    @Test
+    public void testGetGolbalUsers() throws IOException {
+        List<CasdoorUser> globalUsers = casdoorUserService.getGlobalUsers();
+        assertNotNull(globalUsers);
     }
 
 }

@@ -34,7 +34,12 @@ public class CasdoorUserService extends CasdoorService {
                 Map.of("owner", casdoorConfig.getOrganizationName()), new TypeReference<CasdoorResponse<List<CasdoorUser>, Object>>() {});
         return resp.getData();
     }
+    public List<CasdoorUser> getGlobalUsers() throws IOException {
+        CasdoorResponse<List<CasdoorUser>, Object> response = doGet("get-global-users",null,
+                new TypeReference<CasdoorResponse<List<CasdoorUser>, Object>>() {});
 
+        return response.getData();
+    }
     /**
      * Get users with pagination.
      * @param sorter sorter of users
