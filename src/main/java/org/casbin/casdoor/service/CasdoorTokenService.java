@@ -36,11 +36,11 @@ public class CasdoorTokenService extends CasdoorService {
      */
     public CasdoorResponse<List<CasdoorToken>, Object> getTokens(int p, int pageSize) throws IOException {
         return doGet("get-tokens", p > -1 ? Map.of(
-                "owner", casdoorConfig.getOrganizationName(),
+                "owner", "admin",
                 "p", Integer.toString(p),
                 "pageSize", Integer.toString(pageSize)
         ) : Map.of(
-                "owner", casdoorConfig.getOrganizationName()
+                "owner", "admin"
         ), new TypeReference<CasdoorResponse<List<CasdoorToken>, Object>>() {});
     }
 
