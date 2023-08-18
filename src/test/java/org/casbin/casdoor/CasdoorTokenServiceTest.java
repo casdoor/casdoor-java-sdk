@@ -2,8 +2,10 @@ package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.CasdoorToken;
 import org.casbin.casdoor.service.CasdoorTokenService;
+import org.casbin.casdoor.support.ConfigFactory;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,9 +13,13 @@ import java.io.IOException;
 import static org.junit.Assert.assertNotNull;
 
 public class CasdoorTokenServiceTest extends CasdoorServiceTest {
+    private CasdoorTokenService casdoorTokenService;
+    @Before
+    public void setUp() throws Exception{
+        casdoorTokenService = new CasdoorTokenService(ConfigFactory.getConfig());
+    }
     @Test
     public void testDeleteTokens() throws IOException {
-        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
         CasdoorToken token = new CasdoorToken();
         token.setAccessToken("string");
         token.setApplication("string");
@@ -37,7 +43,6 @@ public class CasdoorTokenServiceTest extends CasdoorServiceTest {
 
     @Test
     public void testGetTokens() throws IOException {
-        CasdoorTokenService casdoorTokenService = new CasdoorTokenService(this.casdoorConfig);
         CasdoorResponse tokens = casdoorTokenService.getTokens(1, 10);
         assertNotNull(tokens);
     }
