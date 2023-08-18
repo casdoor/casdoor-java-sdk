@@ -22,10 +22,6 @@ import org.casbin.casdoor.util.http.CasdoorResponse;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @Description: 描述信息
- * @author: Dizzy
- */
 public class CasdoorCertService extends CasdoorService{
 
     public CasdoorCertService(CasdoorConfig casdoorConfig) {
