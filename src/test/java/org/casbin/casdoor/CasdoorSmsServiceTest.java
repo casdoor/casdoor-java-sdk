@@ -1,6 +1,6 @@
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.service.CasdoorSmsService;
+import org.casbin.casdoor.service.SmsService;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class CasdoorSmsServiceTest extends CasdoorServiceTest {
     @Test
     public void testSendSms() throws IOException {
         String receiver = "";
-        CasdoorSmsService casdoorSmsService = new CasdoorSmsService(casdoorConfig);
+        SmsService casdoorSmsService = new SmsService(config);
         CasdoorResponse response = casdoorSmsService.sendSms(randomCode(), receiver);
         Assert.assertEquals("ok", response.getStatus());
     }

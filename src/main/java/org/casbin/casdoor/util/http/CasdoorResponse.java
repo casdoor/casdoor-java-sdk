@@ -16,7 +16,7 @@ package org.casbin.casdoor.util.http;
 
 
 
-public class CasdoorResponse <T1, T2> {
+public class CasdoorResponse<T1, T2> {
     private String status;
     private String msg;
     private T1 data;
