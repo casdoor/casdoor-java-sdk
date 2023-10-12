@@ -26,7 +26,7 @@ Initialization requires 5 parameters, which are all string type:
 | applicationName  | No   | The name for the Casdoor application                |
 
 ```java
-CasdoorConfig casdoorConfig = new CasdoorConfig(endpoint, clientId, clientSecret, certificate, organizationName, applicationName);
+CasdoorConfig config = new CasdoorConfig(endpoint, clientId, clientSecret, certificate, organizationName, applicationName);
 ```
 
 ## Step2. Get Service and use
@@ -36,7 +36,7 @@ Now provide two services: ``CasdoorUserService``, ``CasdoorAuthService``
 You can create them like
 
 ```Java
-CasdoorUserService casdoorUserService = new CasdoorUserService(casdoorConfig);
+CasdoorUserService casdoorUserService = new CasdoorUserService(config);
 ```
 
 ## UserService
@@ -58,14 +58,14 @@ Your web application can get the `code`,`state` and call `GetOAuthToken(code, st
 The general process is as follows:
 
 ```java
-String token = casdoorAuthService.getOAuthToken(code, state);
+String token = authService.getOAuthToken(code, state);
 
-CasdoorUser casdoorUser = casdoorAuthService.parseJwtToken(token);
+CasdoorUser user = authService.parseJwtToken(token);
 ```
 
 2. **Set Session in your app**
 
-`casdoorUser` contains the basic information about the user provided by casdoor, you can use it as a keyword to set the session in your application, like this:
+`user` contains the basic information about the user provided by casdoor, you can use it as a keyword to set the session in your application, like this:
 
 ```java
 HttpSession session = request.getSession();

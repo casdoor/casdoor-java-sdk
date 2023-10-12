@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,19 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.casbin.casdoor.util;
 
-public enum OrganizationOperations {
-    ADD_ORGANIZATION("add-organization"),
-    DELETE_ORGANIZATION("delete-organization"),
-    UPDATE_ORGANIZATION("update-organization");
-    private final String operation;
+package org.casbin.casdoor.exception;
 
-    OrganizationOperations(String op) {
-        this.operation = op;
+/**
+ * @author Yixiang Zhao (@seriouszyx)
+ */
+public class Exception extends RuntimeException {
+    public Exception() {
+        super();
     }
 
-    public String getOperation() {
-        return operation;
+    public Exception(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public Exception(String message) {
+        super(message);
+    }
+
+    public Exception(Throwable cause) {
+        super(cause);
     }
 }

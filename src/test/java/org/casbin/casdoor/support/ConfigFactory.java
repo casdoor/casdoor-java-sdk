@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.config.Config;
 
 public class ConfigFactory {
     private ConfigFactory() {
@@ -14,8 +14,8 @@ public class ConfigFactory {
     /**
      * You should replace config and certificate.pem content with your own Casdoor instance.
      */
-    public static CasdoorConfig getConfig() {
-        return new CasdoorConfig(
+    public static Config getConfig() {
+        return new Config(
                 "http://localhost:8000",
                 "6368a1041b46e5d156ab",
                 "09764d62a75a5b644c449ba42c44062e14224ba5",

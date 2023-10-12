@@ -1,110 +1,84 @@
 package org.casbin.casdoor;
-
-import org.casbin.casdoor.config.CasdoorConfig;
-import org.casbin.casdoor.entity.CasdoorApplication;
-import org.casbin.casdoor.service.CasdoorApplicationService;
+import org.casbin.casdoor.config.Config;
+import org.casbin.casdoor.entity.Application;
+import org.casbin.casdoor.service.ApplicationService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ApplicationTest {
+    private ApplicationService applicationService = new ApplicationService(TestDefaultConfig.InitConfig());
 
     @Test
-    public void test() {
-        // Initialize the CasDoor SDK config
-        CasdoorConfig config = TestDefaultConfig.InitConfig();
-        // Create a CasDoorApplicationService object
-        CasdoorApplicationService applicationService = new CasdoorApplicationService(config);
-
+    public void testApplication() {
         String name = TestDefaultConfig.getRandomName("application");
-        // Add a new application
-        CasdoorApplication application = new CasdoorApplication();
-        application.setOwner("Admin");
-        application.setName(name);
-        application.setCreatedTime(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
-        application.setDisplayName(name);
-        application.setLogo("https://cdn.casbin.org/img/casdoor-logo_1185x256.png");
-        application.setHomepageUrl("https://casdoor.org");
-        application.setDescription("Casdoor Website!!!!!!");
-        application.setOrganization("casbinEasTWiind");
 
+        // Add a new object
+        Application application = new Application(
+                "Admin",
+                name,
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                name,
+                "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
+                "https://casdoor.org",
+                "Casdoor Website",
+                "casbin"
+        );
+        assertDoesNotThrow(() -> applicationService.addApplication(application));
 
-        try {
-            applicationService.addApplication(application);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        // Get all applications, check if our added application is inside the list
-        List<CasdoorApplication> applications = null;
+        // Get all objects, check if our added object is inside the list
+        List<Application> applications;
         try {
             applications = applicationService.getApplications();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        boolean found = false;
-        for (CasdoorApplication item : applications) {
-            if (item.getName().equals(application.getName())) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            throw new RuntimeException("Added application not found in list");
+        } catch (Exception e) {
+            fail("Failed to get objects: " + e.getMessage());
+            return;
         }
 
-        // Get the application
-        CasdoorApplication retrievedApplication = null;
+        boolean found = applications.stream().anyMatch(item -> item.getName().equals(name));
+        assertTrue(found,"Added object not found in list");
+
+        // Get the object
+        Application retrievedApplication;
         try {
             retrievedApplication = applicationService.getApplication(name);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            fail("Failed to get object: " + e.getMessage());
+            return;
         }
-        if (!retrievedApplication.getName().equals(name)) {
-            throw new RuntimeException("Retrieved application does not match added application: " + retrievedApplication.getName() + " != " + name);
-        }
+        assertEquals(name, retrievedApplication.getName(), "Retrieved object does not match added object");
 
-        // Update the application
+        // Update the object
         String updatedDescription = "Updated Casdoor Website";
         retrievedApplication.setDescription(updatedDescription);
-        try {
-            applicationService.updateApplication(retrievedApplication);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        assertDoesNotThrow(() -> applicationService.updateApplication(retrievedApplication));
 
         // Validate the update
-        CasdoorApplication updatedApplication = null;
+        Application updatedApplication;
         try {
             updatedApplication = applicationService.getApplication(name);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            fail("Failed to get updated object: " + e.getMessage());
+            return;
         }
-        if (!updatedApplication.getDescription().equals(updatedDescription)) {
-            throw new RuntimeException("Failed to update application, description mismatch: " + updatedApplication.getDescription() + " != +" + updatedDescription);
-        }
+        assertEquals(updatedDescription, updatedApplication.getDescription(), "Failed to update object, description mismatch");
 
-        // Delete the application
-        try {
-            applicationService.deleteApplication(name);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Delete the object
+        assertDoesNotThrow(() -> applicationService.deleteApplication(name));
 
         // Validate the deletion
-        CasdoorApplication deletedApplication = null;
+        Application deletedApplication;
         try {
             deletedApplication = applicationService.getApplication(name);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            fail("Failed to delete object: " + e.getMessage());
+            return;
         }
-        if (deletedApplication != null) {
-            throw new RuntimeException("Failed to delete application, it's still retrievable");
-        }
+        assertNull(deletedApplication,"Failed to delete object, it's still retrievable");
     }
 }

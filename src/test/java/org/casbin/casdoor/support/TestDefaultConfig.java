@@ -6,7 +6,7 @@ package org.casbin.casdoor.support;
 */
 
 
-import org.casbin.casdoor.config.CasdoorConfig;
+import org.casbin.casdoor.config.Config;
 
 import java.util.Random;
 
@@ -62,8 +62,8 @@ public class TestDefaultConfig {
                     "nCCJHBcAyFnm1hdvdwEdH33jDBjNB6ciotJZrf/3VYaIWSalADosHAgMWfXuWP+h\n" +
                     "8XKXmzlxuHbTMQYtZPDgspS5aK+S4Q9wb8RRAYo=";
 
-    public static CasdoorConfig InitConfig() {
-        return new CasdoorConfig(TEST_CASDOOR_ENDPOINT, TEST_CLIENT_ID, TEST_CLIENT_SECRET, TEST_CASDOOR_CERTIFICATE, TEST_CASDOOR_ORGANIZATION, TEST_CASDOOR_APPLICATION);
+    public static Config InitConfig() {
+        return new Config(TEST_CASDOOR_ENDPOINT, TEST_CLIENT_ID, TEST_CLIENT_SECRET, TEST_CASDOOR_CERTIFICATE, TEST_CASDOOR_ORGANIZATION, TEST_CASDOOR_APPLICATION);
 
     }
 }

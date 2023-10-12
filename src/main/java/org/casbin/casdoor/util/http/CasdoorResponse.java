@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2021 The casbin Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.casbin.casdoor.util.http;
 
 
 
-public class CasdoorResponse <T1, T2> {
+public class CasdoorResponse<T1, T2> {
     private String status;
     private String msg;
     private T1 data;
