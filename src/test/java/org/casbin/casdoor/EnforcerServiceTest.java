@@ -31,6 +31,5 @@ public class EnforcerServiceTest extends CasdoorServiceTest {
                 {true, true, false}
         };
         assertEquals(tar,results);
-
     }
 }

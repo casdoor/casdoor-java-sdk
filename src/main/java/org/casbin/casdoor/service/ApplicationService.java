@@ -32,20 +32,23 @@ public class ApplicationService extends Service {
 
     public Application getApplication(String name) throws IOException {
         CasdoorResponse<Application, Object> response = doGet("get-application",
-                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Application, Object>>() {});
+                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Application, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Application> getApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-applications",
-                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Application>, Object>>() {});
+                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Application>, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Application> getOrganizationApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-organization-applications",
                 Map.of("owner", "admin", "organization", config.getOrganizationName()),
-                new TypeReference<CasdoorResponse<List<Application>, Object>>() {});
+                new TypeReference<CasdoorResponse<List<Application>, Object>>() {
+                });
         return response.getData();
     }
 
@@ -55,8 +58,8 @@ public class ApplicationService extends Service {
 
     public CasdoorResponse<String, Object> deleteApplication(String name) throws IOException {
         Application application = new Application();
-        application.setOwner("admin");
-        application.setName(name);
+        application.owner = "admin";
+        application.name = name;
         return modifyApplication(ApplicationOperations.DELETE_APPLICATION, application, null);
     }
 
@@ -65,9 +68,10 @@ public class ApplicationService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyApplication(ApplicationOperations method, Application application, java.util.Map<String, String> queryMap) throws IOException {
-        String id = application.getOwner() + "/" + application.getName();
+        String id = application.owner + "/" + application.name;
         String payload = objectMapper.writeValueAsString(application);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
-                new TypeReference<CasdoorResponse<T1, T2>>() {});
+                new TypeReference<CasdoorResponse<T1, T2>>() {
+                });
     }
 }

@@ -60,15 +60,15 @@ public class ApplicationServiceTest {
     public void testModifyApplication() throws IOException {
 
         Application application = new Application();
-        application.setOwner("admin");
-        application.setName("test-modify-application");
-        application.setDisplayName("init-display-name");
+        application.owner = "admin";
+        application.name = "test-modify-application";
+        application.displayName = "init-display-name";
         CasdoorResponse response = applicationService.addApplication(application);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        application.setDisplayName("test-display-name");
-       response = applicationService.updateApplication(application);
+        application.displayName = "test-display-name";
+        response = applicationService.updateApplication(application);
         Assert.assertEquals("ok", response.getStatus());
 
         response = applicationService.deleteApplication("test-modify-application");
