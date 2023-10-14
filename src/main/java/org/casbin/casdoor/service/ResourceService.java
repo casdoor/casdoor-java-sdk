@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ public class ResourceService extends Service {
 
     public CasdoorResponse<String, Object> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
         return doPost("upload-resource",
-                Map.of("owner", config.getOrganizationName(),
+                Map.of("owner", config.organizationName,
                         "user", user,
-                        "application", config.getApplicationName(),
+                        "application", config.applicationName,
                         "tag", tag,
                         "parent", parent,
                         "fullFilePath", fullFilePath),
@@ -40,7 +40,7 @@ public class ResourceService extends Service {
     }
 
     public CasdoorResponse<String, Object> deleteResource(String name) throws IOException {
-        Resource resource = new Resource(config.getOrganizationName(), name);
+        Resource resource = new Resource(config.organizationName, name);
         String userStr = objectMapper.writeValueAsString(resource);
         return doPost("delete-resource", null, userStr, new TypeReference<CasdoorResponse<String, Object>>() {});
     }

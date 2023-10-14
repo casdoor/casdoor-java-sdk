@@ -1,4 +1,4 @@
-// Copyright 2021 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,13 +54,5 @@ public class CasdoorResponse<T1, T2> {
         this.data2 = data2;
     }
 
-    @Override
-    public String toString() {
-        return "CasdoorResponse{" +
-                "status='" + status + '\'' +
-                ", msg='" + msg + '\'' +
-                ", data='" + data + '\'' +
-                ", data2='" + data2 + '\'' +
-                '}';
-    }
+
 }

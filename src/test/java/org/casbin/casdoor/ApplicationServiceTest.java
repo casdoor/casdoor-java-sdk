@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Application;
@@ -52,22 +53,21 @@ public class ApplicationServiceTest {
     public void testGetOrganizationApplications() throws IOException {
         List<Application> organizationApplications = applicationService.getOrganizationApplications();
         assertNotNull(organizationApplications);
-
     }
 
     @Test
     public void testModifyApplication() throws IOException {
 
         Application application = new Application();
-        application.setOwner("admin");
-        application.setName("test-modify-application");
-        application.setDisplayName("init-display-name");
+        application.owner = "admin";
+        application.name = "test-modify-application";
+        application.displayName = "init-display-name";
         CasdoorResponse response = applicationService.addApplication(application);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        application.setDisplayName("test-display-name");
-       response = applicationService.updateApplication(application);
+        application.displayName = "test-display-name";
+        response = applicationService.updateApplication(application);
         Assert.assertEquals("ok", response.getStatus());
 
         response = applicationService.deleteApplication("test-modify-application");

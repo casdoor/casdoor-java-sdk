@@ -12,25 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor.service;
+package org.casbin.casdoor;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.SmsForm;
-import org.casbin.casdoor.util.Map;
-import org.casbin.casdoor.util.http.CasdoorResponse;
+import org.casbin.casdoor.service.SmsService;
+import org.casbin.casdoor.support.TestDefaultConfig;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class SmsService extends Service {
-    public SmsService(Config config) {
-        super(config);
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class SmsTest {
+
+    private final SmsService smsService = new SmsService(
+            TestDefaultConfig.InitConfig());
+
+    @Test
+    public void testSms() {
+        SmsForm smsForm = new SmsForm(
+                "casdoor",
+                new String[]{"+8613854673829", "+441932567890"});
+        try {
+            smsService.sendSms(smsForm.content, smsForm.receivers);
+        } catch (Exception e) {
+            fail("Failed to send sms:" + e.getMessage());
+        }
+
     }
 
-    public CasdoorResponse sendSms(String content, String... receivers) throws IOException {
-        SmsForm smsForm = new SmsForm("admin/" + config.organizationName, content, receivers);
-        String smsFormStr = objectMapper.writeValueAsString(smsForm);
-
-        return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
-    }
 }

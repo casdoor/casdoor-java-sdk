@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Session;
@@ -37,7 +38,7 @@ public class SessionServiceTest {
 
     @Test
     public void testGetSession() throws IOException {
-        Session session = casdoorSessionService.getSession("example-session-name");
+        Session session = casdoorSessionService.getSession("example-session-name","app-built-in");
         assertNotNull(session);
     }
 
@@ -56,14 +57,14 @@ public class SessionServiceTest {
     @Test
     public void testModifySession() throws IOException {
         Session session = new Session();
-        session.setOwner("test-owner");
-        session.setName("test-session-name");
-        session.setApplication("built-in");
+        session.owner = "test-owner";
+        session.name = "test-session-name";
+        session.application = "built-in";
         CasdoorResponse response = casdoorSessionService.addSession(session);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        session.setName("test-updated-session-name");
+        session.name = "test-updated-session-name";
         response = casdoorSessionService.updateSession(session);
         Assert.assertEquals("ok", response.getStatus());
 

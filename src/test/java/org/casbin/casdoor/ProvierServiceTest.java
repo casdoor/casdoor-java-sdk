@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Provier;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class ProviderServiceTest {
+public class ProvierServiceTest {
     private ProviderService providerService;
 
     @Before
@@ -37,14 +38,14 @@ public class ProviderServiceTest {
 
     @Test
     public void testGetCasdoorProvier() throws IOException {
-        Provier provider = providerService.getProvider("provider_captcha_default");
-        assertNotNull(provider);
+        Provier provier = providerService.getProvider("provider_captcha_default");
+        assertNotNull(provier);
     }
 
     @Test
     public void testGetCasdoorProviers() throws IOException {
-        List<Provier> providers = providerService.getProviders();
-        assertNotNull(providers);
+        List<Provier> proviers = providerService.getProviders();
+        assertNotNull(proviers);
     }
 
     @Test
@@ -55,19 +56,20 @@ public class ProviderServiceTest {
 
     @Test
     public void testModifyCasdoorProvier() throws IOException {
-        Provier provider = new Provier();
-        provider.setOwner("test-owner");
-        provider.setName("test-provider-name");
+        Provier provier = new Provier();
+        provier.owner = "test-owner";
+        provier.name = "test-provier-name";
 
-        CasdoorResponse response = providerService.addProvider(provider);
+        CasdoorResponse response = providerService.addProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        provider.setOwner("test-updated-owner");
-        response = providerService.updateProvider(provider);
+
+        provier.owner = "test-updated-owner";
+        response = providerService.updateProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
 
-        response = providerService.deleteProvider(provider);
+        response = providerService.deleteProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }

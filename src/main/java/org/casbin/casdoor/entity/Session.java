@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor.entity;
 
 
@@ -23,44 +24,14 @@ public class Session implements Serializable {
     public String createdTime;
     public String[] sessionId;
 
-    public String getOwner() {
-        return owner;
+    public Session() {
     }
 
-    public void setOwner(String owner) {
+    public Session(String owner, String name, String application, String createdTime, String[] sessionId) {
         this.owner = owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getApplication() {
-        return application;
-    }
-
-    public void setApplication(String application) {
         this.application = application;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
-    }
-
-    public String[] getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String[] sessionId) {
         this.sessionId = sessionId;
     }
-
 }

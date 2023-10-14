@@ -15,7 +15,7 @@ public class ResourceServiceTest extends CasdoorServiceTest {
         String tag = "";
         String parent = "";
         File file = new File(this.getClass().getResource("/casbin.svg").getFile());
-        String fullFilePath = String.format("%s/%s/%s", tag, config.getOrganizationName(), file.getName());
+        String fullFilePath = String.format("%s/%s/%s", tag, config.organizationName, file.getName());
         ResourceService resourceService = new ResourceService(config);
 
         CasdoorResponse<String, Object> response = resourceService.uploadResource(user, tag, parent, fullFilePath, file);

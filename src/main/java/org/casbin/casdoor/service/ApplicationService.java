@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,20 +32,23 @@ public class ApplicationService extends Service {
 
     public Application getApplication(String name) throws IOException {
         CasdoorResponse<Application, Object> response = doGet("get-application",
-                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Application, Object>>() {});
+                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Application, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Application> getApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-applications",
-                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Application>, Object>>() {});
+                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Application>, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Application> getOrganizationApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-organization-applications",
-                Map.of("owner", "admin", "organization", config.getOrganizationName()),
-                new TypeReference<CasdoorResponse<List<Application>, Object>>() {});
+                Map.of("owner", "admin", "organization", config.organizationName),
+                new TypeReference<CasdoorResponse<List<Application>, Object>>() {
+                });
         return response.getData();
     }
 
@@ -54,8 +58,8 @@ public class ApplicationService extends Service {
 
     public CasdoorResponse<String, Object> deleteApplication(String name) throws IOException {
         Application application = new Application();
-        application.setOwner("admin");
-        application.setName(name);
+        application.owner = "admin";
+        application.name = name;
         return modifyApplication(ApplicationOperations.DELETE_APPLICATION, application, null);
     }
 
@@ -64,9 +68,10 @@ public class ApplicationService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyApplication(ApplicationOperations method, Application application, java.util.Map<String, String> queryMap) throws IOException {
-        String id = application.getOwner() + "/" + application.getName();
+        String id = application.owner + "/" + application.name;
         String payload = objectMapper.writeValueAsString(application);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
-                new TypeReference<CasdoorResponse<T1, T2>>() {});
+                new TypeReference<CasdoorResponse<T1, T2>>() {
+                });
     }
 }

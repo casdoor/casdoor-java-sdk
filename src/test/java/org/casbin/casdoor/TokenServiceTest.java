@@ -21,21 +21,22 @@ public class TokenServiceTest extends CasdoorServiceTest {
     @Test
     public void testDeleteTokens() throws IOException {
         Token token = new Token();
-        token.setAccessToken("string");
-        token.setApplication("string");
-        token.setCodeChallenge("string");
-        token.setCreatedTime("string");
-        token.setOrganization("string");
-        token.setRefreshToken("string");
-        token.setUser("string");
-        token.setScope("string");
-        token.setTokenType("string");
-        token.setExpiresIn(0);
-        token.setCodeIsUsed(true);
-        token.setExpiresIn(0);
+        token.accessToken = "string";
+        token.application = "string";
+        token.codeChallenge = "string";
+        token.createdTime = "string";
+        token.organization = "string";
+        token.refreshToken = "string";
+        token.user = "string";
+        token.scope = "string";
+        token.tokenType = "string";
+        token.expiresIn = 0;
+        token.codeIsUsed = true;
 
-        token.setName("test-delete-token");
-        token.setOwner("admin");
+        token.name = "test-delete-token";
+        token.owner = "admin";
+
+
         CasdoorResponse response = casdoorTokenService.deleteToken(token);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

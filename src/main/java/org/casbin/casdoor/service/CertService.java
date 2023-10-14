@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,7 +31,7 @@ public class CertService extends Service {
 
     public List<Cert> getCerts() throws IOException {
         CasdoorResponse<List<Cert>, Object> response = doGet("get-certs",
-                Map.of("owner", config.getOrganizationName()),
+                Map.of("owner", config.organizationName),
                 new TypeReference<CasdoorResponse<List<Cert>, Object>>() {});
 
         return response.getData();

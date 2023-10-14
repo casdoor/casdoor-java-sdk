@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 
@@ -58,13 +59,13 @@ public class OrganizationServiceTest {
     public void testModifyOrganization() throws IOException {
 
         Organization organization = new Organization();
-        organization.setOwner("built-in");
-        organization.setName("test-modify-organization");
+        organization.owner = "built-in";
+        organization.name = "test-modify-organization";
         CasdoorResponse response = organizationService.addOrganization(organization);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        organization.setDisplayName("test-display-name");
+        organization.displayName = "test-display-name";
         response = organizationService.updateOrganization(organization);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

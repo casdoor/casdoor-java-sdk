@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Record;
@@ -37,8 +38,8 @@ public class RecordServiceTest {
     @Test
     public void testAddRecord() throws IOException {
         Record record = new Record();
-        record.setName("test");
-        record.setOwner("test-buildt-in");
+        record.name = "test";
+        record.owner = "test-buildt-in";
         CasdoorResponse response = recordService.addRecord(record);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

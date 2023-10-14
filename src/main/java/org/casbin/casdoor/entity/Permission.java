@@ -1,4 +1,4 @@
-// Copyright 2022 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,161 +42,28 @@ public class Permission implements Serializable {
     public String effect;
     @JsonProperty("isEnabled")
     public boolean isEnabled;
-
     public String submitter;
     public String approver;
     public String approveTime;
     public String state;
 
-    public String getOwner() {
-        return owner;
+    public Permission() {
     }
 
-    public void setOwner(String owner) {
+    public Permission(String owner, String name, String createdTime, String displayName, String description, String[] users, String[] roles, String[] domains, String model, String resourceType, String[] resources, String[] actions, String effect, boolean isEnabled) {
         this.owner = owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String[] getUsers() {
-        return users;
-    }
-
-    public void setUsers(String[] users) {
         this.users = users;
-    }
-
-    public String[] getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String[] roles) {
         this.roles = roles;
-    }
-
-    public String[] getDomains() {
-        return domains;
-    }
-
-    public void setDomains(String[] domains) {
         this.domains = domains;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
         this.model = model;
-    }
-
-    public String getAdapter() {
-        return adapter;
-    }
-
-    public void setAdapter(String adapter) {
-        this.adapter = adapter;
-    }
-
-    public String getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(String resourceType) {
         this.resourceType = resourceType;
-    }
-
-    public String[] getResources() {
-        return resources;
-    }
-
-    public void setResources(String[] resources) {
         this.resources = resources;
-    }
-
-    public String[] getActions() {
-        return actions;
-    }
-
-    public void setActions(String[] actions) {
         this.actions = actions;
-    }
-
-    public String getEffect() {
-        return effect;
-    }
-
-    public void setEffect(String effect) {
         this.effect = effect;
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public String getSubmitter() {
-        return submitter;
-    }
-
-    public void setSubmitter(String submitter) {
-        this.submitter = submitter;
-    }
-
-    public String getApprover() {
-        return approver;
-    }
-
-    public void setApprover(String approver) {
-        this.approver = approver;
-    }
-
-    public String getApproveTime() {
-        return approveTime;
-    }
-
-    public void setApproveTime(String approveTime) {
-        this.approveTime = approveTime;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+        this.isEnabled = isEnabled;
     }
 }

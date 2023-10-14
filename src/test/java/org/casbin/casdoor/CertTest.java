@@ -16,34 +16,27 @@ package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Cert;
 import org.casbin.casdoor.service.CertService;
-import org.casbin.casdoor.support.ConfigFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.casbin.casdoor.support.TestDefaultConfig;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CertServiceTest {
+public class CertTest {
 
-    private CertService certService;
-    @Before
-    public void init(){
-        certService = new CertService(ConfigFactory.getConfig());
-    }
+    private final CertService certService = new CertService(
+            TestDefaultConfig.InitConfig());
 
     @Test
-    public void testGetCerts() throws IOException {
-        List<Cert> admin = certService.getCerts();
-        assertNotNull(admin);
-
-    }
-
-    @Test
-    public void testGetGlobalCert() throws IOException {
+    public void testCerts() throws IOException {
+        List<Cert> certs = certService.getCerts();
+        assertNotNull(certs);
+        assertFalse(certs.isEmpty());
         List<Cert> globalCerts = certService.getGlobalCerts();
         assertNotNull(globalCerts);
-
+        assertFalse(globalCerts.isEmpty());
     }
+
 }

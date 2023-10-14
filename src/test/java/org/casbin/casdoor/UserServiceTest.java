@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor;
 
 import org.casbin.casdoor.entity.Role;
@@ -52,7 +53,7 @@ public class UserServiceTest extends CasdoorServiceTest {
         List<User> users = casdoorUserService.getUsers();
         Assert.assertNotNull(users);
         users = casdoorUserService.getSortedUsers("created_time", 5);
-        System.err.println(users.get(0).getName());
+        System.err.println(users.get(0).name);
         Assert.assertNotNull(users);
         Assert.assertEquals(5, users.size());
     }
@@ -67,13 +68,13 @@ public class UserServiceTest extends CasdoorServiceTest {
     public void testModifyUser() throws IOException {
 
         User user = new User();
-        user.setOwner("built-in");
-        user.setName("test-modify-user");
+        user.owner = "built-in";
+        user.name = "test-modify-user";
         CasdoorResponse response = casdoorUserService.addUser(user);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        user.setDisplayName("test-display-name");
+        user.displayName = "test-display-name";
         response = casdoorUserService.updateUser(user);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

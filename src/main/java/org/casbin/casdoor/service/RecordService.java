@@ -1,4 +1,4 @@
-// Copyright 2023 The casbin Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,14 +35,14 @@ public class RecordService extends Service {
 
     public List<Record> getRecords() throws IOException {
         CasdoorResponse<List<Record>, Object> response = doGet("get-records",
-                Map.of("owner", config.getOrganizationName()),
+                Map.of("owner", config.organizationName),
                 new TypeReference<CasdoorResponse<List<Record>, Object>>() {});
 
         return response.getData();
     }
     public java.util.Map<String, Object> getPaginationRecords(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Record[], Object> casdoorResponse = doGet("get-sessions",
-                Map.mergeMap(Map.of("owner", config.getOrganizationName(),
+                Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Record[], Object>>() {});
 
@@ -50,14 +51,14 @@ public class RecordService extends Service {
 
     public Record getRecord(String name) throws IOException {
         CasdoorResponse<Record, Object> response = doGet("get-record",
-                Map.of("id", config.getOrganizationName() + "/" + name),
+                Map.of("id", config.organizationName + "/" + name),
                 new TypeReference<CasdoorResponse<Record, Object>>() {});
 
         return response.getData();
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyRecord(String method, Record record, java.util.Map<String, String> queryMap) throws IOException {
-        String id = record.getOwner() + "/" + record.getName();
+        String id = record.owner + "/" + record.name;
         String payload = objectMapper.writeValueAsString(record);
         return doPost(method, Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});
