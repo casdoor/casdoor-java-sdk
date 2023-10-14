@@ -34,26 +34,26 @@ public class PermissionService extends Service {
 
     public Permission getPermission(String name) throws IOException {
         CasdoorResponse<Permission, Object> response = doGet("get-permission",
-                Map.of("id", config.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Permission, Object>>() {});
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Permission, Object>>() {});
         return response.getData();
     }
 
     public List<Permission> getPermissions() throws IOException {
         CasdoorResponse<List<Permission>, Object> resp = doGet("get-permissions",
-                Map.of("owner", config.getOrganizationName()), new TypeReference<CasdoorResponse<List<Permission>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Permission>, Object>>() {});
         return resp.getData();
     }
 
     public List<Permission> getPermissionsByRole(String name) throws IOException {
         CasdoorResponse<List<Permission>, Object> resp = doGet("get-permissions-by-role",
-                Map.of("id", config.getOrganizationName() + "/" + name,
-                        "owner", config.getOrganizationName()), new TypeReference<CasdoorResponse<List<Permission>, Object>>() {});
+                Map.of("id", config.organizationName + "/" + name,
+                        "owner", config.organizationName), new TypeReference<CasdoorResponse<List<Permission>, Object>>() {});
 
         return resp.getData();
     }
     public java.util.Map<String, Object> getPaginationPermissions(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Permission[], Object> resp = doGet("get-permissions",
-                Map.mergeMap(Map.of("owner", config.getOrganizationName(),
+                Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Permission[], Object>>() {});
 
@@ -83,7 +83,7 @@ public class PermissionService extends Service {
      */
     private <T1, T2> CasdoorResponse<T1, T2> modifyPermission(PermissionOperations method, Permission permission) throws IOException {
         return doPost(method.getOperation(),
-                Map.of("id", permission.getOwner() + "/" + permission.getName()),
+                Map.of("id", permission.owner + "/" + permission.name),
                 objectMapper.writeValueAsString(permission), new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 }

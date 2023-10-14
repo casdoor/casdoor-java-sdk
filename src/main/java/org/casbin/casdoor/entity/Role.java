@@ -33,59 +33,13 @@ public class Role implements Serializable {
     @JsonProperty("isEnabled")
     public boolean isEnabled;
 
-    public String getOwner() {
-        return owner;
+    public Role() {
     }
 
-    public void setOwner(String owner) {
+    public Role(String owner, String name, String createdTime, String displayName) {
         this.owner = owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String[] getUsers() {
-        return users;
-    }
-
-    public void setUsers(String[] users) {
-        this.users = users;
-    }
-
-    public String[] getRoles() {
-        return roles;
-    }
-
-    public void setRoles(String[] roles) {
-        this.roles = roles;
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
     }
 }

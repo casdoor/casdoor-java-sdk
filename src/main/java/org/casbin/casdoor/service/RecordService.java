@@ -35,14 +35,14 @@ public class RecordService extends Service {
 
     public List<Record> getRecords() throws IOException {
         CasdoorResponse<List<Record>, Object> response = doGet("get-records",
-                Map.of("owner", config.getOrganizationName()),
+                Map.of("owner", config.organizationName),
                 new TypeReference<CasdoorResponse<List<Record>, Object>>() {});
 
         return response.getData();
     }
     public java.util.Map<String, Object> getPaginationRecords(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Record[], Object> casdoorResponse = doGet("get-sessions",
-                Map.mergeMap(Map.of("owner", config.getOrganizationName(),
+                Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Record[], Object>>() {});
 
@@ -51,14 +51,14 @@ public class RecordService extends Service {
 
     public Record getRecord(String name) throws IOException {
         CasdoorResponse<Record, Object> response = doGet("get-record",
-                Map.of("id", config.getOrganizationName() + "/" + name),
+                Map.of("id", config.organizationName + "/" + name),
                 new TypeReference<CasdoorResponse<Record, Object>>() {});
 
         return response.getData();
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyRecord(String method, Record record, java.util.Map<String, String> queryMap) throws IOException {
-        String id = record.getOwner() + "/" + record.getName();
+        String id = record.owner + "/" + record.name;
         String payload = objectMapper.writeValueAsString(record);
         return doPost(method, Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});

@@ -32,13 +32,13 @@ public class RoleServiceTest extends CasdoorServiceTest {
         RoleService roleService = new RoleService(this.config);
 
         Role role = new Role();
-        role.setOwner("built-in");
-        role.setName("test-modify-role");
+        role.owner = "built-in";
+        role.name = "test-modify-role";
         CasdoorResponse<String, Object> response = roleService.addRole(role);
         assertEquals("ok", response.getStatus());
         assertEquals("Affected", response.getData());
 
-        role.setDisplayName("test-display-name");
+        role.displayName = "test-display-name";
         response = roleService.updateRole(role);
         assertEquals("ok", response.getStatus());
         assertEquals("Affected", response.getData());

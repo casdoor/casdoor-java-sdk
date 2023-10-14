@@ -30,9 +30,9 @@ public class ResourceService extends Service {
 
     public CasdoorResponse<String, Object> uploadResource(String user, String tag, String parent, String fullFilePath, File file) throws IOException {
         return doPost("upload-resource",
-                Map.of("owner", config.getOrganizationName(),
+                Map.of("owner", config.organizationName,
                         "user", user,
-                        "application", config.getApplicationName(),
+                        "application", config.applicationName,
                         "tag", tag,
                         "parent", parent,
                         "fullFilePath", fullFilePath),
@@ -40,7 +40,7 @@ public class ResourceService extends Service {
     }
 
     public CasdoorResponse<String, Object> deleteResource(String name) throws IOException {
-        Resource resource = new Resource(config.getOrganizationName(), name);
+        Resource resource = new Resource(config.organizationName, name);
         String userStr = objectMapper.writeValueAsString(resource);
         return doPost("delete-resource", null, userStr, new TypeReference<CasdoorResponse<String, Object>>() {});
     }

@@ -31,27 +31,8 @@ public class SmsForm implements Serializable {
         this.receivers = receivers;
     }
 
-    public String getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(String organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
+    public SmsForm(String content, String[] receivers) {
         this.content = content;
-    }
-
-    public String[] getReceivers() {
-        return receivers;
-    }
-
-    public void setReceivers(String[] receivers) {
         this.receivers = receivers;
     }
 }

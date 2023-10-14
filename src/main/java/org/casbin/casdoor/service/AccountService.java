@@ -43,9 +43,9 @@ public class AccountService extends Service {
      */
     public CasdoorResponse setPassword(String userName, String oldPassword, String newPassword) throws IOException {
         return doPost("set-password",
-                Map.of("owner", config.getOrganizationName()),
+                Map.of("owner", config.organizationName),
                 Map.of(
-                        "userOwner", config.getOrganizationName(),
+                        "userOwner", config.organizationName,
                         "userName", userName,
                         "oldPassword", oldPassword,
                         "newPassword", newPassword),

@@ -38,8 +38,8 @@ public class RecordServiceTest {
     @Test
     public void testAddRecord() throws IOException {
         Record record = new Record();
-        record.setName("test");
-        record.setOwner("test-buildt-in");
+        record.name = "test";
+        record.owner = "test-buildt-in";
         CasdoorResponse response = recordService.addRecord(record);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

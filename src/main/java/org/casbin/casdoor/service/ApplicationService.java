@@ -46,7 +46,7 @@ public class ApplicationService extends Service {
 
     public List<Application> getOrganizationApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-organization-applications",
-                Map.of("owner", "admin", "organization", config.getOrganizationName()),
+                Map.of("owner", "admin", "organization", config.organizationName),
                 new TypeReference<CasdoorResponse<List<Application>, Object>>() {
                 });
         return response.getData();

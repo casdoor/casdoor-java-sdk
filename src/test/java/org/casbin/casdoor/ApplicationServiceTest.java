@@ -53,7 +53,6 @@ public class ApplicationServiceTest {
     public void testGetOrganizationApplications() throws IOException {
         List<Application> organizationApplications = applicationService.getOrganizationApplications();
         assertNotNull(organizationApplications);
-
     }
 
     @Test

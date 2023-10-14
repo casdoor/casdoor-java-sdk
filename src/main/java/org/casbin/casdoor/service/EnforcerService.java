@@ -36,7 +36,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[], Object> response = doPost("enforce",
                 Map.of(
-                        "permissionId", config.getOrganizationName() + "/" + permissionId,
+                        "permissionId", config.organizationName + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
@@ -54,7 +54,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[][], Object> response = doPost("batch-enforce",
                 Map.of(
-                        "permissionId", config.getOrganizationName() + "/" + permissionId,
+                        "permissionId", config.organizationName + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),

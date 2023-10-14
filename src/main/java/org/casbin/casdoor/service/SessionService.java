@@ -32,20 +32,20 @@ public class SessionService extends Service {
 
     public List<Session> getSessions() throws IOException {
         CasdoorResponse<List<Session>, Object> resp = doGet("get-sessions",
-                Map.of("owner", config.getOrganizationName()), new TypeReference<CasdoorResponse<List<Session>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Session>, Object>>() {});
         return resp.getData();
     }
     public java.util.Map<String, Object> getPaginationSessions(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Session[], Object> casdoorResponse = doGet("get-sessions",
-                Map.mergeMap(Map.of("owner", config.getOrganizationName(),
+                Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Session[], Object>>() {});
 
         return Map.of("casdoorSessions", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
-    public Session getSession(String name) throws IOException {
+    public Session getSession(String name,String application) throws IOException {
         CasdoorResponse<Session, Object> response = doGet("get-session",
-                Map.of("id", config.getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Session, Object>>() {});
+                Map.of("sessionPkId", config.organizationName + "/" + name + "/" + application), new TypeReference<CasdoorResponse<Session, Object>>() {});
         return response.getData();
     }
 
@@ -66,7 +66,7 @@ public class SessionService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySession(SessionOperations method, Session session) throws IOException {
-        String id = session.getOwner() + "/" + session.getName();
+        String id = session.owner + "/" + session.name;
         String payload = objectMapper.writeValueAsString(session);
         return doPost(method.getOperation(), null, payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});

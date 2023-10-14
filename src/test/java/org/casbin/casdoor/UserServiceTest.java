@@ -53,7 +53,7 @@ public class UserServiceTest extends CasdoorServiceTest {
         List<User> users = casdoorUserService.getUsers();
         Assert.assertNotNull(users);
         users = casdoorUserService.getSortedUsers("created_time", 5);
-        System.err.println(users.get(0).getName());
+        System.err.println(users.get(0).name);
         Assert.assertNotNull(users);
         Assert.assertEquals(5, users.size());
     }
@@ -68,13 +68,13 @@ public class UserServiceTest extends CasdoorServiceTest {
     public void testModifyUser() throws IOException {
 
         User user = new User();
-        user.setOwner("built-in");
-        user.setName("test-modify-user");
+        user.owner = "built-in";
+        user.name = "test-modify-user";
         CasdoorResponse response = casdoorUserService.addUser(user);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        user.setDisplayName("test-display-name");
+        user.displayName = "test-display-name";
         response = casdoorUserService.updateUser(user);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

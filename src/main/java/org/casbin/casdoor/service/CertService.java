@@ -31,7 +31,7 @@ public class CertService extends Service {
 
     public List<Cert> getCerts() throws IOException {
         CasdoorResponse<List<Cert>, Object> response = doGet("get-certs",
-                Map.of("owner", config.getOrganizationName()),
+                Map.of("owner", config.organizationName),
                 new TypeReference<CasdoorResponse<List<Cert>, Object>>() {});
 
         return response.getData();

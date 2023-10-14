@@ -54,13 +54,5 @@ public class CasdoorResponse<T1, T2> {
         this.data2 = data2;
     }
 
-    @Override
-    public String toString() {
-        return "CasdoorResponse{" +
-                "status='" + status + '\'' +
-                ", msg='" + msg + '\'' +
-                ", data='" + data + '\'' +
-                ", data2='" + data2 + '\'' +
-                '}';
-    }
+
 }

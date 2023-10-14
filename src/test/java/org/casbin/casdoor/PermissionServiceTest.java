@@ -34,13 +34,14 @@ public class PermissionServiceTest extends CasdoorServiceTest {
         PermissionService permissionService = new PermissionService(this.config);
 
         Permission permission = new Permission();
-        permission.setOwner("built-in");
-        permission.setName("test-modify-permission");
+        permission.owner = "built-in";
+        permission.name = "test-modify-permission";
+
         CasdoorResponse response = permissionService.addPermission(permission);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        permission.setDisplayName("test-display-name");
+        permission.displayName = "test-display-name";
         response = permissionService.updatePermission(permission);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());

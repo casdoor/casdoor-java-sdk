@@ -24,44 +24,14 @@ public class Session implements Serializable {
     public String createdTime;
     public String[] sessionId;
 
-    public String getOwner() {
-        return owner;
+    public Session() {
     }
 
-    public void setOwner(String owner) {
+    public Session(String owner, String name, String application, String createdTime, String[] sessionId) {
         this.owner = owner;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
-    }
-
-    public String getApplication() {
-        return application;
-    }
-
-    public void setApplication(String application) {
         this.application = application;
-    }
-
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
-    }
-
-    public String[] getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String[] sessionId) {
         this.sessionId = sessionId;
     }
-
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class ProviderServiceTest {
+public class ProvierServiceTest {
     private ProviderService providerService;
 
     @Before
@@ -38,14 +38,14 @@ public class ProviderServiceTest {
 
     @Test
     public void testGetCasdoorProvier() throws IOException {
-        Provier provider = providerService.getProvider("provider_captcha_default");
-        assertNotNull(provider);
+        Provier provier = providerService.getProvider("provider_captcha_default");
+        assertNotNull(provier);
     }
 
     @Test
     public void testGetCasdoorProviers() throws IOException {
-        List<Provier> providers = providerService.getProviders();
-        assertNotNull(providers);
+        List<Provier> proviers = providerService.getProviders();
+        assertNotNull(proviers);
     }
 
     @Test
@@ -56,19 +56,20 @@ public class ProviderServiceTest {
 
     @Test
     public void testModifyCasdoorProvier() throws IOException {
-        Provier provider = new Provier();
-        provider.setOwner("test-owner");
-        provider.setName("test-provider-name");
+        Provier provier = new Provier();
+        provier.owner = "test-owner";
+        provier.name = "test-provier-name";
 
-        CasdoorResponse response = providerService.addProvider(provider);
+        CasdoorResponse response = providerService.addProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        provider.setOwner("test-updated-owner");
-        response = providerService.updateProvider(provider);
+
+        provier.owner = "test-updated-owner";
+        response = providerService.updateProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
 
-        response = providerService.deleteProvider(provider);
+        response = providerService.deleteProvider(provier);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
     }

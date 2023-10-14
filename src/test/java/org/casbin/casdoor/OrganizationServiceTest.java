@@ -59,13 +59,13 @@ public class OrganizationServiceTest {
     public void testModifyOrganization() throws IOException {
 
         Organization organization = new Organization();
-        organization.setOwner("built-in");
-        organization.setName("test-modify-organization");
+        organization.owner = "built-in";
+        organization.name = "test-modify-organization";
         CasdoorResponse response = organizationService.addOrganization(organization);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
 
-        organization.setDisplayName("test-display-name");
+        organization.displayName = "test-display-name";
         response = organizationService.updateOrganization(organization);
         Assert.assertEquals("ok", response.getStatus());
         Assert.assertEquals("Affected", response.getData());
