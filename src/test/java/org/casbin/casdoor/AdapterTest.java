@@ -14,91 +14,83 @@
 
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.entity.Cert;
-import org.casbin.casdoor.service.CertService;
+import org.casbin.casdoor.entity.Adapter;
+import org.casbin.casdoor.service.AdapterService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CertTest {
-
-    private final CertService certService = new CertService(
+public class AdapterTest {
+    private final AdapterService adapterService = new AdapterService(
             TestDefaultConfig.InitConfig());
 
     @Test
-    public void testCert() {
-        String name = TestDefaultConfig.getRandomName("cert");
+    public void testAdapter() {
+        String name = TestDefaultConfig.getRandomName("adapter");
 
         // Add a new object
-        Cert cert = new Cert(
+        Adapter adapter = new Adapter(
                 "admin",
                 name,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
-                "JWT",
-                "x509",
-                "RS256",
-                4096,
-                20
+                "https://casdoor.org"
         );
-        assertDoesNotThrow(() -> certService.addCert(cert));
+        assertDoesNotThrow(() -> adapterService.addAdapter(adapter));
 
         // Get all objects, check if our added object is inside the list
-        List<Cert> certs;
+        List<Adapter> adapters;
         try {
-            certs = certService.getCerts();
+            adapters = adapterService.getAdapters();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = certs.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = adapters.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Cert retrievedCert;
+        Adapter retrievedAdapter;
         try {
-            retrievedCert = certService.getCert(name);
+            retrievedAdapter = adapterService.getAdapter(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedCert.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedAdapter.name, "Retrieved object does not match added object");
 
         // Update the object
-        String updatedDisplayName = "Updated Casdoor Website";
-        retrievedCert.displayName = updatedDisplayName;
-        assertDoesNotThrow(() -> certService.updateCert(retrievedCert));
+        String updatedUser = "Updated Casdoor Website";
+        retrievedAdapter.user = updatedUser;
+        assertDoesNotThrow(() -> adapterService.updateAdapter(retrievedAdapter));
 
         // Validate the update
-        Cert updatedCert;
+        Adapter updatedAdapter;
         try {
-            updatedCert = certService.getCert(name);
+            updatedAdapter = adapterService.getAdapter(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDisplayName, updatedCert.displayName, "Failed to update object, displayName mismatch");
+        assertEquals(updatedUser, updatedAdapter.user, "Failed to update object, User mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> certService.deleteCert(cert));
+        assertDoesNotThrow(() -> adapterService.deleteAdapter(adapter));
 
         // Validate the deletion
-        Cert deletedCert;
+        Adapter deletedAdapter;
         try {
-            deletedCert = certService.getCert(name);
+            deletedAdapter = adapterService.getAdapter(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedCert, "Failed to delete object, it's still retrievable");
+        assertNull(deletedAdapter, "Failed to delete object, it's still retrievable");
     }
-
-
 }

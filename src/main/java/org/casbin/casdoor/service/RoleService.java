@@ -32,13 +32,15 @@ public class RoleService extends Service {
 
     public Role getRole(String name) throws IOException {
         CasdoorResponse<Role, Object> resp = doGet("get-role",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Role, Object>>() {});
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Role, Object>>() {
+                });
         return resp.getData();
     }
 
     public List<Role> getRoles() throws IOException {
         CasdoorResponse<List<Role>, Object> resp = doGet("get-roles",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Role>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Role>, Object>>() {
+                });
         return resp.getData();
     }
 
@@ -46,10 +48,12 @@ public class RoleService extends Service {
         CasdoorResponse<Role[], Object> casdoorResponse = doGet("get-roles",
                 Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Role[], Object>>() {});
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Role[], Object>>() {
+                });
 
         return Map.of("casdoorRoles", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
+
     public CasdoorResponse<String, Object> updateRole(Role role) throws IOException {
         return modifyRole(RoleOperations.UPDATE_ROLE, role);
     }
@@ -65,9 +69,14 @@ public class RoleService extends Service {
     public CasdoorResponse<String, Object> deleteRole(Role role) throws IOException {
         return modifyRole(RoleOperations.DELETE_ROLE, role);
     }
+
     private <T1, T2> CasdoorResponse<T1, T2> modifyRole(RoleOperations method, Role role) throws IOException {
-       return doPost(method.getOperation(),
-                Map.of("id", role.owner + "/" + role.name),
-                objectMapper.writeValueAsString(role), new TypeReference<CasdoorResponse<T1, T2>>() {});
+        String id = role.owner + "/" + role.name;
+        role.owner = config.organizationName;
+        String payload = objectMapper.writeValueAsString(role);
+        return doPost(method.getOperation(),
+                Map.of("id", id), payload
+                , new TypeReference<CasdoorResponse<T1, T2>>() {
+                });
     }
 }

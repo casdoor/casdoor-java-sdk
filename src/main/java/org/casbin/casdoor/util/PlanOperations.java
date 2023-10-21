@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor.entity;
+package org.casbin.casdoor.util;
+public enum PlanOperations {
+    ADD_PLAN("add-plan"),
+    DELETE_PLAN("delete-plan"),
+    UPDATE_PLAN("update-plan");
+    private final String operation;
 
+    PlanOperations(String op) {
+        this.operation = op;
+    }
 
-import java.io.Serializable;
-
-/**
- * Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
- * used to obtain resource-related information from Casdoor
- */
-
-public class Resource implements Serializable {
-        public String owner;
-        public String name;
-
-        public Resource() {
-        }
-
-        public Resource(String owner, String name) {
-                this.owner = owner;
-                this.name = name;
-        }
+    public String getOperation() {
+        return operation;
+    }
 }

@@ -34,13 +34,15 @@ public class EnforcerService extends Service {
 
     public Enforcer getEnforcer(String name) throws IOException {
         CasdoorResponse<Enforcer, Object> response = doGet("get-enforcer",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Enforcer, Object>>() {});
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Enforcer, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Enforcer> getEnforcers() throws IOException {
         CasdoorResponse<List<Enforcer>, Object> resp = doGet("get-enforcers",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Enforcer>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Enforcer>, Object>>() {
+                });
         return resp.getData();
     }
 
@@ -97,10 +99,11 @@ public class EnforcerService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyEnforcer(EnforcerOperations method, Enforcer enforcer) throws IOException {
         String id = enforcer.owner + "/" + enforcer.name;
+        enforcer.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(enforcer);
         return doPost(method.getOperation(),
-                Map.of("id", enforcer.owner + "/" + enforcer.name),
-                objectMapper.writeValueAsString(enforcer), new TypeReference<CasdoorResponse<T1, T2>>() {
+                Map.of("id", id),
+                payload, new TypeReference<CasdoorResponse<T1, T2>>() {
                 });
     }
 }

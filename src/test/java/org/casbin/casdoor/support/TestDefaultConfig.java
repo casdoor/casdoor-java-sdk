@@ -8,6 +8,10 @@ package org.casbin.casdoor.support;
 
 import org.casbin.casdoor.config.Config;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -65,5 +69,16 @@ public class TestDefaultConfig {
     public static Config InitConfig() {
         return new Config(TEST_CASDOOR_ENDPOINT, TEST_CLIENT_ID, TEST_CLIENT_SECRET, TEST_CASDOOR_CERTIFICATE, TEST_CASDOOR_ORGANIZATION, TEST_CASDOOR_APPLICATION);
 
+    }
+
+    public static File convert(byte[] data) throws IOException {
+
+        File file = File.createTempFile("temp", ".tmp");
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(data);
+        }
+
+        return file;
     }
 }

@@ -35,7 +35,7 @@ public class UserTest {
 
         // Add a new object
         User user = new User(
-                "casbin",
+                "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name);

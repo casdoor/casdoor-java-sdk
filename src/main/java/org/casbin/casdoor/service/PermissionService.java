@@ -82,8 +82,11 @@ public class PermissionService extends Service {
      * possible actions are `add-permission`, `update-permission`, `delete-permission`,
      */
     private <T1, T2> CasdoorResponse<T1, T2> modifyPermission(PermissionOperations method, Permission permission) throws IOException {
+        String id = permission.owner + "/" + permission.name;
+        permission.owner = config.organizationName;
+        String payload = objectMapper.writeValueAsString(permission);
         return doPost(method.getOperation(),
-                Map.of("id", permission.owner + "/" + permission.name),
-                objectMapper.writeValueAsString(permission), new TypeReference<CasdoorResponse<T1, T2>>() {});
+                Map.of("id", id),
+                payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 }

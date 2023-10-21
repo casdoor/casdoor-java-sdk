@@ -9,36 +9,34 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing CasdoorPermissions and
 // limitations under the License.
 
 package org.casbin.casdoor.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
-/**
- * Role has the same definition as https://github.com/casbin/casdoor/blob/master/object/role.go#L24
- */
-
-public class Role implements Serializable {
+public class Subscription {
     public String owner;
     public String name;
     public String createdTime;
     public String displayName;
-    public String[] users;
-    public String[] roles;
-    @JsonProperty("isEnabled")
-    public boolean isEnabled;
-
+    public LocalDateTime startDate;
+    public LocalDateTime endDate;
+    public int duration;
     public String description;
+    public String user;
+    public String plan;
+    public boolean isEnabled;
+    public String submitter;
+    public String approver;
+    public String approveTime;
+    public String state;
 
-    public Role() {
+    public Subscription() {
     }
 
-    public Role(String owner, String name, String createdTime, String displayName,String description) {
+    public Subscription(String owner, String name, String createdTime, String displayName, String description) {
         this.owner = owner;
         this.name = name;
         this.createdTime = createdTime;

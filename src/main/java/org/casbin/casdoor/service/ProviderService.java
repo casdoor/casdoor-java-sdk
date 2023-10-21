@@ -66,6 +66,7 @@ public class ProviderService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyProvider(ProviderOperations method, Provier provier, java.util.Map<String, String> queryMap) throws IOException {
         String id = provier.owner + "/" + provier.name;
+        provier.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(provier);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});

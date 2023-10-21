@@ -31,31 +31,37 @@ public class OrganizationService extends Service {
 
     public Organization getOrganization(String name) throws IOException {
         CasdoorResponse<Organization, Object> response = doGet("get-organization",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Organization, Object>>() {});
+                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Organization, Object>>() {
+                });
         return response.getData();
     }
 
     public List<Organization> getOrganizations() throws IOException {
         CasdoorResponse<List<Organization>, Object> resp = doGet("get-organizations",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
+                });
         return resp.getData();
     }
 
     public List<Organization> getOrganizationNames() throws IOException {
         CasdoorResponse<List<Organization>, Object> response = doGet("get-organization-names",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {});
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
+                });
         return response.getData();
     }
 
     public CasdoorResponse<String, Object> updateOrganization(Organization organization) throws IOException {
+        organization.owner = "admin";
         return modifyOrganization(OrganizationOperations.UPDATE_ORGANIZATION, organization);
     }
 
     public CasdoorResponse<String, Object> addOrganization(Organization organization) throws IOException {
+        organization.owner = "admin";
         return modifyOrganization(OrganizationOperations.ADD_ORGANIZATION, organization);
     }
 
     public CasdoorResponse<String, Object> deleteOrganization(Organization organization) throws IOException {
+        organization.owner = "admin";
         return modifyOrganization(OrganizationOperations.DELETE_ORGANIZATION, organization);
     }
 
@@ -64,8 +70,11 @@ public class OrganizationService extends Service {
      * Possible actions are `add-organization`, `update-organization`, `delete-organization`.
      */
     private <T1, T2> CasdoorResponse<T1, T2> modifyOrganization(OrganizationOperations method, Organization organization) throws IOException {
+        String id = organization.owner + "/" + organization.name;
+        String payload = objectMapper.writeValueAsString(organization);
         return doPost(method.getOperation(),
-                Map.of("id", organization.owner + "/" + organization.name),
-                objectMapper.writeValueAsString(organization), new TypeReference<CasdoorResponse<T1, T2>>() {});
+                Map.of("id", id), payload
+                , new TypeReference<CasdoorResponse<T1, T2>>() {
+                });
     }
 }
