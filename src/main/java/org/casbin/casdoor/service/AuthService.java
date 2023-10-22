@@ -93,15 +93,15 @@ public class AuthService extends Service {
         // read "access_token" from payload and convert to CasdoorUser
         try {
             JWTClaimsSet claimsSet = parseJwt.getJWTClaimsSet();
-            String accessToken = claimsSet.getStringClaim("access_token");
+            String userJson = claimsSet == null ? null : claimsSet.toString();
 
-            if (accessToken == null || accessToken.isEmpty()) {
-                throw new AuthException("Access token not found in JWT payload.");
+            if (userJson == null || userJson.isEmpty()) {
+                throw new AuthException("Cannot get claims from JWT payload");
             }
 
-            return objectMapper.readValue(accessToken, User.class);
+            return objectMapper.readValue(userJson, User.class);
         } catch (JsonProcessingException | java.text.ParseException e) {
-            throw new AuthException("Cannot read access token from JWT payload.", e);
+            throw new AuthException("Cannot convert claims to User", e);
         }
     }
 
