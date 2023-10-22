@@ -53,17 +53,17 @@ public class ApplicationService extends Service {
     }
 
     public CasdoorResponse<String, Object> addApplication(Application application) throws IOException {
+        application.owner = "admin";
         return modifyApplication(ApplicationOperations.ADD_APPLICATION, application, null);
     }
 
-    public CasdoorResponse<String, Object> deleteApplication(String name) throws IOException {
-        Application application = new Application();
+    public CasdoorResponse<String, Object> deleteApplication(Application application) throws IOException {
         application.owner = "admin";
-        application.name = name;
         return modifyApplication(ApplicationOperations.DELETE_APPLICATION, application, null);
     }
 
     public CasdoorResponse<String, Object> updateApplication(Application application) throws IOException {
+        application.owner = "admin";
         return modifyApplication(ApplicationOperations.UPDATE_APPLICATION, application, null);
     }
 

@@ -14,91 +14,82 @@
 
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.entity.Cert;
-import org.casbin.casdoor.service.CertService;
+import org.casbin.casdoor.entity.Webhook;
+import org.casbin.casdoor.service.WebhookService;
 import org.casbin.casdoor.support.TestDefaultConfig;
+import org.junit.Test;
 
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CertTest {
-
-    private final CertService certService = new CertService(
+public class WebhookTest {
+    private final WebhookService webhookService = new WebhookService(
             TestDefaultConfig.InitConfig());
 
     @Test
-    public void testCert() {
-        String name = TestDefaultConfig.getRandomName("cert");
+    public void testWebhook() { 
+        String name = TestDefaultConfig.getRandomName("Webhook");
 
         // Add a new object
-        Cert cert = new Cert(
-                "admin",
+        Webhook webhook = new Webhook(
+                "casbin",
                 name,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
-                name,
-                "JWT",
-                "x509",
-                "RS256",
-                4096,
-                20
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                "casbin"
         );
-        assertDoesNotThrow(() -> certService.addCert(cert));
+        assertDoesNotThrow(() -> webhookService.addWebhook(webhook)); 
 
         // Get all objects, check if our added object is inside the list
-        List<Cert> certs;
+        List<Webhook> webhooks; 
         try {
-            certs = certService.getCerts();
+            webhooks = webhookService.getWebhooks(); 
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = certs.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = webhooks.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Cert retrievedCert;
+        Webhook retrievedWebhook;
         try {
-            retrievedCert = certService.getCert(name);
+            retrievedWebhook = webhookService.getWebhook(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedCert.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedWebhook.name, "Retrieved object does not match added object");
 
         // Update the object
-        String updatedDisplayName = "Updated Casdoor Website";
-        retrievedCert.displayName = updatedDisplayName;
-        assertDoesNotThrow(() -> certService.updateCert(retrievedCert));
+        String updatedOrganization = "Updated Casdoor Website";
+        retrievedWebhook.organization = updatedOrganization;
+        assertDoesNotThrow(() -> webhookService.updateWebhook(retrievedWebhook));
 
         // Validate the update
-        Cert updatedCert;
+        Webhook updatedWebhook;
         try {
-            updatedCert = certService.getCert(name);
+            updatedWebhook = webhookService.getWebhook(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDisplayName, updatedCert.displayName, "Failed to update object, displayName mismatch");
+        assertEquals(updatedOrganization, updatedWebhook.organization, "Failed to update object, organization mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> certService.deleteCert(cert));
+        assertDoesNotThrow(() -> webhookService.deleteWebhook(webhook));
 
         // Validate the deletion
-        Cert deletedCert;
+        Webhook deletedWebhook;
         try {
-            deletedCert = certService.getCert(name);
+            deletedWebhook = webhookService.getWebhook(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedCert, "Failed to delete object, it's still retrievable");
+        assertNull(deletedWebhook, "Failed to delete object, it's still retrievable");
     }
-
-
 }

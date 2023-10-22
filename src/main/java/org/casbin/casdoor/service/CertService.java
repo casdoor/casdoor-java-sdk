@@ -17,6 +17,8 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.Cert;
+import org.casbin.casdoor.entity.Organization;
+import org.casbin.casdoor.util.CertOperations;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
@@ -37,11 +39,42 @@ public class CertService extends Service {
         return response.getData();
     }
 
+    public Cert getCert(String name) throws IOException {
+        CasdoorResponse<Cert, Object> response = doGet("get-cert",
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Cert, Object>>() {});
+        return response.getData();
+    }
+
     public List<Cert> getGlobalCerts() throws IOException {
         CasdoorResponse<List<Cert>, Object> response = doGet("get-globle-certs",null,
                 new TypeReference<CasdoorResponse<List<Cert>, Object>>() {});
 
         return response.getData();
+    }
+
+    public CasdoorResponse<String, Object> updateCert(Cert cert) throws IOException {
+        return modifyCert(CertOperations.UPDATE_CERT, cert);
+    }
+
+    public CasdoorResponse<String, Object> addCert(Cert cert) throws IOException {
+        return modifyCert(CertOperations.ADD_CERT, cert);
+    }
+
+    public CasdoorResponse<String, Object> deleteCert(Cert cert) throws IOException {
+        return modifyCert(CertOperations.DELETE_CERT, cert);
+    }
+
+    /**
+     * modifyCert is an encapsulation of Cert CUD(Create, Update, Delete) operations.
+     * Possible actions are `add-Cert`, `update-Cert`, `delete-Cert`.
+     */
+    private <T1, T2> CasdoorResponse<T1, T2> modifyCert(CertOperations method, Cert cert) throws IOException {
+        String id = cert.owner + "/" + cert.name;
+        cert.owner = config.organizationName;
+        String payload = objectMapper.writeValueAsString(cert);
+        return doPost(method.getOperation(),
+                Map.of("id", id),
+                payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 
 }

@@ -79,7 +79,7 @@ public class GroupTest {
         assertEquals(updatedDisplayName, updatedGroup.displayName, "Failed to update object, displayName mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> groupService.deleteGroup(name));
+        assertDoesNotThrow(() -> groupService.deleteGroup(group));
 
         // Validate the deletion
         Group deletedGroup;

@@ -34,7 +34,7 @@ public class PaymentTest {
 
         // Add a new object
         Payment payment = new Payment(
-                "casbin",
+                "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
@@ -80,7 +80,7 @@ public class PaymentTest {
         assertEquals(updatedProductName, updatedPayment.productName, "Failed to update object, productName mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> paymentService.deletePayment(name));
+        assertDoesNotThrow(() -> paymentService.deletePayment(payment));
 
         // Validate the deletion
         Payment deletedPayment;

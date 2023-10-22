@@ -14,85 +14,90 @@
 
 package org.casbin.casdoor;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.casbin.casdoor.entity.Application;
-import org.casbin.casdoor.service.ApplicationService;
+import org.casbin.casdoor.entity.Product;
+import org.casbin.casdoor.service.ProductService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ApplicationTest {
-    private final ApplicationService applicationService = new ApplicationService(TestDefaultConfig.InitConfig());
+public class ProductTest {
+
+    private final ProductService productService = new ProductService(
+            TestDefaultConfig.InitConfig());
 
     @Test
-    public void testApplication() {
-        String name = TestDefaultConfig.getRandomName("application");
+    public void testProduct() {
+        String name = TestDefaultConfig.getRandomName("Product");
 
         // Add a new object
-        Application application = new Application(
+        Product product = new Product(
                 "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
                 "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-                "https://casdoor.org",
                 "Casdoor Website",
-                "casbin"
+                "auto_created_product_for_plan",
+                999,
+                0,
+                "Published"
         );
-        assertDoesNotThrow(() -> applicationService.addApplication(application));
+        assertDoesNotThrow(() -> productService.addProduct(product));
 
         // Get all objects, check if our added object is inside the list
-        List<Application> applications;
+        List<Product> products;
         try {
-            applications = applicationService.getApplications();
+            products = productService.getProducts();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = applications.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = products.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Application retrievedApplication;
+        Product retrievedProduct;
         try {
-            retrievedApplication = applicationService.getApplication(name);
+            retrievedProduct = productService.getProduct(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedApplication.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedProduct.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDescription = "Updated Casdoor Website";
-        retrievedApplication.description = updatedDescription;
-        assertDoesNotThrow(() -> applicationService.updateApplication(retrievedApplication));
+        retrievedProduct.description = updatedDescription;
+        assertDoesNotThrow(() -> productService.updateProduct(retrievedProduct));
 
         // Validate the update
-        Application updatedApplication;
+        Product updatedProduct;
         try {
-            updatedApplication = applicationService.getApplication(name);
+            updatedProduct = productService.getProduct(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDescription, updatedApplication.description, "Failed to update object, description mismatch");
+        assertEquals(updatedDescription, updatedProduct.description, "Failed to update object, description mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> applicationService.deleteApplication(application));
+        assertDoesNotThrow(() -> productService.deleteProduct(product));
 
         // Validate the deletion
-        Application deletedApplication;
+        Product deletedProduct;
         try {
-            deletedApplication = applicationService.getApplication(name);
+            deletedProduct = productService.getProduct(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedApplication, "Failed to delete object, it's still retrievable");
+        assertNull(deletedProduct, "Failed to delete object, it's still retrievable");
     }
+
 }

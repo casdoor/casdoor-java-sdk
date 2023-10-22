@@ -20,6 +20,7 @@ import org.casbin.casdoor.util.GroupOperations;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.List;
 
 import java.io.IOException;
@@ -32,14 +33,14 @@ public class GroupService extends Service {
 
     public Group getGroup(String name) throws IOException {
         CasdoorResponse<Group, Object> response = doGet("get-group",
-                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Group, Object>>() {
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Group, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Group> getGroups() throws IOException {
         CasdoorResponse<List<Group>, Object> response = doGet("get-groups",
-                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Group>, Object>>() {
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Group>, Object>>() {
                 });
         return response.getData();
     }
@@ -48,10 +49,7 @@ public class GroupService extends Service {
         return modifyGroup(GroupOperations.ADD_GROUP, group, null);
     }
 
-    public CasdoorResponse<String, Object> deleteGroup(String name) throws IOException {
-        Group group = new Group();
-        group.owner = "admin";
-        group.name = name;
+    public CasdoorResponse<String, Object> deleteGroup(Group group) throws IOException {
         return modifyGroup(GroupOperations.DELETE_GROUP, group, null);
     }
 
@@ -61,6 +59,7 @@ public class GroupService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyGroup(GroupOperations method, Group group, java.util.Map<String, String> queryMap) throws IOException {
         String id = group.owner + "/" + group.name;
+        group.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(group);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

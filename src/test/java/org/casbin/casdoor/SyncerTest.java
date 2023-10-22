@@ -14,91 +14,90 @@
 
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.entity.Cert;
-import org.casbin.casdoor.service.CertService;
+import org.casbin.casdoor.entity.Syncer;
+import org.casbin.casdoor.service.SyncerService;
 import org.casbin.casdoor.support.TestDefaultConfig;
+import org.junit.Test;
 
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CertTest {
-
-    private final CertService certService = new CertService(
+public class SyncerTest {
+    private final SyncerService syncerService = new SyncerService(
             TestDefaultConfig.InitConfig());
 
     @Test
-    public void testCert() {
-        String name = TestDefaultConfig.getRandomName("cert");
+    public void testSyncer() {
+        String name = TestDefaultConfig.getRandomName("Syncer");
 
         // Add a new object
-        Cert cert = new Cert(
+        Syncer syncer = new Syncer(
                 "admin",
                 name,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
-                name,
-                "JWT",
-                "x509",
-                "RS256",
-                4096,
-                20
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                "casbin",
+                "localhost",
+                3306,
+                "root",
+                "123",
+                "mysql",
+                "syncer_db",
+                "user-table",
+                1
         );
-        assertDoesNotThrow(() -> certService.addCert(cert));
+        assertDoesNotThrow(() -> syncerService.addSyncer(syncer));
 
         // Get all objects, check if our added object is inside the list
-        List<Cert> certs;
+        List<Syncer> syncers;
         try {
-            certs = certService.getCerts();
+            syncers = syncerService.getSyncers();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = certs.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = syncers.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Cert retrievedCert;
+        Syncer retrievedSyncer;
         try {
-            retrievedCert = certService.getCert(name);
+            retrievedSyncer = syncerService.getSyncer(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedCert.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedSyncer.name, "Retrieved object does not match added object");
 
         // Update the object
-        String updatedDisplayName = "Updated Casdoor Website";
-        retrievedCert.displayName = updatedDisplayName;
-        assertDoesNotThrow(() -> certService.updateCert(retrievedCert));
+        String updatedPassword = "123456";
+        retrievedSyncer.password = updatedPassword;
+        assertDoesNotThrow(() -> syncerService.updateSyncer(retrievedSyncer));
 
         // Validate the update
-        Cert updatedCert;
+        Syncer updatedSyncer;
         try {
-            updatedCert = certService.getCert(name);
+            updatedSyncer = syncerService.getSyncer(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDisplayName, updatedCert.displayName, "Failed to update object, displayName mismatch");
+        assertEquals(updatedPassword, updatedSyncer.password, "Failed to update object, description mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> certService.deleteCert(cert));
+        assertDoesNotThrow(() -> syncerService.deleteSyncer(syncer));
 
         // Validate the deletion
-        Cert deletedCert;
+        Syncer deletedSyncer;
         try {
-            deletedCert = certService.getCert(name);
+            deletedSyncer = syncerService.getSyncer(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedCert, "Failed to delete object, it's still retrievable");
+        assertNull(deletedSyncer, "Failed to delete object, it's still retrievable");
     }
-
-
 }

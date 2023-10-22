@@ -20,6 +20,7 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.ModelOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.List;
 
 import java.io.IOException;
@@ -33,14 +34,14 @@ public class ModelService extends Service {
 
     public Model getModel(String name) throws IOException {
         CasdoorResponse<Model, Object> response = doGet("get-model",
-                Map.of("id", "casbin/" + name), new TypeReference<CasdoorResponse<Model, Object>>() {
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Model, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Model> getModels() throws IOException {
         CasdoorResponse<List<Model>, Object> response = doGet("get-models",
-                Map.of("owner", "casbin"), new TypeReference<CasdoorResponse<List<Model>, Object>>() {
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Model>, Object>>() {
                 });
         return response.getData();
     }
@@ -49,10 +50,7 @@ public class ModelService extends Service {
         return modifyModel(ModelOperations.ADD_MODEL, model, null);
     }
 
-    public CasdoorResponse<String, Object> deleteModel(String name) throws IOException {
-        Model model = new Model();
-        model.owner = "casbin";
-        model.name = name;
+    public CasdoorResponse<String, Object> deleteModel(Model model) throws IOException {
         return modifyModel(ModelOperations.DELETE_MODEL, model, null);
     }
 
@@ -62,6 +60,7 @@ public class ModelService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyModel(ModelOperations method, Model model, java.util.Map<String, String> queryMap) throws IOException {
         String id = model.owner + "/" + model.name;
+        model.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(model);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

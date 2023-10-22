@@ -14,35 +14,29 @@
 
 package org.casbin.casdoor.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
-/**
- * Role has the same definition as https://github.com/casbin/casdoor/blob/master/object/role.go#L24
- */
-
-public class Role implements Serializable {
+public class Plan {
     public String owner;
     public String name;
     public String createdTime;
     public String displayName;
-    public String[] users;
-    public String[] roles;
-    @JsonProperty("isEnabled")
-    public boolean isEnabled;
-
     public String description;
+    public double pricePerMonth;
+    public double pricePerYear;
+    public String currency;
+    public boolean isEnabled;
+    public String role;
+    public List<String> options;
 
-    public Role() {
-    }
-
-    public Role(String owner, String name, String createdTime, String displayName,String description) {
+    public Plan(String owner, String name, String createdTime, String displayName, String description) {
         this.owner = owner;
         this.name = name;
         this.createdTime = createdTime;
         this.displayName = displayName;
         this.description = description;
+    }
+
+    public Plan() {
     }
 }

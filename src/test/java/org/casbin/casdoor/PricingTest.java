@@ -14,85 +14,88 @@
 
 package org.casbin.casdoor;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.casbin.casdoor.entity.Application;
-import org.casbin.casdoor.service.ApplicationService;
+import org.casbin.casdoor.entity.Pricing;
+import org.casbin.casdoor.service.PricingService;
 import org.casbin.casdoor.support.TestDefaultConfig;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ApplicationTest {
-    private final ApplicationService applicationService = new ApplicationService(TestDefaultConfig.InitConfig());
+
+public class PricingTest {
+
+    private final PricingService pricingService = new PricingService(
+            TestDefaultConfig.InitConfig());
 
     @Test
-    public void testApplication() {
-        String name = TestDefaultConfig.getRandomName("application");
+    public void testPricing() {
+        String name = TestDefaultConfig.getRandomName("Pricing");
 
         // Add a new object
-        Application application = new Application(
+        Pricing pricing = new Pricing(
                 "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
-                "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-                "https://casdoor.org",
-                "Casdoor Website",
-                "casbin"
+                "app-admin",
+                "Casdoor Website"
         );
-        assertDoesNotThrow(() -> applicationService.addApplication(application));
+        assertDoesNotThrow(() -> pricingService.addPricing(pricing));
 
         // Get all objects, check if our added object is inside the list
-        List<Application> applications;
+        List<Pricing> pricings;
         try {
-            applications = applicationService.getApplications();
+            pricings = pricingService.getPricings();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = applications.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = pricings.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Application retrievedApplication;
+        Pricing retrievedPricing;
         try {
-            retrievedApplication = applicationService.getApplication(name);
+            retrievedPricing = pricingService.getPricing(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedApplication.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedPricing.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDescription = "Updated Casdoor Website";
-        retrievedApplication.description = updatedDescription;
-        assertDoesNotThrow(() -> applicationService.updateApplication(retrievedApplication));
+        retrievedPricing.description = updatedDescription;
+        assertDoesNotThrow(() -> pricingService.updatePricing(retrievedPricing));
 
         // Validate the update
-        Application updatedApplication;
+        Pricing updatedPricing;
         try {
-            updatedApplication = applicationService.getApplication(name);
+            updatedPricing = pricingService.getPricing(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDescription, updatedApplication.description, "Failed to update object, description mismatch");
+        assertEquals(updatedDescription, updatedPricing.description, "Failed to update object, description mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> applicationService.deleteApplication(application));
+        assertDoesNotThrow(() -> pricingService.deletePricing(retrievedPricing));
 
         // Validate the deletion
-        Application deletedApplication;
+        Pricing deletedPricing;
         try {
-            deletedApplication = applicationService.getApplication(name);
+            deletedPricing = pricingService.getPricing(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedApplication, "Failed to delete object, it's still retrievable");
+        assertNull(deletedPricing, "Failed to delete object, it's still retrievable");
     }
+
 }
+

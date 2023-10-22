@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 public class ModelTest {
     private final ModelService modelService = new ModelService(TestDefaultConfig.InitConfig());
 
@@ -92,7 +93,7 @@ public class ModelTest {
         assertEquals(updatedDisplayName, updatedModel.displayName, "Failed to update object, displayName mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> modelService.deleteModel(name));
+        assertDoesNotThrow(() -> modelService.deleteModel(model));
 
         // Validate the deletion
         Model deletedModel;

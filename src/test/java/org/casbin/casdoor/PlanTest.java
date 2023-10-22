@@ -14,85 +14,84 @@
 
 package org.casbin.casdoor;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.casbin.casdoor.entity.Application;
-import org.casbin.casdoor.service.ApplicationService;
+import org.casbin.casdoor.entity.Plan;
+import org.casbin.casdoor.service.PlanService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ApplicationTest {
-    private final ApplicationService applicationService = new ApplicationService(TestDefaultConfig.InitConfig());
+public class PlanTest {
+    private final PlanService planService = new PlanService(
+            TestDefaultConfig.InitConfig());
 
     @Test
-    public void testApplication() {
-        String name = TestDefaultConfig.getRandomName("application");
+    public void testPlan() {
+        String name = TestDefaultConfig.getRandomName("Plan");
 
         // Add a new object
-        Application application = new Application(
+        Plan plan = new Plan(
                 "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
-                "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-                "https://casdoor.org",
-                "Casdoor Website",
                 "casbin"
         );
-        assertDoesNotThrow(() -> applicationService.addApplication(application));
+        assertDoesNotThrow(() -> planService.addPlan(plan));
 
         // Get all objects, check if our added object is inside the list
-        List<Application> applications;
+        List<Plan> plans;
         try {
-            applications = applicationService.getApplications();
+            plans = planService.getPlans();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = applications.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = plans.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Application retrievedApplication;
+        Plan retrievedPlan;
         try {
-            retrievedApplication = applicationService.getApplication(name);
+            retrievedPlan = planService.getPlan(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedApplication.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedPlan.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDescription = "Updated Casdoor Website";
-        retrievedApplication.description = updatedDescription;
-        assertDoesNotThrow(() -> applicationService.updateApplication(retrievedApplication));
+        retrievedPlan.description = updatedDescription;
+        assertDoesNotThrow(() -> planService.updatePlan(retrievedPlan));
 
         // Validate the update
-        Application updatedApplication;
+        Plan updatedPlan;
         try {
-            updatedApplication = applicationService.getApplication(name);
+            updatedPlan = planService.getPlan(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDescription, updatedApplication.description, "Failed to update object, description mismatch");
+        assertEquals(updatedDescription, updatedPlan.description, "Failed to update object, description mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> applicationService.deleteApplication(application));
+        assertDoesNotThrow(() -> planService.deletePlan(retrievedPlan));
 
         // Validate the deletion
-        Application deletedApplication;
+        Plan deletedPlan;
         try {
-            deletedApplication = applicationService.getApplication(name);
+            deletedPlan = planService.getPlan(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedApplication, "Failed to delete object, it's still retrievable");
+        assertNull(deletedPlan, "Failed to delete object, it's still retrievable");
     }
 }
+

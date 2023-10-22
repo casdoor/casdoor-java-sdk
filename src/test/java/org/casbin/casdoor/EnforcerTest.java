@@ -36,7 +36,7 @@ public class EnforcerTest {
 
         // Add a new object
         Enforcer enforcer = new Enforcer(
-                "casbin",
+                "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

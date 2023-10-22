@@ -12,25 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.casbin.casdoor.entity;
+package org.casbin.casdoor.util;
 
+public enum CertOperations {
+    ADD_CERT("add-cert"),
+    DELETE_CERT("delete-cert"),
+    UPDATE_CERT("update-cert");
+    private final String operation;
 
-import java.io.Serializable;
+    CertOperations(String op) {
+        this.operation = op;
+    }
 
-/**
- * Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
- * used to obtain resource-related information from Casdoor
- */
-
-public class Resource implements Serializable {
-        public String owner;
-        public String name;
-
-        public Resource() {
-        }
-
-        public Resource(String owner, String name) {
-                this.owner = owner;
-                this.name = name;
-        }
+    public String getOperation() {
+        return operation;
+    }
 }

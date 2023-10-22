@@ -14,85 +14,84 @@
 
 package org.casbin.casdoor;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.casbin.casdoor.entity.Application;
-import org.casbin.casdoor.service.ApplicationService;
+import org.casbin.casdoor.entity.Subscription;
+import org.casbin.casdoor.service.SubscriptionService;
 import org.casbin.casdoor.support.TestDefaultConfig;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ApplicationTest {
-    private final ApplicationService applicationService = new ApplicationService(TestDefaultConfig.InitConfig());
+
+public class SubscriptionTest {
+    private final SubscriptionService subscriptionService = new SubscriptionService(
+            TestDefaultConfig.InitConfig());
 
     @Test
-    public void testApplication() {
-        String name = TestDefaultConfig.getRandomName("application");
+    public void testSubscription() {
+        String name = TestDefaultConfig.getRandomName("Subscription");
 
         // Add a new object
-        Application application = new Application(
+        Subscription subscription = new Subscription(
                 "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,
-                "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
-                "https://casdoor.org",
-                "Casdoor Website",
-                "casbin"
+                "Casdoor Website"
         );
-        assertDoesNotThrow(() -> applicationService.addApplication(application));
+        assertDoesNotThrow(() -> subscriptionService.addSubscription(subscription));
 
         // Get all objects, check if our added object is inside the list
-        List<Application> applications;
+        List<Subscription> subscriptions;
         try {
-            applications = applicationService.getApplications();
+            subscriptions = subscriptionService.getSubscriptions();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = applications.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = subscriptions.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Application retrievedApplication;
+        Subscription retrievedSubscription;
         try {
-            retrievedApplication = applicationService.getApplication(name);
+            retrievedSubscription = subscriptionService.getSubscription(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedApplication.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedSubscription.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDescription = "Updated Casdoor Website";
-        retrievedApplication.description = updatedDescription;
-        assertDoesNotThrow(() -> applicationService.updateApplication(retrievedApplication));
+        retrievedSubscription.description = updatedDescription;
+        assertDoesNotThrow(() -> subscriptionService.updateSubscription(retrievedSubscription));
 
         // Validate the update
-        Application updatedApplication;
+        Subscription updatedSubscription;
         try {
-            updatedApplication = applicationService.getApplication(name);
+            updatedSubscription = subscriptionService.getSubscription(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDescription, updatedApplication.description, "Failed to update object, description mismatch");
+        assertEquals(updatedDescription, updatedSubscription.description, "Failed to update object, description mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> applicationService.deleteApplication(application));
+        assertDoesNotThrow(() -> subscriptionService.deleteSubscription(subscription));
 
         // Validate the deletion
-        Application deletedApplication;
+        Subscription deletedSubscription;
         try {
-            deletedApplication = applicationService.getApplication(name);
+            deletedSubscription = subscriptionService.getSubscription(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedApplication, "Failed to delete object, it's still retrievable");
+        assertNull(deletedSubscription, "Failed to delete object, it's still retrievable");
     }
 }

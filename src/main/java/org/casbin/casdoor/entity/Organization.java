@@ -20,21 +20,39 @@ public class Organization {
     public String createdTime;
     public String displayName;
     public String websiteUrl;
+    public String favicon;
+    public String passwordType;
+    public String passwordSalt;
+    public String[] passwordOptions;
+    public String[] countryCodes;
+    public String defaultAvatar;
+    public String defaultApplication;
+    public String[] tags;
+    public String[] languages;
+    public ThemeData themeData;
+    public String masterPassword;
+    public int initScore;
+    public boolean enableSoftDeletion;
+    public boolean isProfilePublic;
+    public MfaItem[] mfaItems;
+    public AccountItem[] accountItems;
 
-    public Organization() {
-    }
-
-    public Organization(String owner, String name, String createdTime, String displayName, String websiteUrl, String passwordType) {
+    public Organization(String owner, String name, String createdTime, String displayName, String websiteUrl, String passwordType, String[] passwordOptions, String[] countryCodes, String[] tags, String[] languages, int initScore, boolean enableSoftDeletion, boolean isProfilePublic) {
         this.owner = owner;
         this.name = name;
         this.createdTime = createdTime;
         this.displayName = displayName;
         this.websiteUrl = websiteUrl;
         this.passwordType = passwordType;
+        this.passwordOptions = passwordOptions;
+        this.countryCodes = countryCodes;
+        this.tags = tags;
+        this.languages = languages;
+        this.initScore = initScore;
+        this.enableSoftDeletion = enableSoftDeletion;
+        this.isProfilePublic = isProfilePublic;
     }
 
-    public String favicon;
-    public String passwordType;
-    public String passwordSalt;
-    public String phonePrefix;
+    public Organization() {
+    }
 }

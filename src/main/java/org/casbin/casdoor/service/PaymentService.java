@@ -20,6 +20,7 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.PaymentOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.List;
 
 import java.io.IOException;
@@ -32,14 +33,14 @@ public class PaymentService extends Service {
 
     public Payment getPayment(String name) throws IOException {
         CasdoorResponse<Payment, Object> response = doGet("get-payment",
-                Map.of("id", "casbin/" + name), new TypeReference<CasdoorResponse<Payment, Object>>() {
+                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Payment, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Payment> getPayments() throws IOException {
         CasdoorResponse<List<Payment>, Object> response = doGet("get-payments",
-                Map.of("owner", "casbin"), new TypeReference<CasdoorResponse<List<Payment>, Object>>() {
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Payment>, Object>>() {
                 });
         return response.getData();
     }
@@ -48,10 +49,7 @@ public class PaymentService extends Service {
         return modifyPayment(PaymentOperations.ADD_PAYMENT, payment, null);
     }
 
-    public CasdoorResponse<String, Object> deletePayment(String name) throws IOException {
-        Payment payment = new Payment();
-        payment.owner = "casbin";
-        payment.name = name;
+    public CasdoorResponse<String, Object> deletePayment(Payment payment) throws IOException {
         return modifyPayment(PaymentOperations.DELETE_PAYMENT, payment, null);
     }
 
@@ -61,6 +59,7 @@ public class PaymentService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyPayment(PaymentOperations method, Payment payment, java.util.Map<String, String> queryMap) throws IOException {
         String id = payment.owner + "/" + payment.name;
+        payment.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(payment);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

@@ -14,35 +14,30 @@
 
 package org.casbin.casdoor.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.io.Serializable;
-import java.util.Arrays;
-
-/**
- * Role has the same definition as https://github.com/casbin/casdoor/blob/master/object/role.go#L24
- */
-
-public class Role implements Serializable {
+public class Adapter {
     public String owner;
     public String name;
     public String createdTime;
-    public String displayName;
-    public String[] users;
-    public String[] roles;
-    @JsonProperty("isEnabled")
+    public String type;
+    public String databaseType;
+    public String host;
+    public int port;
+    public String user;
+    public String password;
+    public String database;
+    public String table;
+    public String tableNamePrefix;
     public boolean isEnabled;
 
-    public String description;
 
-    public Role() {
+    public Adapter() {
     }
 
-    public Role(String owner, String name, String createdTime, String displayName,String description) {
+    public Adapter(String owner, String name, String createdTime, String user, String host) {
         this.owner = owner;
         this.name = name;
         this.createdTime = createdTime;
-        this.displayName = displayName;
-        this.description = description;
+        this.host = host;
+        this.user = user;
     }
 }

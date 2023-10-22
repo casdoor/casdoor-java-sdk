@@ -37,10 +37,11 @@ public class RoleTest {
 
         // Add a new object
         Role role = new Role(
-                "casbin",
+                "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
-                name
+                name,
+                "Casdoor Website"
         );
         assertDoesNotThrow(() -> roleService.addRole(role));
 
@@ -66,8 +67,8 @@ public class RoleTest {
         assertEquals(name, retrievedRole.name, "Retrieved object does not match added object");
 
         // Update the object
-        String updatedDisplayName = "Updated Casdoor Website";
-        retrievedRole.displayName = updatedDisplayName;
+        String updatedDescription = "Updated Casdoor Website";
+        retrievedRole.description = updatedDescription;
         assertDoesNotThrow(() -> roleService.updateRole(retrievedRole));
 
         // Validate the update
@@ -78,25 +79,20 @@ public class RoleTest {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDisplayName, updatedRole.displayName, "Failed to update object, displayName mismatch");
+        assertEquals(updatedDescription, updatedRole.description, "Failed to update object, description mismatch");
 
         // Delete the object
-        try {
-            roleService.deleteRole(role);
-        } catch (Exception e) {
-            fail("Failed to delete object: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> roleService.deleteRole(role));
 
         // Validate the deletion
-        Role deletedRole = null;
+        Role deletedRole;
         try {
             deletedRole = roleService.getRole(name);
         } catch (Exception e) {
-            fail("Failed to delete object, it's still retrievable: " + e.getMessage());
+            fail("Failed to delete object: " + e.getMessage());
+            return;
         }
-        if (deletedRole != null) {
-            fail("Failed to delete object, it's still retrievable");
-        }
+        assertNull(deletedRole, "Failed to delete object, it's still retrievable");
     }
 }
 

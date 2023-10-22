@@ -14,23 +14,7 @@
 
 package org.casbin.casdoor.entity;
 
-
-import java.io.Serializable;
-
-/**
- * Resource has the same definition as https://github.com/casbin/casdoor/blob/master/object/resource.go#L24
- * used to obtain resource-related information from Casdoor
- */
-
-public class Resource implements Serializable {
-        public String owner;
-        public String name;
-
-        public Resource() {
-        }
-
-        public Resource(String owner, String name) {
-                this.owner = owner;
-                this.name = name;
-        }
+public class MfaItem {
+    public String name;
+    public String rule;
 }

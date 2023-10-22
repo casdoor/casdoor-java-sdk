@@ -93,10 +93,12 @@ public class UserService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyUser(UserOperations method, User user) throws IOException {
-        String userStr = objectMapper.writeValueAsString(user);
+        String id = user.owner + "/" + user.name;
+        user.owner = config.organizationName;
+        String payload = objectMapper.writeValueAsString(user);
         return doPost(method.getOperation(), Map.of(
-                "id", user.owner + "/" + user.name
-        ), userStr, new TypeReference<CasdoorResponse<T1, T2>>() {});
+                "id", id
+        ), payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 
     public java.util.Map<String, Object> getPaginationUsers(int p, int pageSize, java.util.Map<String, String> queryMap) throws IOException {

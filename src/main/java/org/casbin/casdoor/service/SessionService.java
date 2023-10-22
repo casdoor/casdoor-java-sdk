@@ -67,8 +67,9 @@ public class SessionService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySession(SessionOperations method, Session session) throws IOException {
         String id = session.owner + "/" + session.name;
+        session.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(session);
-        return doPost(method.getOperation(), null, payload,
+        return doPost(method.getOperation(), Map.of("id",id), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 }
