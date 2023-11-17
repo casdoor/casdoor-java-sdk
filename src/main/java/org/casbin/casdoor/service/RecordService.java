@@ -35,14 +35,14 @@ public class RecordService extends Service {
 
     public List<Record> getRecords() throws IOException {
         CasdoorResponse<List<Record>, Object> response = doGet("get-records",
-                Map.of("owner", config.organizationName),
+                Map.of("owner", getConfig().getOrganizationName()),
                 new TypeReference<CasdoorResponse<List<Record>, Object>>() {});
 
         return response.getData();
     }
     public java.util.Map<String, Object> getPaginationRecords(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Record[], Object> casdoorResponse = doGet("get-sessions",
-                Map.mergeMap(Map.of("owner", config.organizationName,
+                Map.mergeMap(Map.of("owner", getConfig().getOrganizationName(),
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Record[], Object>>() {});
 
@@ -51,7 +51,7 @@ public class RecordService extends Service {
 
     public Record getRecord(String name) throws IOException {
         CasdoorResponse<Record, Object> response = doGet("get-record",
-                Map.of("id", config.organizationName + "/" + name),
+                Map.of("id", getConfig().getOrganizationName() + "/" + name),
                 new TypeReference<CasdoorResponse<Record, Object>>() {});
 
         return response.getData();
@@ -59,7 +59,7 @@ public class RecordService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyRecord(String method, Record record, java.util.Map<String, String> queryMap) throws IOException {
         String id = record.owner + "/" + record.name;
-        String payload = objectMapper.writeValueAsString(record);
+        String payload = getObjectMapper().writeValueAsString(record);
         return doPost(method, Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});
     }

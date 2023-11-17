@@ -28,7 +28,7 @@ public class EmailService extends Service {
 
     public CasdoorResponse sendEmail(String title, String content, String sender, String... receivers) throws IOException {
         EmailForm emailForm = new EmailForm(title, content, sender, receivers);
-        String emailFormStr = objectMapper.writeValueAsString(emailForm);
+        String emailFormStr = getObjectMapper().writeValueAsString(emailForm);
 
         return doPost("send-email", null, emailFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
     }

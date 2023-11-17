@@ -46,7 +46,7 @@ public class ApplicationService extends Service {
 
     public List<Application> getOrganizationApplications() throws IOException {
         CasdoorResponse<List<Application>, Object> response = doGet("get-organization-applications",
-                Map.of("owner", "admin", "organization", config.organizationName),
+                Map.of("owner", "admin", "organization", getConfig().getOrganizationName()),
                 new TypeReference<CasdoorResponse<List<Application>, Object>>() {
                 });
         return response.getData();
@@ -69,7 +69,7 @@ public class ApplicationService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyApplication(ApplicationOperations method, Application application, java.util.Map<String, String> queryMap) throws IOException {
         String id = application.owner + "/" + application.name;
-        String payload = objectMapper.writeValueAsString(application);
+        String payload = getObjectMapper().writeValueAsString(application);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

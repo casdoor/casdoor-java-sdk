@@ -34,14 +34,14 @@ public class ModelService extends Service {
 
     public Model getModel(String name) throws IOException {
         CasdoorResponse<Model, Object> response = doGet("get-model",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Model, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Model, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Model> getModels() throws IOException {
         CasdoorResponse<List<Model>, Object> response = doGet("get-models",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Model>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Model>, Object>>() {
                 });
         return response.getData();
     }
@@ -60,8 +60,8 @@ public class ModelService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyModel(ModelOperations method, Model model, java.util.Map<String, String> queryMap) throws IOException {
         String id = model.owner + "/" + model.name;
-        model.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(model);
+        model.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(model);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

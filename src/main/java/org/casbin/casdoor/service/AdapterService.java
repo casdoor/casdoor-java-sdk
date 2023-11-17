@@ -33,14 +33,14 @@ public class AdapterService extends Service {
 
     public Adapter getAdapter(String name) throws IOException {
         CasdoorResponse<Adapter, Object> response = doGet("get-adapter",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Adapter, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Adapter, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Adapter> getAdapters() throws IOException {
         CasdoorResponse<List<Adapter>, Object> response = doGet("get-adapters",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Adapter>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Adapter>, Object>>() {
                 });
         return response.getData();
     }
@@ -59,8 +59,8 @@ public class AdapterService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyAdapter(AdapterOperations method, Adapter adapter, java.util.Map<String, String> queryMap) throws IOException {
         String id = adapter.owner + "/" + adapter.name;
-        adapter.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(adapter);
+        adapter.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(adapter);
 
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

@@ -33,14 +33,14 @@ public class PlanService extends Service {
 
     public Plan getPlan(String name) throws IOException {
         CasdoorResponse<Plan, Object> response = doGet("get-plan",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Plan, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Plan, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Plan> getPlans() throws IOException {
         CasdoorResponse<List<Plan>, Object> response = doGet("get-plans",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Plan>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Plan>, Object>>() {
                 });
         return response.getData();
     }
@@ -59,8 +59,8 @@ public class PlanService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyPlan(PlanOperations method, Plan plan, java.util.Map<String, String> queryMap) throws IOException {
         String id = plan.owner + "/" + plan.name;
-        plan.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(plan);
+        plan.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(plan);
         return doPost(method.getOperation(),
                 Map.of("id", id), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

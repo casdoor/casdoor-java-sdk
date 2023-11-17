@@ -46,6 +46,6 @@ public class TokenService extends Service {
     }
 
     public CasdoorResponse<Boolean, Object> deleteToken(Token token) throws IOException {
-        return doPost("delete-token", Map.of(), objectMapper.writeValueAsString(token), new TypeReference<CasdoorResponse<Boolean, Object>>() {});
+        return doPost("delete-token", Map.of(), getObjectMapper().writeValueAsString(token), new TypeReference<CasdoorResponse<Boolean, Object>>() {});
     }
 }

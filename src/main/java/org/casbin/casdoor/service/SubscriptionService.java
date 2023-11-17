@@ -32,14 +32,14 @@ public class SubscriptionService extends Service {
 
     public Subscription getSubscription(String name) throws IOException {
         CasdoorResponse<Subscription, Object> response = doGet("get-subscription",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Subscription, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Subscription, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Subscription> getSubscriptions() throws IOException {
         CasdoorResponse<List<Subscription>, Object> response = doGet("get-subscriptions",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Subscription>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Subscription>, Object>>() {
                 });
         return response.getData();
     }
@@ -58,8 +58,8 @@ public class SubscriptionService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySubscription(SubscriptionOperations method, Subscription subscription, java.util.Map<String, String> queryMap) throws IOException {
         String id = subscription.owner + "/" + subscription.name;
-        subscription.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(subscription);
+        subscription.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(subscription);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

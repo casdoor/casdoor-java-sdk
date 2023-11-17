@@ -33,20 +33,20 @@ public class ProviderService extends Service {
 
     public Provier getProvider(String name) throws IOException {
         CasdoorResponse<Provier, Object> response = doGet("get-provider",
-                Map.of("id", config.organizationName + "/" + name),
+                Map.of("id", getConfig().getOrganizationName() + "/" + name),
                 new com.fasterxml.jackson.core.type.TypeReference<CasdoorResponse<Provier, Object>>() {});
         return response.getData();
     }
     public List<Provier> getProviders() throws IOException {
         CasdoorResponse<List<Provier>, Object> response = doGet("get-providers",
-                Map.of("owner", config.organizationName),
+                Map.of("owner", getConfig().getOrganizationName()),
                 new com.fasterxml.jackson.core.type.TypeReference<CasdoorResponse<List<Provier>, Object>>() {});
         return response.getData();
     }
 
     public java.util.Map<String, Object> getPaginationProviders(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<Provier[], Object> casdoorResponse = doGet("get-providers",
-                Map.mergeMap(Map.of("owner", config.organizationName,
+                Map.mergeMap(Map.of("owner", getConfig().getOrganizationName(),
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Provier[], Object>>() {});
 
@@ -66,8 +66,8 @@ public class ProviderService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyProvider(ProviderOperations method, Provier provier, java.util.Map<String, String> queryMap) throws IOException {
         String id = provier.owner + "/" + provier.name;
-        provier.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(provier);
+        provier.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(provier);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});
     }

@@ -38,14 +38,14 @@ public class OrganizationService extends Service {
 
     public List<Organization> getOrganizations() throws IOException {
         CasdoorResponse<List<Organization>, Object> resp = doGet("get-organizations",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
                 });
         return resp.getData();
     }
 
     public List<Organization> getOrganizationNames() throws IOException {
         CasdoorResponse<List<Organization>, Object> response = doGet("get-organization-names",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
                 });
         return response.getData();
     }
@@ -71,7 +71,7 @@ public class OrganizationService extends Service {
      */
     private <T1, T2> CasdoorResponse<T1, T2> modifyOrganization(OrganizationOperations method, Organization organization) throws IOException {
         String id = organization.owner + "/" + organization.name;
-        String payload = objectMapper.writeValueAsString(organization);
+        String payload = getObjectMapper().writeValueAsString(organization);
         return doPost(method.getOperation(),
                 Map.of("id", id), payload
                 , new TypeReference<CasdoorResponse<T1, T2>>() {

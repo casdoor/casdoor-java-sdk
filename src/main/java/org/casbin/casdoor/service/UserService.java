@@ -31,7 +31,7 @@ public class UserService extends Service {
 
     public List<User> getUsers() throws IOException {
         CasdoorResponse<List<User>, Object> resp = doGet("get-users",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
         return resp.getData();
     }
     public List<User> getGlobalUsers() throws IOException {
@@ -49,7 +49,7 @@ public class UserService extends Service {
      */
     public List<User> getSortedUsers(String sorter, int limit) throws IOException {
         CasdoorResponse<List<User>, Object> resp = doGet("get-users",
-                Map.of("owner", config.organizationName,
+                Map.of("owner", getConfig().getOrganizationName(),
                         "sorter", sorter,
                         "limit", limit > 0 ? Integer.toString(limit) : ""), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
         return resp.getData();
@@ -57,20 +57,20 @@ public class UserService extends Service {
 
     public int getUserCount(String isOnline) throws IOException {
         CasdoorResponse<Integer, Object> resp = doGet("get-user-count",
-                Map.of("owner", config.organizationName,
+                Map.of("owner", getConfig().getOrganizationName(),
                         "isOnline", isOnline), new TypeReference<CasdoorResponse<Integer, Object>>() {});
         return resp.getData();
     }
 
     public User getUser(String name) throws IOException {
         CasdoorResponse<User, Object> resp = doGet("get-user",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<User, Object>>() {});
-        return objectMapper.convertValue(resp.getData(), User.class);
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<User, Object>>() {});
+        return getObjectMapper().convertValue(resp.getData(), User.class);
     }
 
     public User getUserByEmail(String email) throws IOException {
         CasdoorResponse<User, Object> resp = doGet("get-user",
-                Map.of("owner", config.organizationName,
+                Map.of("owner", getConfig().getOrganizationName(),
                         "email", email), new TypeReference<CasdoorResponse<User, Object>>() {});
         return resp.getData();
     }
@@ -94,8 +94,8 @@ public class UserService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyUser(UserOperations method, User user) throws IOException {
         String id = user.owner + "/" + user.name;
-        user.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(user);
+        user.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(user);
         return doPost(method.getOperation(), Map.of(
                 "id", id
         ), payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
@@ -103,7 +103,7 @@ public class UserService extends Service {
 
     public java.util.Map<String, Object> getPaginationUsers(int p, int pageSize, java.util.Map<String, String> queryMap) throws IOException {
         CasdoorResponse<List<User>, Object> resp = doGet("get-users",
-                Map.mergeMap(Map.of("owner", config.organizationName,
+                Map.mergeMap(Map.of("owner", getConfig().getOrganizationName(),
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
 

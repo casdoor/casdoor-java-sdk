@@ -53,11 +53,11 @@ public class AuthService extends Service {
     public String getOAuthToken(String code, String state) {
         try {
             OAuthClientRequest oAuthClientRequest = OAuthClientRequest
-                    .tokenLocation(String.format("%s/api/login/oauth/access_token", config.endpoint))
+                    .tokenLocation(String.format("%s/api/login/oauth/access_token", getConfig().getEndpoint()))
                     .setGrantType(GrantType.AUTHORIZATION_CODE)
-                    .setClientId(config.clientId)
-                    .setClientSecret(config.clientSecret)
-                    .setRedirectURI(String.format("%s/api/login/oauth/authorize", config.endpoint))
+                    .setClientId(getConfig().getClientId())
+                    .setClientSecret(getConfig().getClientSecret())
+                    .setRedirectURI(String.format("%s/api/login/oauth/authorize", getConfig().getEndpoint()))
                     .setCode(code)
                     .buildQueryMessage();
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
@@ -79,7 +79,7 @@ public class AuthService extends Service {
         // verify the jwt public key
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(config.certificate.getBytes()));
+            X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(getConfig().getCertificate().getBytes()));
             RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
             JWSVerifier verifier = new RSASSAVerifier(publicKey);
             boolean verify = parseJwt.verify(verifier);
@@ -99,21 +99,21 @@ public class AuthService extends Service {
                 throw new AuthException("Cannot get claims from JWT payload");
             }
 
-            return objectMapper.readValue(userJson, User.class);
+            return getObjectMapper().readValue(userJson, User.class);
         } catch (JsonProcessingException | java.text.ParseException e) {
             throw new AuthException("Cannot convert claims to User", e);
         }
     }
 
     public String getSigninUrl(String redirectUrl) {
-        return this.getSigninUrl(redirectUrl, config.applicationName);
+        return this.getSigninUrl(redirectUrl, getConfig().getApplicationName());
     }
 
     public String getSigninUrl(String redirectUrl, String state) {
         String scope = "read";
         try {
             return String.format("%s/login/oauth/authorize?client_id=%s&response_type=code&redirect_uri=%s&scope=%s&state=%s",
-                    config.endpoint, config.clientId,
+                    getConfig().getEndpoint(), getConfig().getClientId(),
                     URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString()),
                     scope, state);
         } catch (UnsupportedEncodingException e) {
@@ -131,7 +131,7 @@ public class AuthService extends Service {
 
     private String getSignupUrl(boolean enablePassword, String redirectUrl) {
         if (enablePassword) {
-            return String.format("%s/signup/%s", config.endpoint, config.applicationName);
+            return String.format("%s/signup/%s", getConfig().getEndpoint(), getConfig().getApplicationName());
         } else {
             return getSigninUrl(redirectUrl).replace("/login/oauth/authorize", "/signup/oauth/authorize");
         }
@@ -146,9 +146,9 @@ public class AuthService extends Service {
         if (accessToken != null && accessToken.trim().length() > 0) params.put("access_token", accessToken);
         if (returnUrl != null && returnUrl.trim().length() > 0) params.put("returnUrl", returnUrl);
         if (username == null || username.trim().length() == 0) {
-            return String.format("%s/account%s", config.endpoint, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
+            return String.format("%s/account%s", getConfig().getEndpoint(), params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
         } else {
-            return String.format("%s/users/%s/%s%s", config.endpoint, config.organizationName, username, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
+            return String.format("%s/users/%s/%s%s", getConfig().getEndpoint(), getConfig().getOrganizationName(), username, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
         }
     }
 

@@ -19,12 +19,12 @@ package org.casbin.casdoor.config;
  * The first step to use this SDK is to initialize the global casdoorConfig.
  */
 public class Config {
-    public String endpoint;
-    public String clientId;
-    public String clientSecret;
-    public String certificate;
-    public String organizationName;
-    public String applicationName;
+    private String endpoint;
+    private String clientId;
+    private String clientSecret;
+    private String certificate;
+    private String organizationName;
+    private String applicationName;
 
     public Config() {
     }

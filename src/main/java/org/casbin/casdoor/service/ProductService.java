@@ -32,14 +32,14 @@ public class ProductService extends Service {
 
     public Product getProduct(String name) throws IOException {
         CasdoorResponse<Product, Object> response = doGet("get-product",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Product, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Product, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Product> getProducts() throws IOException {
         CasdoorResponse<List<Product>, Object> response = doGet("get-products",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Product>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Product>, Object>>() {
                 });
         return response.getData();
     }
@@ -58,8 +58,8 @@ public class ProductService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyProduct(ProductOperations method, Product product, java.util.Map<String, String> queryMap) throws IOException {
         String id = product.owner + "/" + product.name;
-        product.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(product);
+        product.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(product);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

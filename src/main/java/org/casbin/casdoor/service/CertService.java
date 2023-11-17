@@ -33,7 +33,7 @@ public class CertService extends Service {
 
     public List<Cert> getCerts() throws IOException {
         CasdoorResponse<List<Cert>, Object> response = doGet("get-certs",
-                Map.of("owner", config.organizationName),
+                Map.of("owner", getConfig().getOrganizationName()),
                 new TypeReference<CasdoorResponse<List<Cert>, Object>>() {});
 
         return response.getData();
@@ -41,7 +41,7 @@ public class CertService extends Service {
 
     public Cert getCert(String name) throws IOException {
         CasdoorResponse<Cert, Object> response = doGet("get-cert",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Cert, Object>>() {});
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Cert, Object>>() {});
         return response.getData();
     }
 
@@ -70,8 +70,8 @@ public class CertService extends Service {
      */
     private <T1, T2> CasdoorResponse<T1, T2> modifyCert(CertOperations method, Cert cert) throws IOException {
         String id = cert.owner + "/" + cert.name;
-        cert.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(cert);
+        cert.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(cert);
         return doPost(method.getOperation(),
                 Map.of("id", id),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {});

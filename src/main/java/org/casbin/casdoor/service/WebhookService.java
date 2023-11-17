@@ -31,14 +31,14 @@ public class WebhookService extends Service {
 
     public Webhook getWebhook(String name) throws IOException {
         CasdoorResponse<Webhook, Object> response = doGet("get-webhook",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Webhook, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Webhook, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Webhook> getWebhooks() throws IOException {
         CasdoorResponse<List<Webhook>, Object> response = doGet("get-webhooks",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Webhook>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Webhook>, Object>>() {
                 });
         return response.getData();
     }
@@ -57,8 +57,8 @@ public class WebhookService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyWebhook(WebhookOperations method, Webhook webhook, java.util.Map<String, String> queryMap) throws IOException {
         String id = webhook.owner + "/" + webhook.name;
-        webhook.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(webhook);
+        webhook.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(webhook);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

@@ -31,14 +31,14 @@ public class SyncerService extends Service {
 
     public Syncer getSyncer(String name) throws IOException {
         CasdoorResponse<Syncer, Object> response = doGet("get-syncer",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Syncer, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Syncer, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Syncer> getSyncers() throws IOException {
         CasdoorResponse<List<Syncer>, Object> response = doGet("get-syncers",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Syncer>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Syncer>, Object>>() {
                 });
         return response.getData();
     }
@@ -57,8 +57,8 @@ public class SyncerService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySyncer(SyncerOperations method, Syncer syncer, java.util.Map<String, String> queryMap) throws IOException {
         String id = syncer.owner + "/" + syncer.name;
-        syncer.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(syncer);
+        syncer.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(syncer);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {
                 });

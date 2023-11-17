@@ -34,14 +34,14 @@ public class EnforcerService extends Service {
 
     public Enforcer getEnforcer(String name) throws IOException {
         CasdoorResponse<Enforcer, Object> response = doGet("get-enforcer",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Enforcer, Object>>() {
+                Map.of("id", getConfig().getOrganizationName() + "/" + name), new TypeReference<CasdoorResponse<Enforcer, Object>>() {
                 });
         return response.getData();
     }
 
     public List<Enforcer> getEnforcers() throws IOException {
         CasdoorResponse<List<Enforcer>, Object> resp = doGet("get-enforcers",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Enforcer>, Object>>() {
+                Map.of("owner", getConfig().getOrganizationName()), new TypeReference<CasdoorResponse<List<Enforcer>, Object>>() {
                 });
         return resp.getData();
     }
@@ -59,13 +59,13 @@ public class EnforcerService extends Service {
     }
 
     public boolean enforce(String permissionId, String modelId, String resourceId, Object[] casbinRequest) throws IOException {
-        byte[] postBytes = objectMapper.writeValueAsBytes(casbinRequest);
+        byte[] postBytes = getObjectMapper().writeValueAsBytes(casbinRequest);
         if (postBytes == null) {
             throw new Exception("Failed to get bytes from URL");
         }
         CasdoorResponse<Boolean[], Object> response = doPost("enforce",
                 Map.of(
-                        "permissionId", config.organizationName + "/" + permissionId,
+                        "permissionId", getConfig().getOrganizationName() + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
@@ -79,13 +79,13 @@ public class EnforcerService extends Service {
     }
 
     public Boolean[][] batchEnforce(String permissionId, String modelId, String resourceId, Object[][] casbinRequests) throws IOException {
-        byte[] postBytes = objectMapper.writeValueAsBytes(casbinRequests);
+        byte[] postBytes = getObjectMapper().writeValueAsBytes(casbinRequests);
         if (postBytes == null) {
             throw new Exception("Failed to get bytes from URL");
         }
         CasdoorResponse<Boolean[][], Object> response = doPost("batch-enforce",
                 Map.of(
-                        "permissionId", config.organizationName + "/" + permissionId,
+                        "permissionId", getConfig().getOrganizationName() + "/" + permissionId,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
@@ -99,8 +99,8 @@ public class EnforcerService extends Service {
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyEnforcer(EnforcerOperations method, Enforcer enforcer) throws IOException {
         String id = enforcer.owner + "/" + enforcer.name;
-        enforcer.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(enforcer);
+        enforcer.owner = getConfig().getOrganizationName();
+        String payload = getObjectMapper().writeValueAsString(enforcer);
         return doPost(method.getOperation(),
                 Map.of("id", id),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {
