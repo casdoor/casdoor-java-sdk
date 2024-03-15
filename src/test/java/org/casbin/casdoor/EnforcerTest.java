@@ -14,6 +14,7 @@
 
 package org.casbin.casdoor;
 
+import org.casbin.casdoor.entity.CasbinRule;
 import org.casbin.casdoor.entity.Enforcer;
 import org.casbin.casdoor.service.EnforcerService;
 import org.casbin.casdoor.support.TestDefaultConfig;
@@ -30,6 +31,25 @@ public class EnforcerTest {
 
     private final EnforcerService enforcerService = new EnforcerService(TestDefaultConfig.InitConfig());
 
+    @Test
+    public void testPolicy() {
+        String name = TestDefaultConfig.getRandomName("Enforcer");
+
+        // Add a new object
+        Enforcer enforcer = new Enforcer(
+                "admin",
+                name,
+                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                name,
+                "built-in/user-model-built-in",
+                "built-in/user-adapter-built-in",
+                "Casdoor Website");
+        assertDoesNotThrow(() -> enforcerService.addEnforcer(enforcer));
+
+        CasbinRule policy = new CasbinRule(0,"p","","","","","","");
+        assertDoesNotThrow(() -> enforcerService.addPolicy(enforcer, policy));
+    }
+    
     @Test
     public void testEnforcer() {
         String name = TestDefaultConfig.getRandomName("Enforcer");

@@ -16,6 +16,7 @@ package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
+import org.casbin.casdoor.entity.CasbinRule;
 import org.casbin.casdoor.entity.Enforcer;
 import org.casbin.casdoor.exception.Exception;
 import org.casbin.casdoor.util.EnforcerOperations;
@@ -101,6 +102,19 @@ public class EnforcerService extends Service {
         String id = enforcer.owner + "/" + enforcer.name;
         enforcer.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(enforcer);
+        return doPost(method.getOperation(),
+                Map.of("id", id),
+                payload, new TypeReference<CasdoorResponse<T1, T2>>() {
+                });
+    }
+
+    public CasdoorResponse<Object, String> addPolicy(Enforcer enforcer, CasbinRule policy) throws IOException {
+        return modifyPolicy(EnforcerOperations.ADD_Policy, enforcer, policy);
+    }
+
+    private <T1, T2> CasdoorResponse<T1, T2> modifyPolicy(EnforcerOperations method, Enforcer enforcer, CasbinRule policy) throws IOException {
+        String id = enforcer.owner + "/" + enforcer.name;
+        String payload = objectMapper.writeValueAsString(policy);
         return doPost(method.getOperation(),
                 Map.of("id", id),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {

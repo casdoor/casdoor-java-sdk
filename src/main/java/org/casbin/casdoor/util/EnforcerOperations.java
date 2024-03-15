@@ -17,7 +17,8 @@ package org.casbin.casdoor.util;
 public enum EnforcerOperations {
     ADD_Enforcer("add-enforcer"),
     DELETE_Enforcer("delete-enforcer"),
-    UPDATE_Enforcer("update-enforcer");
+    UPDATE_Enforcer("update-enforcer"),
+    ADD_Policy("add-policy");
 
     private final String operation;
 
