@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2024 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.CasbinRule;
 import org.casbin.casdoor.entity.Enforcer;
 import org.casbin.casdoor.service.EnforcerService;
+import org.casbin.casdoor.service.PolicyService;
 import org.casbin.casdoor.support.TestDefaultConfig;
 import org.junit.jupiter.api.Test;
 
@@ -27,12 +28,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EnforcerTest {
+public class PolicyTest {
 
     private final EnforcerService enforcerService = new EnforcerService(TestDefaultConfig.InitConfig());
 
+    private final PolicyService policyService = new PolicyService(TestDefaultConfig.InitConfig());
+
     @Test
-    public void testEnforcer() {
+    public void testPolicy() {
         String name = TestDefaultConfig.getRandomName("Enforcer");
 
         // Add a new object
@@ -46,55 +49,46 @@ public class EnforcerTest {
                 "Casdoor Website");
         assertDoesNotThrow(() -> enforcerService.addEnforcer(enforcer));
 
+        CasbinRule policy = new CasbinRule(0,"p","1","2","4","","","","");
+        assertDoesNotThrow(() -> policyService.addPolicy(enforcer, policy));
+
         // Get all objects, check if our added object is inside the list
-        List<Enforcer> enforcers;
+        List<CasbinRule> policies;
         try {
-            enforcers = enforcerService.getEnforcers();
+            policies = policyService.getPolicies(name,"");
         } catch (IOException e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = enforcers.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = policies.stream().anyMatch(item -> item.Ptype.equals("p") && item.V2.equals("4"));
         assertTrue(found, "Added object not found in list");
 
-        // Get the object
-        Enforcer retrievedEnforcer;
-        try {
-            retrievedEnforcer = enforcerService.getEnforcer(name);
-        } catch (Exception e) {
-            fail("Failed to get object: " + e.getMessage());
-            return;
-        }
-        assertEquals(name, retrievedEnforcer.name, "Retrieved object does not match added object");
-
         // Update the object
-        String updatedDescription = "Updated Casdoor Website";
-        retrievedEnforcer.description = updatedDescription;
-        assertDoesNotThrow(() -> enforcerService.updateEnforcer(retrievedEnforcer));
+        CasbinRule newpolicy = new CasbinRule(0,"p","1","2","5","","","","");
+        assertDoesNotThrow(() -> policyService.updatePolicy(enforcer, policy, newpolicy));
 
         // Validate the update
-        Enforcer updatedEnforcer;
         try {
-            updatedEnforcer = enforcerService.getEnforcer(name);
-        } catch (Exception e) {
-            fail("Failed to get updated object: " + e.getMessage());
+            policies = policyService.getPolicies(name,"");
+        } catch (IOException e) {
+            fail("Failed to get objects: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDescription, updatedEnforcer.description, "Failed to update object, description mismatch");
+
+        found = policies.stream().anyMatch(item -> item.Ptype.equals("p") && item.V2.equals("5"));
+        assertTrue(found, "Updated object not found in list");
 
         // Delete the object
-        assertDoesNotThrow(() -> enforcerService.deleteEnforcer(enforcer));
-
+        assertDoesNotThrow(() -> policyService.removePolicy(enforcer, newpolicy));
         // Validate the deletion
-        Enforcer deletedEnforcer;
         try {
-            deletedEnforcer = enforcerService.getEnforcer(name);
-        } catch (Exception e) {
-            fail("Failed to delete object: " + e.getMessage());
+            policies = policyService.getPolicies(name,"");
+        } catch (IOException e) {
+            fail("Failed to get objects: " + e.getMessage());
             return;
         }
-        assertNull(deletedEnforcer, "Failed to delete object, it's still retrievable");
+        found = policies.stream().anyMatch(item -> item.Ptype.equals("p") && item.V2.equals("5"));
+        assertFalse(found, "Deleted object not found in list");
     }
-
 }

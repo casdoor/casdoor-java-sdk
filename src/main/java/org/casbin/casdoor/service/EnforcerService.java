@@ -16,6 +16,7 @@ package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
+import org.casbin.casdoor.entity.CasbinRule;
 import org.casbin.casdoor.entity.Enforcer;
 import org.casbin.casdoor.exception.Exception;
 import org.casbin.casdoor.util.EnforcerOperations;
@@ -106,4 +107,5 @@ public class EnforcerService extends Service {
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {
                 });
     }
+
 }
