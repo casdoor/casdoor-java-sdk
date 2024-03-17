@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2024 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 
 package org.casbin.casdoor.util;
 
-public enum EnforcerOperations {
-    ADD_Enforcer("add-enforcer"),
-    DELETE_Enforcer("delete-enforcer"),
-    UPDATE_Enforcer("update-enforcer");
+public enum PolicyOperations {
+
+    ADD_Policy("add-policy"),
+    DELETE_Policy("remove-policy"),
+    UPDATE_Policy("update-policy");
 
     private final String operation;
 
-    EnforcerOperations(String op) {
+    PolicyOperations(String op) {
         this.operation = op;
     }
 
