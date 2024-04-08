@@ -100,14 +100,11 @@ public class AuthService extends Service {
                 throw new AuthException("Cannot get claims from JWT payload");
             }
 
-            // get expiration time
-            Date expiration = claimsSet.getExpirationTime();
-
-            // check if the expiration time is before the current time
-            if (expiration.before(new Date())) {
-                throw new AuthException("JWT has expired.");
+            // check if the token has expired
+            Date expireTime = claimsSet.getExpirationTime();
+            if (expireTime.before(new Date())) {
+                throw new AuthException("The token has expired");
             }
-
 
             return objectMapper.readValue(userJson, User.class);
         } catch (JsonProcessingException | java.text.ParseException e) {
