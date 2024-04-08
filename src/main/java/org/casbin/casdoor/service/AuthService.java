@@ -43,6 +43,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 public class AuthService extends Service {
@@ -97,6 +98,12 @@ public class AuthService extends Service {
 
             if (userJson == null || userJson.isEmpty()) {
                 throw new AuthException("Cannot get claims from JWT payload");
+            }
+
+            // check if the token has expired
+            Date expireTime = claimsSet.getExpirationTime();
+            if (expireTime.before(new Date())) {
+                throw new AuthException("The token has expired");
             }
 
             return objectMapper.readValue(userJson, User.class);
