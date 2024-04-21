@@ -20,6 +20,7 @@ import org.casbin.casdoor.util.GroupOperations;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.util.List;
 
 import java.io.IOException;
@@ -45,9 +46,12 @@ public class GroupService extends Service {
     }
 
     public List<Group> getGroups(Boolean withTree) throws IOException {
-        if(!withTree) return getGroups();
+        if (!withTree) {
+            return getGroups();
+        }
+
         CasdoorResponse<List<Group>, Object> response = doGet("get-groups",
-                Map.of("owner", config.organizationName,"withTree","true"),new TypeReference<CasdoorResponse<List<Group>, Object>>() {
+                Map.of("owner", config.organizationName, "withTree", "true"), new TypeReference<CasdoorResponse<List<Group>, Object>>() {
                 });
         return response.getData();
     }
