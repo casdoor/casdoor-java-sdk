@@ -45,6 +45,17 @@ public class GroupService extends Service {
         return response.getData();
     }
 
+    public List<Group> getGroups(Boolean withTree) throws IOException {
+        if (!withTree) {
+            return getGroups();
+        }
+
+        CasdoorResponse<List<Group>, Object> response = doGet("get-groups",
+                Map.of("owner", config.organizationName, "withTree", "true"), new TypeReference<CasdoorResponse<List<Group>, Object>>() {
+                });
+        return response.getData();
+    }
+
     public CasdoorResponse<String, Object> addGroup(Group group) throws IOException {
         return modifyGroup(GroupOperations.ADD_GROUP, group, null);
     }
