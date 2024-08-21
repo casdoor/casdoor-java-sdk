@@ -23,6 +23,7 @@ public class Plan {
     public String displayName;
     public String description;
     public double pricePerMonth;
+    public double price;
     public double pricePerYear;
     public String currency;
     public boolean isEnabled;
