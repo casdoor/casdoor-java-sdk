@@ -22,9 +22,8 @@ public class Plan {
     public String createdTime;
     public String displayName;
     public String description;
-    public double pricePerMonth;
     public double price;
-    public double pricePerYear;
+    public String period;
     public String currency;
     public boolean isEnabled;
     public String role;
