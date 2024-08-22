@@ -16,6 +16,8 @@ package org.casbin.casdoor.entity;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class Plan {
     public String owner;
     public String name;
