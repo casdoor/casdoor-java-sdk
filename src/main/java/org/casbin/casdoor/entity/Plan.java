@@ -27,7 +27,8 @@ public class Plan {
     public String currency;
     public boolean isEnabled;
     public String role;
-    public List<String> options;
+    public String [] paymentProviders;
+    public  String [] options;
 
     public Plan(String owner, String name, String createdTime, String displayName, String description) {
         this.owner = owner;
