@@ -57,6 +57,9 @@ public class Application implements Serializable {
     public int formOffset;
     public String formSideHtml;
     public String formBackgroundUrl;
+    public List<SigninMethod> signinMethods;
+    public List<SigninItem> signinItems;
+    public List<SignupItem> signupItems;
 
     public Application() {
     }
@@ -70,5 +73,31 @@ public class Application implements Serializable {
         this.homepageUrl = homepageUrl;
         this.description = description;
         this.organization = organization;
+    }
+
+    public static class SigninMethod {
+        public String name;
+        public String displayName;
+        public String rule;
+    }
+
+    public static class SigninItem {
+        public String name;
+        public boolean visible;
+        public String label;
+        public String placeholder;
+        public String rule;
+        public boolean isCustom;
+    }
+
+    public static class SignupItem {
+        public String label;
+        public String name;
+        public String placeholder;
+        public boolean prompted;
+        public String regex;
+        public boolean required;
+        public String rule;
+        public boolean visible;
     }
 }
