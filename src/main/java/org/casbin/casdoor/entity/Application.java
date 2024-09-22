@@ -82,7 +82,6 @@ public class Application implements Serializable {
     }
 
     public static class SigninItem {
-
         public String name;
         public boolean visible;
         public String label;
@@ -92,7 +91,6 @@ public class Application implements Serializable {
     }
 
     public static class SignupItem {
-
         public String label;
         public String name;
         public String placeholder;
