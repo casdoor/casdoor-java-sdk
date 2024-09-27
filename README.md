@@ -17,11 +17,11 @@ Casdoor SDK is very simple to use. We will show you the steps below.
 Initialization requires 5 parameters, which are all string type:
 
 | Name (in order)  | Must | Description                                         |
-| ---------------- | ---- | --------------------------------------------------- |
+|------------------|------|-----------------------------------------------------|
 | endpoint         | Yes  | Casdoor Server Url, such as `http://localhost:8000` |
 | clientId         | Yes  | Client ID for the Casdoor application               |
 | clientSecret     | Yes  | Client secret for the Casdoor application           |
-| certificate     | Yes  | The public key for the Casdoor application's cert   |
+| certificate      | Yes  | The public key for the Casdoor application's cert   |
 | organizationName | Yes  | The name for the Casdoor organization               |
 | applicationName  | No   | The name for the Casdoor application                |
 
@@ -75,4 +75,3 @@ session.setAttribute("user", user);
 ## SpringBoot Support
 
 If you use SpingBoot for your application, you can use [casdoor-spring-boot-starter](https://github.com/casdoor/casdoor-spring-boot-starter)
-
