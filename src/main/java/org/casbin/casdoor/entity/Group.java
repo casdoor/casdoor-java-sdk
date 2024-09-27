@@ -27,7 +27,7 @@ public class Group {
     public String type;
     public String parentId;
     public boolean isTopGroup;
-    public List<User> users;
+    public List<String> users;
     public String title;
     public String key;
     public List<Group> children;
