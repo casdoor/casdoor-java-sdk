@@ -56,6 +56,16 @@ public class ProductService extends Service {
         return modifyProduct(ProductOperations.UPDATE_PRODUCT, product, null);
     }
 
+    public Product buyProduct(String name, String providerName) throws IOException {
+        java.util.Map<String, String> queryMap = Map.of(
+                "id", config.organizationName + "/" + name,
+                "providerName", providerName
+        );
+        CasdoorResponse<Product, Object> response = doPost("buy-product", queryMap, "", new TypeReference<CasdoorResponse<Product, Object>>() {
+        });
+        return response.getData();
+    }
+
     private <T1, T2> CasdoorResponse<T1, T2> modifyProduct(ProductOperations method, Product product, java.util.Map<String, String> queryMap) throws IOException {
         String id = product.owner + "/" + product.name;
         product.owner = config.organizationName;

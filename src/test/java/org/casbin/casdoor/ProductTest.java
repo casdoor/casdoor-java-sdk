@@ -86,6 +86,20 @@ public class ProductTest {
         }
         assertEquals(updatedDescription, updatedProduct.description, "Failed to update object, description mismatch");
 
+        // Test the buyProduct function
+        Product boughtProduct;
+        try {
+            boughtProduct = productService.buyProduct(name, "provider_payment_paypal");
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("The user") && errorMessage.contains("doesn't exist")) {
+                assertTrue(true);
+            } else {
+                fail("Failed to buy product: " + e.getMessage());
+            }
+            return;
+        }
+
         // Delete the object
         assertDoesNotThrow(() -> productService.deleteProduct(product));
 
