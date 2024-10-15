@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +48,8 @@ public class ProductTest {
                 0,
                 "Published"
         );
+        product.providers = new ArrayList<>();
+        product.providers.add("provider_payment_dummy");
         assertDoesNotThrow(() -> productService.addProduct(product));
 
         // Get all objects, check if our added object is inside the list
@@ -89,7 +92,7 @@ public class ProductTest {
         // Test the buyProduct function
         Product boughtProduct;
         try {
-            boughtProduct = productService.buyProduct(name, "provider_payment_paypal");
+            boughtProduct = productService.buyProduct(name, "provider_payment_dummy", "admin");
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             if (errorMessage.contains("The user") && errorMessage.contains("doesn't exist")) {
