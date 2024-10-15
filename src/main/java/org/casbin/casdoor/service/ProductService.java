@@ -56,7 +56,7 @@ public class ProductService extends Service {
         return modifyProduct(ProductOperations.UPDATE_PRODUCT, product, null);
     }
 
-    public Product buyProduct(String name, String providerName, String userName ) throws IOException {
+    public Product buyProduct(String name, String providerName, String userName) throws IOException {
         java.util.Map<String, String> queryMap = Map.of(
                 "id", config.organizationName + "/" + name,
                 "providerName", providerName,
