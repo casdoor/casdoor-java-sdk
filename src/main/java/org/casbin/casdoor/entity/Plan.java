@@ -21,7 +21,7 @@ public class Plan {
     public String name;
     public String createdTime;
     public String displayName;
-    public String description;
+    public List<String> description;
 
     public double price;
     public String currency;
