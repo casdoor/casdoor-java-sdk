@@ -35,18 +35,23 @@ public class User implements Serializable {
     public String updatedTime;
 
     public String id;
+    public String externalId = "";
     public String type;
     public String password = "";
     public String passwordSalt = "";
+    public String passwordType = "";
     public String displayName = "";
     public String firstName = "";
     public String lastName = "";
     public String avatar = "";
+    public String avatarType = "";
     public String permanentAvatar = "";
     public String email;
     @JsonProperty("emailVerified")
     public boolean emailVerified = false;
     public String phone = "";
+    public String countryCode = "";
+    public String region = "";
     public String location = "";
     public String[] address;
     public String affiliation = "";
@@ -56,7 +61,6 @@ public class User implements Serializable {
     public String homepage = "";
     public String bio = "";
     public String tag = "";
-    public String region = "";
     public String language;
     public String gender = "";
     public String birthday = "";
@@ -79,10 +83,12 @@ public class User implements Serializable {
     public String signupApplication;
     public String hash = "";
     public String preHash = "";
+    public String accessKey = "";
+    public String accessSecret = "";
 
     public String createdIp = "";
-	public String lastSigninTime = "";
-	public String lastSigninIp = "";
+    public String lastSigninTime = "";
+    public String lastSigninIp = "";
 
     public String github = "";
     public String google = "";
@@ -108,29 +114,6 @@ public class User implements Serializable {
     public String bilibili = "";
     public String okta = "";
     public String douyin = "";
-    public String custom = "";
-    public String ldap = "";
-    public Map<String, String> properties;
-    public List<Role> roles;
-    public List<Permission> permissions;
-
-
-    public List<String> recoveryCodes;
-    public List<String> groups;
-    @JsonProperty("mfaPhoneEnabled")
-    public boolean mfaPhoneEnabled;
-
-    @JsonProperty("mfaEmailEnabled")
-    public boolean mfaEmailEnabled;
-
-
-    public int signinWrongTimes;
-    public String externalId = "";
-    public String passwordType = "";
-    public String avatarType = "";
-    public String countryCode = "";
-    public String accessKey = "";
-    public String accessSecret = "";
     public String line = "";
     public String amazon = "";
     public String auth0 = "";
@@ -182,10 +165,23 @@ public class User implements Serializable {
     public String zoom = "";
     public String metaMask = "";
     public String web3Onboard = "";
-    public String preferredMfaType = "";
-    public String totpSecret = "";
-    public String lastSigninWrongTime = "";
+    public String custom = "";
 
+    public String preferredMfaType = "";
+    public List<String> recoveryCodes;
+    public String totpSecret = "";
+    public boolean mfaPhoneEnabled;
+    public boolean mfaEmailEnabled;
+
+    public String ldap = "";
+    public Map<String, String> properties;
+
+    public List<Role> roles;
+    public List<Permission> permissions;
+    public List<String> groups;
+
+    public String lastSigninWrongTime = "";
+    public int signinWrongTimes;
 
 
     @JsonGetter("isOnline")
@@ -230,32 +226,32 @@ public class User implements Serializable {
 
     @JsonGetter("isEmailVerified")
     public boolean isEmailVerified() {
-      return emailVerified;
+        return emailVerified;
     }
 
     @JsonSetter("setEmailVerified")
     public void setEmailVerified(boolean emailVerified) {
-      this.emailVerified = emailVerified;
+        this.emailVerified = emailVerified;
     }
 
     @JsonGetter("isDefaultAvatar")
     public boolean isDefaultAvatar() {
-      return isDefaultAvatar;
+        return isDefaultAvatar;
     }
 
     @JsonSetter("setDefaultAvatar")
     public void setDefaultAvatar(boolean isDefaultAvatar) {
-      this.isDefaultAvatar = isDefaultAvatar;
+        this.isDefaultAvatar = isDefaultAvatar;
     }
 
     @JsonGetter("isDeleted")
     public boolean isDeleted() {
-      return isDeleted;
+        return isDeleted;
     }
 
     @JsonSetter("setDeleted")
     public void setDeleted(boolean isDeleted) {
-      this.isDeleted = isDeleted;
+        this.isDeleted = isDeleted;
     }
 
     public User() {
