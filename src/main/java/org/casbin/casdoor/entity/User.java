@@ -114,6 +114,80 @@ public class User implements Serializable {
     public List<Role> roles;
     public List<Permission> permissions;
 
+
+    public List<String> recoveryCodes;
+    public List<String> groups;
+    @JsonProperty("mfaPhoneEnabled")
+    public boolean mfaPhoneEnabled;
+
+    @JsonProperty("mfaEmailEnabled")
+    public boolean mfaEmailEnabled;
+
+
+    public int signinWrongTimes;
+    public String externalId = "";
+    public String passwordType = "";
+    public String avatarType = "";
+    public String countryCode = "";
+    public String accessKey = "";
+    public String accessSecret = "";
+    public String line = "";
+    public String amazon = "";
+    public String auth0 = "";
+    public String battleNet = "";
+    public String bitbucket = "";
+    public String box = "";
+    public String cloudFoundry = "";
+    public String dailymotion = "";
+    public String deezer = "";
+    public String digitalOcean = "";
+    public String discord = "";
+    public String dropbox = "";
+    public String eveOnline = "";
+    public String fitbit = "";
+    public String gitea = "";
+    public String heroku = "";
+    public String influxCloud = "";
+    public String instagram = "";
+    public String intercom = "";
+    public String kakao = "";
+    public String lastfm = "";
+    public String mailru = "";
+    public String meetup = "";
+    public String microsoftOnline = "";
+    public String naver = "";
+    public String nextcloud = "";
+    public String oneDrive = "";
+    public String oura = "";
+    public String patreon = "";
+    public String paypal = "";
+    public String salesForce = "";
+    public String shopify = "";
+    public String soundcloud = "";
+    public String spotify = "";
+    public String strava = "";
+    public String stripe = "";
+    public String tikTok = "";
+    public String tumblr = "";
+    public String twitch = "";
+    public String twitter = "";
+    public String typetalk = "";
+    public String uber = "";
+    public String vK = "";
+    public String wepay = "";
+    public String xero = "";
+    public String yahoo = "";
+    public String yammer = "";
+    public String yandex = "";
+    public String zoom = "";
+    public String metaMask = "";
+    public String web3Onboard = "";
+    public String preferredMfaType = "";
+    public String totpSecret = "";
+    public String lastSigninWrongTime = "";
+
+
+
     @JsonGetter("isOnline")
     public boolean isOnline() {
         return isOnline;
