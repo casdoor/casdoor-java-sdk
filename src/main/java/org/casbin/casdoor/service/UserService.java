@@ -20,11 +20,15 @@ import org.casbin.casdoor.entity.User;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.UserOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.HashMap;
 import java.io.IOException;
 import java.util.List;
-
 public class UserService extends Service {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
     public UserService(Config config) {
         super(config);
     }
@@ -108,5 +112,44 @@ public class UserService extends Service {
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
 
         return Map.of("casdoorUsers", resp.getData(), "data2", resp.getData2());
+    }
+
+    /**
+     * Set the password for a user.
+     * @param owner the owner of the user
+     * @param name the name of the user
+     * @param oldPassword the old password of the user (can be empty if not required)
+     * @param newPassword the new password of the user
+     * @return true if the password was set successfully, false otherwise
+     * @throws IOException if there is an error during the operation
+     */
+    public boolean setPassword(String owner, String name, String oldPassword, String newPassword) throws IOException {
+        java.util.Map<String, String> param = new HashMap<>();
+        param.put("userOwner", owner);
+        param.put("userName", name);
+        param.put("newPassword", newPassword);
+
+        if (oldPassword != null && !oldPassword.isEmpty()) {
+            param.put("oldPassword", oldPassword);
+        }
+
+        String payload = objectMapper.writeValueAsString(param);
+        CasdoorResponse<String, Object> resp;
+
+        try {
+            resp = doPost("set-password", null, payload, new TypeReference<CasdoorResponse<String, Object>>() {});
+        } catch (IOException e) {
+            LOGGER.error("Error setting password for user {}: {}", name, e.getMessage());
+            throw new IOException("Failed to set password: " + e.getMessage(), e);
+        }
+
+        boolean isSuccess = "ok".equals(resp.getStatus());
+        if (isSuccess) {
+            LOGGER.info("Password successfully set for user {}", name);
+        } else {
+            LOGGER.warn("Failed to set password for user {}: {}", name, resp.getMsg());
+        }
+
+        return isSuccess;
     }
 }
