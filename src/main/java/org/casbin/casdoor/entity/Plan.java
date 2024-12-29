@@ -22,12 +22,16 @@ public class Plan {
     public String createdTime;
     public String displayName;
     public String description;
+
     public double price;
-    public String period;
     public String currency;
+    public String period;
+    public String product;
+    public String[] paymentProviders;
     public boolean isEnabled;
+
     public String role;
-    public List<String> options;
+    public String[] options;
 
     public Plan(String owner, String name, String createdTime, String displayName, String description) {
         this.owner = owner;
