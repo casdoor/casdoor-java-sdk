@@ -109,4 +109,28 @@ public class UserService extends Service {
 
         return Map.of("casdoorUsers", resp.getData(), "data2", resp.getData2());
     }
+
+      /**
+     * Set the password for a user.
+     * @param owner the owner of the user
+     * @param name the name of the user
+     * @param oldPassword the old password of the user (can be empty if not required)
+     * @param newPassword the new password of the user
+     * @return true if the password was set successfully, false otherwise
+     * @throws IOException if there is an error during the operation
+     */
+    public boolean setPassword(String owner, String name, String oldPassword, String newPassword) throws IOException {
+        java.util.Map<String, String> param = Map.of(
+            "userOwner", owner,
+            "userName", name,
+            "oldPassword", oldPassword,
+            "newPassword", newPassword
+        );
+
+        String payload = objectMapper.writeValueAsString(param);
+
+        CasdoorResponse<String, Object> resp = doPost("set-password", null, payload, new TypeReference<CasdoorResponse<String, Object>>() {});
+        
+        return "ok".equals(resp.getStatus());
+    }
 }
