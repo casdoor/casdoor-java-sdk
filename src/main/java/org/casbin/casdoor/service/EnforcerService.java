@@ -59,7 +59,7 @@ public class EnforcerService extends Service {
         return modifyEnforcer(EnforcerOperations.UPDATE_Enforcer, enforcer);
     }
 
-    public boolean enforce(String permissionId, String modelId, String resourceId, Object[] casbinRequest) throws IOException {
+    public boolean enforce(String permissionId, String modelId, String resourceId, String enforcerId, String owner, Object[] casbinRequest) throws IOException {
         byte[] postBytes = objectMapper.writeValueAsBytes(casbinRequest);
         if (postBytes == null) {
             throw new Exception("Failed to get bytes from URL");
@@ -68,7 +68,9 @@ public class EnforcerService extends Service {
                 Map.of(
                         "permissionId", config.organizationName + "/" + permissionId,
                         "modelId", modelId,
-                        "resourceId", resourceId
+                        "resourceId", resourceId,
+                        "enforcerId", enforcerId,
+                        "owner", owner
                 ),
                 new String(postBytes, StandardCharsets.UTF_8),
                 new TypeReference<CasdoorResponse<Boolean[], Object>>() {
@@ -77,6 +79,10 @@ public class EnforcerService extends Service {
 
         // All true
         return Arrays.stream(response.getData()).allMatch(Boolean::booleanValue);
+    }
+
+    public boolean enforce(String permissionId, String modelId, String resourceId, Object[] casbinRequest) throws IOException {
+        return enforce(permissionId, modelId, resourceId, null, null, casbinRequest);
     }
 
     public Boolean[][] batchEnforce(String permissionId, String modelId, String resourceId, Object[][] casbinRequests) throws IOException {
