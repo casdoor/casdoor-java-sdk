@@ -15,22 +15,22 @@
 package org.casbin.casdoor.entity;
 
 public class Invitation {
-    private String owner;
-    private String name;
-    private String createdTime;
-    private String updatedTime;
-    private String displayName;
-    private String code;
-    private boolean isRegexp;
-    private int quota;
-    private int usedCount;
-    private String application;
-    private String username;
-    private String email;
-    private String phone;
-    private String signupGroup;
-    private String defaultCode;
-    private String state;
+    public String owner;
+    public String name;
+    public String createdTime;
+    public String updatedTime;
+    public String displayName;
+    public String code;
+    public boolean isRegexp;
+    public int quota;
+    public int usedCount;
+    public String application;
+    public String username;
+    public String email;
+    public String phone;
+    public String signupGroup;
+    public String defaultCode;
+    public String state;
 
     public Invitation(String owner, String name, String createdTime, String displayName, String code, boolean isRegexp, int quota, String application, String defaultCode) {
         this.owner = owner;

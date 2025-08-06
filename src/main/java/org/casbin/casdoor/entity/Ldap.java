@@ -17,21 +17,21 @@ package org.casbin.casdoor.entity;
 import java.util.List;
 
 public class Ldap {
-    private String id;
-    private String owner;
-    private String createdTime;
-    private String serverName;
-    private String host;
-    private int port;
-    private boolean enableSsl;
-    private String username;
-    private String password;
-    private String baseDn;
-    private String filter;
-    private List<String> filterFields;
-    private String defaultGroup;
-    private int autoSync;
-    private String lastSync;
+    public String id;
+    public String owner;
+    public String createdTime;
+    public String serverName;
+    public String host;
+    public int port;
+    public boolean enableSsl;
+    public String username;
+    public String password;
+    public String baseDn;
+    public String filter;
+    public List<String> filterFields;
+    public String defaultGroup;
+    public int autoSync;
+    public String lastSync;
 
     public Ldap(String owner, String serverName, String host, int port, String username, String password, String baseDn, int autoSync) {
         this.owner = owner;

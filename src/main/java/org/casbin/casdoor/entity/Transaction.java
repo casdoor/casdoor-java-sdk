@@ -15,24 +15,24 @@
 package org.casbin.casdoor.entity;
 
 public class Transaction {
-    private String owner;
-    private String name;
-    private String createdTime;
-    private String displayName;
-    private String provider;
-    private String category;
-    private String type;
-    private String productName;
-    private String productDisplayName;
-    private String detail;
-    private String tag;
-    private String currency;
-    private double amount;
-    private String returnUrl;
-    private String user;
-    private String application;
-    private String payment;
-    private String state;
+    public String owner;
+    public String name;
+    public String createdTime;
+    public String displayName;
+    public String provider;
+    public String category;
+    public String type;
+    public String productName;
+    public String productDisplayName;
+    public String detail;
+    public String tag;
+    public String currency;
+    public double amount;
+    public String returnUrl;
+    public String user;
+    public String application;
+    public String payment;
+    public String state;
 
     public Transaction(String owner, String name, String displayName, String provider, String category, String type, String productName, String productDisplayName, String detail) {
         this.owner = owner;
