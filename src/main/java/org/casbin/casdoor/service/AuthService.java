@@ -17,6 +17,8 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -42,6 +44,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -81,13 +84,20 @@ public class AuthService extends Service {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(config.certificate.getBytes()));
-            RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
-            JWSVerifier verifier = new RSASSAVerifier(publicKey);
+            JWSAlgorithm alg = parseJwt.getHeader().getAlgorithm();
+            JWSVerifier verifier;
+            if (JWSAlgorithm.ES256.equals(alg) || JWSAlgorithm.ES512.equals(alg)) {
+                ECPublicKey ecPublicKey = (ECPublicKey) cert.getPublicKey();
+                verifier = new ECDSAVerifier(ecPublicKey);
+            } else {
+                RSAPublicKey rsaPublicKey = (RSAPublicKey) cert.getPublicKey();
+                verifier = new RSASSAVerifier(rsaPublicKey);
+            }
             boolean verify = parseJwt.verify(verifier);
             if (!verify) {
                 throw new AuthException("Cannot verify signature.");
             }
-        } catch (CertificateException | JOSEException e) {
+        } catch (CertificateException | JOSEException | ClassCastException e) {
             throw new AuthException("Cannot verify signature.", e);
         }
 
