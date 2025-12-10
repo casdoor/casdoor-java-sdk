@@ -105,8 +105,6 @@ public class AuthService extends Service {
             if (!verify) {
                 throw new AuthException("Cannot verify signature.");
             }
-        } catch (AuthException e) {
-            throw e;
         } catch (CertificateException | JOSEException e) {
             throw new AuthException("Cannot verify signature.", e);
         }
