@@ -17,6 +17,8 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -41,7 +43,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -81,8 +85,22 @@ public class AuthService extends Service {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             X509Certificate cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(config.certificate.getBytes()));
-            RSAPublicKey publicKey = (RSAPublicKey) cert.getPublicKey();
-            JWSVerifier verifier = new RSASSAVerifier(publicKey);
+            PublicKey publicKey = cert.getPublicKey();
+            JWSAlgorithm alg = parseJwt.getHeader().getAlgorithm();
+            JWSVerifier verifier;
+            if (JWSAlgorithm.Family.RSA.contains(alg)) {
+                if (!(publicKey instanceof RSAPublicKey)) {
+                    throw new AuthException("Public key type mismatch for RSA algorithm.");
+                }
+                verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
+            } else if (JWSAlgorithm.Family.EC.contains(alg)) {
+                if (!(publicKey instanceof ECPublicKey)) {
+                    throw new AuthException("Public key type mismatch for EC algorithm.");
+                }
+                verifier = new ECDSAVerifier((ECPublicKey) publicKey);
+            } else {
+                throw new AuthException("Unsupported jwt algorithm: " + alg.getName());
+            }
             boolean verify = parseJwt.verify(verifier);
             if (!verify) {
                 throw new AuthException("Cannot verify signature.");
