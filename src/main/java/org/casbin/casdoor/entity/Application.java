@@ -39,6 +39,8 @@ public class Application implements Serializable {
     public String samlReplyUrl;
     public List<String> grantTypes;
     public List<String> tags;
+    public List<String> providers;
+    public List<Provier> providerObjs;
     public String clientId;
     public String clientSecret;
     public List<String> redirectUris;
