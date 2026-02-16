@@ -14,9 +14,13 @@
 
 package org.casbin.casdoor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.List;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Application implements Serializable {
     public String owner;
     public String name;

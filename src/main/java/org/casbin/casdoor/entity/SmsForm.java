@@ -14,9 +14,13 @@
 
 package org.casbin.casdoor.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Arrays;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SmsForm implements Serializable {
     public String organizationId;
     public String content;

@@ -13,11 +13,14 @@
 // limitations under the License.
 
 package org.casbin.casdoor.entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 // Token has the same definition as https://github.com/casdoor/casdoor/blob/master/object/token.go#L45
 
 import java.io.Serializable;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Token implements Serializable {
 
     public String owner;

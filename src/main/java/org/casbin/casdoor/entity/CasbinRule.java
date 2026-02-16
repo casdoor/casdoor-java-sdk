@@ -1,5 +1,8 @@
 package org.casbin.casdoor.entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CasbinRule {
     public long id;
     public String Ptype;

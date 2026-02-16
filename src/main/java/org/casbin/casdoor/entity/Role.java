@@ -14,6 +14,7 @@
 
 package org.casbin.casdoor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -23,6 +24,8 @@ import java.util.Arrays;
  * Role has the same definition as https://github.com/casbin/casdoor/blob/master/object/role.go#L24
  */
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Role implements Serializable {
     public String owner;
     public String name;

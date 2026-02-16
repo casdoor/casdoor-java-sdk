@@ -14,6 +14,8 @@
 
 package org.casbin.casdoor.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -23,6 +25,8 @@ import java.util.Arrays;
  * Permission has the same definition as https://github.com/casbin/casdoor/blob/master/object/permission.go#L29
  */
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Permission implements Serializable {
     public String owner;
     public String name;

@@ -14,13 +14,15 @@
 
 package org.casbin.casdoor.util.http;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CasdoorResponse<T1, T2> {
     private String status;
     private String msg;
     private T1 data;
     private T2 data2;
+    private String sub;
 
     public String getStatus() {
         return status;
@@ -54,5 +56,12 @@ public class CasdoorResponse<T1, T2> {
         this.data2 = data2;
     }
 
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
 
 }

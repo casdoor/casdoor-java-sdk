@@ -13,7 +13,10 @@
 // limitations under the License.
 
 package org.casbin.casdoor.entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction {
     public String owner;
     public String name;
