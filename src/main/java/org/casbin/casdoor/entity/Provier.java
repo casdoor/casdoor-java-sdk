@@ -14,63 +14,20 @@
 
 package org.casbin.casdoor.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
-import java.util.Map;
 
-
+/**
+ * @deprecated Use {@link Provider} instead. This class name is misspelled and will be removed in a future version.
+ */
+@Deprecated
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Provier implements Serializable {
-    public String owner;
-    public String name;
-    public String createdTime;
-    public String displayName;
-    public String category;
-    public String type;
-    public String subType;
-    public String method;
-    public String clientId;
-    public String clientSecret;
-    public String clientId2;
-    public String clientSecret2;
-    public String cert;
-    public String customAuthUrl;
-    public String customTokenUrl;
-    public String customUserInfoUrl;
-    public String customLogo;
-    public String scopes;
-    public Map<String, String> userMapping;
-    public String host;
-    public int port;
-    public boolean disableSsl;
-    public String title;
-    public String content;
-    public String receiver;
-    public String regionId;
-    public String signName;
-    public String templateCode;
-    public String appId;
-    public String endpoint;
-    public String intranetEndpoint;
-    public String domain;
-    public String bucket;
-    public String pathPrefix;
-    public String metadata;
-    public String idP;
-    public String issuerUrl;
-    public boolean enableSignAuthnRequest;
-    public String providerUrl;
+public class Provier extends Provider {
 
     public Provier() {
+        super();
     }
 
     public Provier(String owner, String name, String createdTime, String displayName, String category, String type) {
-        this.owner = owner;
-        this.name = name;
-        this.createdTime = createdTime;
-        this.displayName = displayName;
-        this.category = category;
-        this.type = type;
+        super(owner, name, createdTime, displayName, category, type);
     }
 }
