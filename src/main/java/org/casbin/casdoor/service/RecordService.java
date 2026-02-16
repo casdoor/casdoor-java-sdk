@@ -19,7 +19,7 @@ import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.Record;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;

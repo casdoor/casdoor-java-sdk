@@ -20,7 +20,7 @@ import org.casbin.casdoor.entity.Role;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.RoleOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;
