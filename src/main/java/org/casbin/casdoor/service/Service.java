@@ -9,8 +9,8 @@ import org.casbin.casdoor.exception.Exception;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import org.casbin.casdoor.util.http.HttpClient;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public abstract class Service {
         this.credential = Credentials.basic(config.clientId, config.clientSecret);
     }
 
-    protected <T1, T2> CasdoorResponse<T1, T2> doGet(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doGet(@Nonnull String action, @Nullable java.util.Map<String, String> queryParams, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", config.endpoint, action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.syncGet(url, credential);
         CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
@@ -39,7 +39,7 @@ public abstract class Service {
         return resp;
     }
 
-    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, java.util.Map<String, String> postForm, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@Nonnull String action, @Nullable java.util.Map<String, String> queryParams, java.util.Map<String, String> postForm, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", config.endpoint, action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.postForm(url, postForm, credential);
         CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);
@@ -50,7 +50,7 @@ public abstract class Service {
         return resp;
     }
 
-    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@NotNull String action, @Nullable java.util.Map<String, String> queryParams, String postString, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
+    protected <T1, T2> CasdoorResponse<T1, T2> doPost(@Nonnull String action, @Nullable java.util.Map<String, String> queryParams, String postString, TypeReference<CasdoorResponse<T1, T2>> typeReference) throws IOException {
         String url = String.format("%s/api/%s?%s", config.endpoint, action, Map.mapToUrlParams(queryParams));
         String response = HttpClient.postString(url, postString, credential);
         CasdoorResponse<T1, T2> resp = objectMapper.readValue(response, typeReference);

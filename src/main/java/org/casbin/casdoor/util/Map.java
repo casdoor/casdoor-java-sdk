@@ -1,8 +1,8 @@
 package org.casbin.casdoor.util;
 
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ public class Map {
                 .collect(Collectors.joining("&"));
     }
 
-    @NotNull
+    @Nonnull
     public static <T, V> java.util.Map<T, V> mergeMap(@Nullable java.util.Map<T, V> map1, @Nullable java.util.Map<T, V> map2) {
         if (map1 == null) {
             return map2 == null ? new HashMap<>() : map2;
@@ -32,8 +32,8 @@ public class Map {
     }
 
     @SafeVarargs
-    @NotNull
-    public static <T> java.util.Map<T, T> of(@NotNull T... kv) {
+    @Nonnull
+    public static <T> java.util.Map<T, T> of(@Nonnull T... kv) {
         java.util.Map<T, T> map = new HashMap<>(kv.length / 2 + 1);
         for (int i = 0; i < kv.length; i += 2) {
             map.put(kv[i], kv[i + 1]);
@@ -41,7 +41,7 @@ public class Map {
         return map;
     }
 
-    public static <T, V> java.util.Map<T, V> of(@NotNull T k1, @NotNull V v1, @NotNull T k2, @NotNull V v2) {
+    public static <T, V> java.util.Map<T, V> of(@Nonnull T k1, @Nonnull V v1, @Nonnull T k2, @Nonnull V v2) {
         java.util.Map<T, V> map = new HashMap<>(2);
         map.put(k1, v1);
         map.put(k2, v2);
