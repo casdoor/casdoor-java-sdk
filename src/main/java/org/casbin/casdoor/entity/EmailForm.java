@@ -14,10 +14,14 @@
 
 package org.casbin.casdoor.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Arrays;
 
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailForm implements Serializable {
     public String title;
     public String content;

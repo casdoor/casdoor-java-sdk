@@ -14,6 +14,9 @@
 
 package org.casbin.casdoor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountItem {
     public String name;
     public boolean visible;

@@ -21,7 +21,7 @@ import org.casbin.casdoor.entity.Permission;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.PermissionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;

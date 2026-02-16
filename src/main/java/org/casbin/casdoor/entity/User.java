@@ -15,6 +15,7 @@
 package org.casbin.casdoor.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -28,6 +29,8 @@ import java.util.Map;
  * used to obtain user-related information from your Casdoor server.
  */
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
     public String owner;
     public String name;

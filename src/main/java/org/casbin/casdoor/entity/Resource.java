@@ -15,6 +15,8 @@
 package org.casbin.casdoor.entity;
 
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 /**
@@ -22,6 +24,8 @@ import java.io.Serializable;
  * used to obtain resource-related information from Casdoor
  */
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Resource implements Serializable {
         public String owner;
         public String name;
