@@ -17,6 +17,7 @@ package org.casbin.casdoor.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
+import java.util.Map;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,6 +37,7 @@ public class Group {
     public String key;
     public List<Group> children;
     public boolean isEnabled;
+    public Map<String, String> properties;
 
     public Group(String owner, String name, String createdTime, String displayName) {
         this.owner = owner;
