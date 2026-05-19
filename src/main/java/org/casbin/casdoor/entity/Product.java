@@ -36,7 +36,7 @@ public class Product {
     public List<String> providers;
     public String returnUrl;
     public String state;
-    public List<Provier> providerObjs;
+    public List<Provider> providerObjs;
 
     public Product() {
     }

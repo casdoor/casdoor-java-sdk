@@ -43,14 +43,13 @@ public class Application implements Serializable {
     public String samlReplyUrl;
     public List<String> grantTypes;
     public List<String> tags;
-    public List<String> providers;
-    public List<Provier> providerObjs;
+    public List<ProviderItem> providers;
     public String clientId;
     public String clientSecret;
     public List<String> redirectUris;
     public String tokenFormat;
-    public int expireInHours;
-    public int refreshExpireInHours;
+    public double expireInHours;
+    public double refreshExpireInHours;
     public String signupUrl;
     public String signinUrl;
     public String forgetUrl;
@@ -91,19 +90,23 @@ public class Application implements Serializable {
         public String name;
         public boolean visible;
         public String label;
+        public String customCss;
         public String placeholder;
         public String rule;
         public boolean isCustom;
     }
 
     public static class SignupItem {
-        public String label;
         public String name;
-        public String placeholder;
-        public boolean prompted;
-        public String regex;
-        public boolean required;
-        public String rule;
         public boolean visible;
+        public boolean required;
+        public boolean prompted;
+        public String type;
+        public String customCss;
+        public String label;
+        public String placeholder;
+        public List<String> options;
+        public String regex;
+        public String rule;
     }
 }

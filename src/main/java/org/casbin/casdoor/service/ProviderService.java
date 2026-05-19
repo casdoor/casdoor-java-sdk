@@ -16,7 +16,7 @@ package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
-import org.casbin.casdoor.entity.Provier;
+import org.casbin.casdoor.entity.Provider;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.ProviderOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
@@ -31,43 +31,45 @@ public class ProviderService extends Service {
         super(config);
     }
 
-    public Provier getProvider(String name) throws IOException {
-        CasdoorResponse<Provier, Object> response = doGet("get-provider",
+    public Provider getProvider(String name) throws IOException {
+        CasdoorResponse<Provider, Object> response = doGet("get-provider",
                 Map.of("id", config.organizationName + "/" + name),
-                new com.fasterxml.jackson.core.type.TypeReference<CasdoorResponse<Provier, Object>>() {});
+                new TypeReference<CasdoorResponse<Provider, Object>>() {});
         return response.getData();
     }
-    public List<Provier> getProviders() throws IOException {
-        CasdoorResponse<List<Provier>, Object> response = doGet("get-providers",
+
+    public List<Provider> getProviders() throws IOException {
+        CasdoorResponse<List<Provider>, Object> response = doGet("get-providers",
                 Map.of("owner", config.organizationName),
-                new com.fasterxml.jackson.core.type.TypeReference<CasdoorResponse<List<Provier>, Object>>() {});
+                new TypeReference<CasdoorResponse<List<Provider>, Object>>() {});
         return response.getData();
     }
 
     public java.util.Map<String, Object> getPaginationProviders(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<Provier[], Object> casdoorResponse = doGet("get-providers",
+        CasdoorResponse<Provider[], Object> casdoorResponse = doGet("get-providers",
                 Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
-                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Provier[], Object>>() {});
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Provider[], Object>>() {});
 
         return Map.of("casdoorProviders", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
-    public CasdoorResponse<String, Object> updateProvider(Provier provier) throws IOException {
-        return modifyProvider(ProviderOperations.UPDATE_PROVIDER, provier, null);
+
+    public CasdoorResponse<String, Object> updateProvider(Provider provider) throws IOException {
+        return modifyProvider(ProviderOperations.UPDATE_PROVIDER, provider, null);
     }
 
-    public CasdoorResponse<String, Object> addProvider(Provier provier) throws IOException {
-        return modifyProvider(ProviderOperations.ADD_PROVIDER, provier, null);
+    public CasdoorResponse<String, Object> addProvider(Provider provider) throws IOException {
+        return modifyProvider(ProviderOperations.ADD_PROVIDER, provider, null);
     }
 
-    public CasdoorResponse<String, Object> deleteProvider(Provier provier) throws IOException {
-        return modifyProvider(ProviderOperations.DELETE_PROVIDER, provier, null);
+    public CasdoorResponse<String, Object> deleteProvider(Provider provider) throws IOException {
+        return modifyProvider(ProviderOperations.DELETE_PROVIDER, provider, null);
     }
 
-    private <T1, T2> CasdoorResponse<T1, T2> modifyProvider(ProviderOperations method, Provier provier, java.util.Map<String, String> queryMap) throws IOException {
-        String id = provier.owner + "/" + provier.name;
-        provier.owner = config.organizationName;
-        String payload = objectMapper.writeValueAsString(provier);
+    private <T1, T2> CasdoorResponse<T1, T2> modifyProvider(ProviderOperations method, Provider provider, java.util.Map<String, String> queryMap) throws IOException {
+        String id = provider.owner + "/" + provider.name;
+        provider.owner = config.organizationName;
+        String payload = objectMapper.writeValueAsString(provider);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});
     }

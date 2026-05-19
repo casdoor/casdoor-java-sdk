@@ -16,18 +16,28 @@ package org.casbin.casdoor.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * @deprecated Use {@link Provider} instead. This class name is misspelled and will be removed in a future version.
- */
-@Deprecated
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Provier extends Provider {
+import java.io.Serializable;
+import java.util.List;
 
-    public Provier() {
-        super();
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ProviderItem implements Serializable {
+    public String owner;
+    public String name;
+    public boolean canSignUp;
+    public boolean canSignIn;
+    public boolean canUnlink;
+    public List<String> bindingRule;
+    public List<String> countryCodes;
+    public boolean prompted;
+    public String signupGroup;
+    public String rule;
+    public Provider provider;
+
+    public ProviderItem() {
     }
 
-    public Provier(String owner, String name, String createdTime, String displayName, String category, String type) {
-        super(owner, name, createdTime, displayName, category, type);
+    public ProviderItem(String owner, String name) {
+        this.owner = owner;
+        this.name = name;
     }
 }

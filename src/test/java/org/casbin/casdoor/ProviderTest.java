@@ -14,7 +14,7 @@
 
 package org.casbin.casdoor;
 
-import org.casbin.casdoor.entity.Provier;
+import org.casbin.casdoor.entity.Provider;
 import org.casbin.casdoor.service.ProviderService;
 import org.casbin.casdoor.support.TestDefaultConfig;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProvierTest {
+public class ProviderTest {
 
     private final ProviderService providerService = new ProviderService(
             TestDefaultConfig.InitConfig());
@@ -35,7 +35,7 @@ public class ProvierTest {
         String name = TestDefaultConfig.getRandomName("application");
 
         // Add a new object
-        Provier provier = new Provier(
+        Provider provider = new Provider(
                 "admin",
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
@@ -43,57 +43,57 @@ public class ProvierTest {
                 "Captcha",
                 "Default"
         );
-        assertDoesNotThrow(() -> providerService.addProvider(provier));
+        assertDoesNotThrow(() -> providerService.addProvider(provider));
 
         // Get all objects, check if our added object is inside the list
-        List<Provier> proviers;
+        List<Provider> providers;
         try {
-            proviers = providerService.getProviders();
+            providers = providerService.getProviders();
         } catch (Exception e) {
             fail("Failed to get objects: " + e.getMessage());
             return;
         }
 
-        boolean found = proviers.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = providers.stream().anyMatch(item -> item.name.equals(name));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
-        Provier retrievedProvier;
+        Provider retrievedProvider;
         try {
-            retrievedProvier = providerService.getProvider(name);
+            retrievedProvider = providerService.getProvider(name);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedProvier.name, "Retrieved object does not match added object");
+        assertEquals(name, retrievedProvider.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDisplayName = "Updated Casdoor Website";
-        retrievedProvier.displayName = updatedDisplayName;
-        assertDoesNotThrow(() -> providerService.updateProvider(retrievedProvier));
+        retrievedProvider.displayName = updatedDisplayName;
+        assertDoesNotThrow(() -> providerService.updateProvider(retrievedProvider));
 
         // Validate the update
-        Provier updatedProvier;
+        Provider updatedProvider;
         try {
-            updatedProvier = providerService.getProvider(name);
+            updatedProvider = providerService.getProvider(name);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedDisplayName, updatedProvier.displayName, "Failed to update object, displayName mismatch");
+        assertEquals(updatedDisplayName, updatedProvider.displayName, "Failed to update object, displayName mismatch");
 
         // Delete the object
-        assertDoesNotThrow(() -> providerService.deleteProvider(provier));
+        assertDoesNotThrow(() -> providerService.deleteProvider(provider));
 
         // Validate the deletion
-        Provier deletedProvier;
+        Provider deletedProvider;
         try {
-            deletedProvier = providerService.getProvider(name);
+            deletedProvider = providerService.getProvider(name);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;
         }
-        assertNull(deletedProvier, "Failed to delete object, it's still retrievable");
+        assertNull(deletedProvider, "Failed to delete object, it's still retrievable");
     }
 
 }
