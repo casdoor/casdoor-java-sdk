@@ -15,6 +15,7 @@ public class Map {
         }
         return map.entrySet()
                 .stream()
+                .filter(entry -> entry.getValue() != null)
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
     }

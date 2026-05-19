@@ -66,7 +66,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[], Object> response = doPost("enforce",
                 Map.of(
-                        "permissionId", config.organizationName + "/" + permissionId,
+                        "permissionId", permissionId != null ? config.organizationName + "/" + permissionId : null,
                         "modelId", modelId,
                         "resourceId", resourceId,
                         "enforcerId", enforcerId,
@@ -92,7 +92,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[][], Object> response = doPost("batch-enforce",
                 Map.of(
-                        "permissionId", config.organizationName + "/" + permissionId,
+                        "permissionId", permissionId != null ? config.organizationName + "/" + permissionId : null,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
