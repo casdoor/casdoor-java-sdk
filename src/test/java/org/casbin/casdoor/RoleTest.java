@@ -17,7 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.Role;
 import org.casbin.casdoor.service.RoleService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

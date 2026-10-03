@@ -40,11 +40,16 @@ public class TestDefaultConfig {
     public static String getRandomName(String prefix) {
         return prefix + "_" + getRandomCode(6);
     }
-    private static final String TEST_CASDOOR_ENDPOINT = "https://demo.casdoor.com";
-    private static final String TEST_CLIENT_ID = "294b09fbc17f95daf2fe";
-    private static final String TEST_CLIENT_SECRET = "dd8982f7046ccba1bbd7851d5c1ece4e52bf039d";
-    private static final String TEST_CASDOOR_ORGANIZATION = "casbin";
-    private static final String TEST_CASDOOR_APPLICATION = "app-vue-python-example";
+
+    private static String getEnv(String key, String defaultValue) {
+        String value = System.getenv(key);
+        return value == null || value.isEmpty() ? defaultValue : value;
+    }
+    private static final String TEST_CASDOOR_ENDPOINT = getEnv("CASDOOR_TEST_ENDPOINT", "http://localhost:8000");
+    private static final String TEST_CLIENT_ID = getEnv("CASDOOR_TEST_CLIENT_ID", "casdoor-java-sdk-ci-client");
+    private static final String TEST_CLIENT_SECRET = getEnv("CASDOOR_TEST_CLIENT_SECRET", "casdoor-java-sdk-ci-secret");
+    private static final String TEST_CASDOOR_ORGANIZATION = getEnv("CASDOOR_TEST_ORGANIZATION", "casbin");
+    private static final String TEST_CASDOOR_APPLICATION = getEnv("CASDOOR_TEST_APPLICATION", "app-vue-python-example");
     private static final String TEST_CASDOOR_CERTIFICATE =
             "MIIE+TCCAuGgAwIBAgIDAeJAMA0GCSqGSIb3DQEBCwUAMDYxHTAbBgNVBAoTFENh\n" +
                     "c2Rvb3IgT3JnYW5pemF0aW9uMRUwEwYDVQQDEwxDYXNkb29yIENlcnQwHhcNMjEx\n" +

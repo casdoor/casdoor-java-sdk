@@ -17,7 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.Syncer;
 import org.casbin.casdoor.service.SyncerService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,7 +45,7 @@ public class SyncerTest {
                 "123",
                 "mysql",
                 "syncer_db",
-                "user-table",
+                "user_table",
                 1
         );
         assertDoesNotThrow(() -> syncerService.addSyncer(syncer));
@@ -72,9 +72,9 @@ public class SyncerTest {
         }
         assertEquals(name, retrievedSyncer.name, "Retrieved object does not match added object");
 
-        // Update the object
-        String updatedPassword = "123456";
-        retrievedSyncer.password = updatedPassword;
+        // Update the object, the server masks the password in responses, so update the host instead
+        String updatedHost = "Updated Host";
+        retrievedSyncer.host = updatedHost;
         assertDoesNotThrow(() -> syncerService.updateSyncer(retrievedSyncer));
 
         // Validate the update
@@ -85,7 +85,7 @@ public class SyncerTest {
             fail("Failed to get updated object: " + e.getMessage());
             return;
         }
-        assertEquals(updatedPassword, updatedSyncer.password, "Failed to update object, description mismatch");
+        assertEquals(updatedHost, updatedSyncer.host, "Failed to update object, host mismatch");
 
         // Delete the object
         assertDoesNotThrow(() -> syncerService.deleteSyncer(syncer));

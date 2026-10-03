@@ -17,7 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.Plan;
 import org.casbin.casdoor.service.PlanService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +41,7 @@ public class PlanTest {
                 name,
                 "casbin"
         );
+        plan.currency = "USD";
         assertDoesNotThrow(() -> planService.addPlan(plan));
 
         // Get all objects, check if our added object is inside the list

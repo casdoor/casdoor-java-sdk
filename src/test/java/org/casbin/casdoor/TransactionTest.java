@@ -47,7 +47,9 @@ public class TransactionTest {
         );
 
 
-        assertDoesNotThrow(() -> transactionService.addTransaction(transaction));
+        // The server generates the transaction name and returns it as the data
+        String transactionId = assertDoesNotThrow(() -> transactionService.addTransaction(transaction)).getData();
+        transaction.name = transactionId;
 
         // Get all objects, check if our added object is inside the list
         List<Transaction> transactions;
@@ -58,18 +60,18 @@ public class TransactionTest {
             return;
         }
 
-        boolean found = transactions.stream().anyMatch(item -> item.name.equals(name));
+        boolean found = transactions.stream().anyMatch(item -> item.name.equals(transactionId));
         assertTrue(found, "Added object not found in list");
 
         // Get the object
         Transaction retrievedTransaction;
         try {
-            retrievedTransaction = transactionService.getTransaction(name);
+            retrievedTransaction = transactionService.getTransaction(transactionId);
         } catch (Exception e) {
             fail("Failed to get object: " + e.getMessage());
             return;
         }
-        assertEquals(name, retrievedTransaction.name, "Retrieved object does not match added object");
+        assertEquals(transactionId, retrievedTransaction.name, "Retrieved object does not match added object");
 
         // Update the object
         String updatedDisplayName = "Updated Transaction";
@@ -79,7 +81,7 @@ public class TransactionTest {
         // Validate the update
         Transaction updatedTransaction;
         try {
-            updatedTransaction = transactionService.getTransaction(name);
+            updatedTransaction = transactionService.getTransaction(transactionId);
         } catch (Exception e) {
             fail("Failed to get updated object: " + e.getMessage());
             return;
@@ -92,7 +94,7 @@ public class TransactionTest {
         // Validate the deletion
         Transaction deletedTransaction;
         try {
-            deletedTransaction = transactionService.getTransaction(name);
+            deletedTransaction = transactionService.getTransaction(transactionId);
         } catch (Exception e) {
             fail("Failed to delete object: " + e.getMessage());
             return;

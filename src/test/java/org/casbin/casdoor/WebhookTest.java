@@ -17,7 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.Webhook;
 import org.casbin.casdoor.service.WebhookService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,8 +79,8 @@ public class WebhookTest {
         }
         assertEquals(updatedOrganization, updatedWebhook.organization, "Failed to update object, organization mismatch");
 
-        // Delete the object
-        assertDoesNotThrow(() -> webhookService.deleteWebhook(webhook));
+        // Delete the object, the server matches the organization too, so delete the updated one
+        assertDoesNotThrow(() -> webhookService.deleteWebhook(updatedWebhook));
 
         // Validate the deletion
         Webhook deletedWebhook;

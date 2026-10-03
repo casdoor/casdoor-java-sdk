@@ -32,14 +32,14 @@ public class LdapService extends Service {
 
     public List<Ldap> getLdaps() throws IOException {
         CasdoorResponse<List<Ldap>, Object> response = doGet("get-ldaps",
-                Map.of("owner", "built-in"), new TypeReference<CasdoorResponse<List<Ldap>, Object>>() {
+                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Ldap>, Object>>() {
                 });
         return response.getData();
     }
 
     public Ldap getLdap(String id) throws IOException {
         CasdoorResponse<Ldap, Object> response = doGet("get-ldap",
-                Map.of("id", "built-in/" + id), new TypeReference<CasdoorResponse<Ldap, Object>>() {
+                Map.of("id", config.organizationName + "/" + id), new TypeReference<CasdoorResponse<Ldap, Object>>() {
                 });
         return response.getData();
     }

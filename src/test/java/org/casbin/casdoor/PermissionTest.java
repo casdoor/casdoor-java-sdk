@@ -45,7 +45,7 @@ public class PermissionTest {
                 new String[]{"casbin/*"},
                 new String[]{},
                 new String[]{},
-                "user-model-built-in",
+                "built-in/user-model-built-in",
                 "Application",
                 new String[]{"app-casbin"},
                 new String[]{"Read", "Write"},

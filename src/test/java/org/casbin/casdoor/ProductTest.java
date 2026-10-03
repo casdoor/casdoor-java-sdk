@@ -17,7 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.Product;
 import org.casbin.casdoor.service.ProductService;
 import org.casbin.casdoor.support.TestDefaultConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,6 +50,7 @@ public class ProductTest {
         );
         product.providers = new ArrayList<>();
         product.providers.add("provider_payment_dummy");
+        product.currency = "USD";
         assertDoesNotThrow(() -> productService.addProduct(product));
 
         // Get all objects, check if our added object is inside the list

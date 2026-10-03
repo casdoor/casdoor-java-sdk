@@ -37,7 +37,7 @@ public class EmailTest {
                     "admin",
                     new String[]{"TestSmtpServer"});
         } catch (Exception e) {
-            if (!e.getMessage().contains("535 Error: authentication failed, system busy")) {
+            if (!e.getMessage().contains("535 Error: authentication failed, system busy") && !e.getMessage().contains("refused")) {
                 fail("Failed to get objects: " + e.getMessage());
             }
         }

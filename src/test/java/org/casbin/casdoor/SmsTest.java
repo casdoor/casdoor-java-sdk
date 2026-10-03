@@ -17,6 +17,7 @@ package org.casbin.casdoor;
 import org.casbin.casdoor.entity.SmsForm;
 import org.casbin.casdoor.service.SmsService;
 import org.casbin.casdoor.support.TestDefaultConfig;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class SmsTest {
             TestDefaultConfig.InitConfig());
 
     @Test
+    @Disabled("Needs a real SMS provider")
     public void testSms() {
         SmsForm smsForm = new SmsForm(
                 "casdoor",
