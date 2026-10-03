@@ -15,6 +15,7 @@
 package org.casbin.casdoor.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -34,8 +35,11 @@ import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.User;
 import org.casbin.casdoor.exception.AuthException;
 import org.casbin.casdoor.util.QueryUtils;
+import org.casbin.casdoor.util.http.CasdoorResponse;
+import org.casbin.casdoor.util.http.HttpClient;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -48,7 +52,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 public class AuthService extends Service {
     public AuthService(Config config) {
@@ -183,5 +189,75 @@ public class AuthService extends Service {
 
     public String getMyProfileUrl(String accessToken, String returnUrl) {
         return this.getUserProfileUrl(null, accessToken, returnUrl);
+    }
+
+    public String getLogoutUrl(String idToken, String postLogoutRedirectUri) {
+        return this.getLogoutUrl(idToken, postLogoutRedirectUri, null);
+    }
+
+    /**
+     * Get the OIDC RP-Initiated Logout URL of Casdoor ("/api/logout"). Redirect the user's browser
+     * to it to end the user's Casdoor session, then Casdoor redirects back to postLogoutRedirectUri,
+     * which must be in the application's allowed Redirect URI list.
+     *
+     * @param idToken the ID token (or access token) returned at login, sent as "id_token_hint", can be null
+     * @param postLogoutRedirectUri where to go after logout, can be null
+     * @param state an opaque value passed back to postLogoutRedirectUri, can be null
+     * @return the logout URL
+     */
+    public String getLogoutUrl(String idToken, String postLogoutRedirectUri, String state) {
+        LinkedHashMap<String, Serializable> params = new LinkedHashMap<>();
+        try {
+            String charset = StandardCharsets.UTF_8.toString();
+            if (idToken != null && idToken.trim().length() > 0) params.put("id_token_hint", URLEncoder.encode(idToken, charset));
+            if (postLogoutRedirectUri != null && postLogoutRedirectUri.trim().length() > 0) {
+                params.put("post_logout_redirect_uri", URLEncoder.encode(postLogoutRedirectUri, charset));
+                params.put("client_id", URLEncoder.encode(config.clientId, charset));
+            }
+            if (state != null && state.trim().length() > 0) params.put("state", URLEncoder.encode(state, charset));
+        } catch (UnsupportedEncodingException e) {
+            throw new AuthException(e);
+        }
+        return String.format("%s/api/logout%s", config.endpoint, params.size() == 0 ? "" : "?" + QueryUtils.buildQuery(params));
+    }
+
+    /**
+     * Log out the user that owns the accessToken from all applications and all devices (single sign-out)
+     * by calling Casdoor's "/api/sso-logout" API: all the user's sessions are deleted and all the access
+     * tokens issued to the user are expired.
+     *
+     * @param accessToken the user's access token returned by getOAuthToken()
+     */
+    public void logout(String accessToken) {
+        this.ssoLogout(accessToken, true);
+    }
+
+    /**
+     * Like logout(), but only end the session that the accessToken belongs to,
+     * so the user stays signed in on other devices and browsers.
+     *
+     * @param accessToken the user's access token returned by getOAuthToken()
+     */
+    public void logoutCurrentSession(String accessToken) {
+        this.ssoLogout(accessToken, false);
+    }
+
+    private void ssoLogout(String accessToken, boolean logoutAll) {
+        if (accessToken == null || accessToken.trim().length() == 0) {
+            throw new AuthException("The accessToken should not be empty.");
+        }
+
+        String url = String.format("%s/api/sso-logout?logoutAll=%s", config.endpoint, logoutAll);
+        try {
+            // "/api/sso-logout" identifies the user by their own access token,
+            // so the Bearer token is used here instead of the application's Basic Auth
+            String response = HttpClient.postForm(url, new HashMap<>(), "Bearer " + accessToken);
+            CasdoorResponse<Object, Object> resp = objectMapper.readValue(response, new TypeReference<CasdoorResponse<Object, Object>>() {});
+            if (!Objects.equals(resp.getStatus(), "ok")) {
+                throw new AuthException(String.format("Cannot logout: %s", resp.getMsg()));
+            }
+        } catch (IOException e) {
+            throw new AuthException("Cannot logout.", e);
+        }
     }
 }

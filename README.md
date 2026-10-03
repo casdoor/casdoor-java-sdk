@@ -71,6 +71,22 @@ HttpSession session = request.getSession();
 session.setAttribute("user", user);
 ```
 
+3. **Logout**
+
+To log the user out of Casdoor from your backend (single sign-out: all the user's sessions in all applications are ended and all the user's tokens are expired), call:
+
+```java
+authService.logout(accessToken);
+```
+
+Use `logoutCurrentSession(accessToken)` instead to only end the current session and keep the user signed in on other devices.
+
+To log out through the browser (OIDC RP-Initiated Logout), redirect the user to the URL below, Casdoor redirects back to `postLogoutRedirectUri` after logout (it must be in the application's allowed Redirect URI list):
+
+```java
+String logoutUrl = authService.getLogoutUrl(idToken, postLogoutRedirectUri, state);
+```
+
 ## SpringBoot Support
 
 If you use SpingBoot for your application, you can use [casdoor-spring-boot-starter](https://github.com/casdoor/casdoor-spring-boot-starter)
