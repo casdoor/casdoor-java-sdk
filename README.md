@@ -157,7 +157,7 @@ The `Authorization` header is always managed by the SDK.
 
 ### Errors
 
-The API methods throw `org.casbin.casdoor.exception.Exception` (an `IOException`) with Casdoor's error message when Casdoor returns an error. `getXxx(name)` returns `null` when the object doesn't exist. `addXxx()`, `updateXxx()` and `deleteXxx()` return Casdoor's response, whose `getData()` is `"Affected"` when the object is changed.
+The API methods throw `org.casbin.casdoor.exception.Exception` (a `RuntimeException`) with Casdoor's error message when Casdoor returns an error. `getXxx(name)` returns `null` when the object doesn't exist. `addXxx()`, `updateXxx()` and `deleteXxx()` return Casdoor's response, whose `getData()` is `"Affected"` when the object is changed.
 
 ## 🔐 Authentication
 
