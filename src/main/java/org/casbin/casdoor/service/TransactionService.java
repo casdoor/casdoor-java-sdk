@@ -57,8 +57,9 @@ public class TransactionService extends Service {
     }
 
     public List<Transaction> getUserTransactions(String userName) throws IOException {
-        CasdoorResponse<List<Transaction>, Object> response = doGet("get-user-transactions",
-                Map.of("owner", config.organizationName, "user", userName),
+        // Casdoor has no get-user-transactions API, get-transactions filters the transactions by user
+        CasdoorResponse<List<Transaction>, Object> response = doGet("get-transactions",
+                Map.of("owner", config.organizationName, "field", "user", "value", userName),
                 new TypeReference<CasdoorResponse<List<Transaction>, Object>>() {
                 });
         return response.getData();

@@ -45,7 +45,7 @@ public class TransactionTest {
         "Product Display Name",
         "This is a test transaction"
         );
-
+        transaction.user = "admin";
 
         // The server generates the transaction name and returns it as the data
         String transactionId = assertDoesNotThrow(() -> transactionService.addTransaction(transaction)).getData();
@@ -62,6 +62,16 @@ public class TransactionTest {
 
         boolean found = transactions.stream().anyMatch(item -> item.name.equals(transactionId));
         assertTrue(found, "Added object not found in list");
+
+        // Get the objects of the user, check if our added object is inside the list
+        List<Transaction> userTransactions;
+        try {
+            userTransactions = transactionService.getUserTransactions("admin");
+        } catch (Exception e) {
+            fail("Failed to get user objects: " + e.getMessage());
+            return;
+        }
+        assertTrue(userTransactions.stream().anyMatch(item -> item.name.equals(transactionId)), "Added object not found in user list");
 
         // Get the object
         Transaction retrievedTransaction;

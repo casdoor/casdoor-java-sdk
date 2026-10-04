@@ -41,7 +41,7 @@ public class RecordService extends Service {
         return response.getData();
     }
     public java.util.Map<String, Object> getPaginationRecords(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
-        CasdoorResponse<Record[], Object> casdoorResponse = doGet("get-sessions",
+        CasdoorResponse<Record[], Object> casdoorResponse = doGet("get-records",
                 Map.mergeMap(Map.of("owner", config.organizationName,
                         "p", Integer.toString(p),
                         "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Record[], Object>>() {});
@@ -49,12 +49,28 @@ public class RecordService extends Service {
         return Map.of("casdoorRecords", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
+    /**
+     * Gets a record by name, or null if it doesn't exist. Casdoor has no API to get a single record,
+     * so it searches the records by name. Like the other APIs that read records, it needs the access
+     * token of an admin user, see {@link Config#withAccessToken(String)}.
+     */
     public Record getRecord(String name) throws IOException {
-        CasdoorResponse<Record, Object> response = doGet("get-record",
-                Map.of("id", getId(name)),
-                new TypeReference<CasdoorResponse<Record, Object>>() {});
+        String recordName = name.substring(name.lastIndexOf('/') + 1);
 
-        return response.getData();
+        // The name filter matches the records whose names contain the given name
+        CasdoorResponse<Record[], Object> response = doGet("get-records",
+                Map.of("owner", config.organizationName, "p", "1", "pageSize", "100", "field", "name", "value", recordName),
+                new TypeReference<CasdoorResponse<Record[], Object>>() {});
+
+        if (response.getData() == null) {
+            return null;
+        }
+        for (Record record : response.getData()) {
+            if (recordName.equals(record.name)) {
+                return record;
+            }
+        }
+        return null;
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyRecord(String method, Record record, java.util.Map<String, String> queryMap) throws IOException {
