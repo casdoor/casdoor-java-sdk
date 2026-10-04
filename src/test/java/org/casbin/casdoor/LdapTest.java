@@ -35,7 +35,7 @@ public class LdapTest {
 
         // Add a new object using constructor
         Ldap ldap = new Ldap(
-                "built-in",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 "Test LDAP Server",
                 "localhost", 
                 390,

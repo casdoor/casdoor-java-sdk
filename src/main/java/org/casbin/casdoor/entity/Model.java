@@ -37,6 +37,7 @@ public class Model {
     public List<Model> children;
     public String modelText;
     public boolean isEnabled;
+    public String description;
 
     public Model(String owner, String name, String createdTime, String displayName, String modelText) {
         this.owner = owner;

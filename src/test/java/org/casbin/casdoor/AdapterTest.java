@@ -35,7 +35,7 @@ public class AdapterTest {
 
         // Add a new object
         Adapter adapter = new Adapter(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

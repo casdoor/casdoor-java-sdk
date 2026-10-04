@@ -50,6 +50,10 @@ public class Permission implements Serializable {
     public String approver;
     public String approveTime;
     public String state;
+    public String[] groups;
+    public String[] sourceGroups;
+    public String[] sourceRoles;
+    public String expireTime;
 
     public Permission() {
     }

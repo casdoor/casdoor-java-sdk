@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.WebhookOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class WebhookService extends Service {
 
     public Webhook getWebhook(String name) throws IOException {
         CasdoorResponse<Webhook, Object> response = doGet("get-webhook",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Webhook, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Webhook, Object>>() {
                 });
         return response.getData();
     }
@@ -41,6 +43,16 @@ public class WebhookService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Webhook>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationWebhooks(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Webhook[], Object> casdoorResponse = doGet("get-webhooks",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Webhook[], Object>>() {
+                });
+
+        return Map.of("casdoorWebhooks", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addWebhook(Webhook webhook) throws IOException {
@@ -56,8 +68,8 @@ public class WebhookService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyWebhook(WebhookOperations method, Webhook webhook, java.util.Map<String, String> queryMap) throws IOException {
+        webhook.owner = getOwner(webhook.owner, config.organizationName);
         String id = webhook.owner + "/" + webhook.name;
-        webhook.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(webhook);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

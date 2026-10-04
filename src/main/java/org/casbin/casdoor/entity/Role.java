@@ -37,6 +37,9 @@ public class Role implements Serializable {
     public boolean isEnabled;
 
     public String description;
+    public String[] groups;
+    public String[] domains;
+    public String[] sourceGroups;
 
     public Role() {
     }

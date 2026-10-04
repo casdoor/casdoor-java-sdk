@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.PricingOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class PricingService extends Service {
 
     public Pricing getPricing(String name) throws IOException {
         CasdoorResponse<Pricing, Object> response = doGet("get-pricing",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Pricing, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Pricing, Object>>() {
                 });
         return response.getData();
     }
@@ -42,6 +44,16 @@ public class PricingService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Pricing>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationPricings(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Pricing[], Object> casdoorResponse = doGet("get-pricings",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Pricing[], Object>>() {
+                });
+
+        return Map.of("casdoorPricings", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addPricing(Pricing pricing) throws IOException {
@@ -57,8 +69,8 @@ public class PricingService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyPricing(PricingOperations method, Pricing pricing, java.util.Map<String, String> queryMap) throws IOException {
+        pricing.owner = getOwner(pricing.owner, config.organizationName);
         String id = pricing.owner + "/" + pricing.name;
-        pricing.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(pricing);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

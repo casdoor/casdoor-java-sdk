@@ -34,7 +34,7 @@ public class PermissionService extends Service {
 
     public Permission getPermission(String name) throws IOException {
         CasdoorResponse<Permission, Object> response = doGet("get-permission",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Permission, Object>>() {});
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Permission, Object>>() {});
         return response.getData();
     }
 
@@ -46,7 +46,7 @@ public class PermissionService extends Service {
 
     public List<Permission> getPermissionsByRole(String name) throws IOException {
         CasdoorResponse<List<Permission>, Object> resp = doGet("get-permissions-by-role",
-                Map.of("id", config.organizationName + "/" + name,
+                Map.of("id", getId(name),
                         "owner", config.organizationName), new TypeReference<CasdoorResponse<List<Permission>, Object>>() {});
 
         return resp.getData();
@@ -66,7 +66,7 @@ public class PermissionService extends Service {
     }
 
     public CasdoorResponse<String, Object> updatePermissionForColumns(Permission permission, String... columns) throws IOException {
-        return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission);
+        return modifyPermission(PermissionOperations.UPDATE_PERMISSION, permission, columns);
     }
 
     public CasdoorResponse<String, Object> addPermission(Permission permission) throws IOException {
@@ -81,12 +81,12 @@ public class PermissionService extends Service {
      * modifyPermission is an encapsulation of permission CUD(Create, Update, Delete) operations.
      * possible actions are `add-permission`, `update-permission`, `delete-permission`,
      */
-    private <T1, T2> CasdoorResponse<T1, T2> modifyPermission(PermissionOperations method, Permission permission) throws IOException {
+    private <T1, T2> CasdoorResponse<T1, T2> modifyPermission(PermissionOperations method, Permission permission, String... columns) throws IOException {
+        permission.owner = getOwner(permission.owner, config.organizationName);
         String id = permission.owner + "/" + permission.name;
-        permission.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(permission);
         return doPost(method.getOperation(),
-                Map.of("id", id),
+                Map.of("id", id, "columns", joinColumns(columns)),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 }

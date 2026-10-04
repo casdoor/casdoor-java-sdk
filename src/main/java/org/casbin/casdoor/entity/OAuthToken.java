@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,32 +14,31 @@
 
 package org.casbin.casdoor.entity;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
-
+/**
+ * OAuthToken is the token returned by the OAuth token endpoint of Casdoor.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Session implements Serializable {
-    public String owner;
-    public String name;
-    public String application;
-    public String createdTime;
-    public String[] sessionId;
-    public Object[] sessionInfos;
-    @JsonProperty("ExclusiveSignin")
-    public boolean exclusiveSignin;
+public class OAuthToken implements Serializable {
+    @JsonProperty("access_token")
+    public String accessToken;
+    @JsonProperty("id_token")
+    public String idToken;
+    @JsonProperty("refresh_token")
+    public String refreshToken;
+    @JsonProperty("token_type")
+    public String tokenType;
+    @JsonProperty("expires_in")
+    public long expiresIn;
+    public String scope;
+    public String error;
+    @JsonProperty("error_description")
+    public String errorDescription;
 
-    public Session() {
-    }
-
-    public Session(String owner, String name, String application, String createdTime, String[] sessionId) {
-        this.owner = owner;
-        this.name = name;
-        this.application = application;
-        this.createdTime = createdTime;
-        this.sessionId = sessionId;
+    public OAuthToken() {
     }
 }

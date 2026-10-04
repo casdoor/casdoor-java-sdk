@@ -32,6 +32,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.casbin.casdoor.config.Config;
+import org.casbin.casdoor.entity.OAuthToken;
 import org.casbin.casdoor.entity.User;
 import org.casbin.casdoor.exception.AuthException;
 import org.casbin.casdoor.util.QueryUtils;
@@ -75,6 +76,59 @@ public class AuthService extends Service {
             OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient.accessToken(oAuthClientRequest, OAuth.HttpMethod.POST);
             return oAuthResponse.getAccessToken();
         } catch (OAuthSystemException | OAuthProblemException e) {
+            throw new AuthException("Cannot get OAuth token.", e);
+        }
+    }
+
+    /**
+     * Gets the OAuth token with the Resource Owner Password Credentials grant.
+     * @param username the name of the user
+     * @param password the password of the user
+     * @return the token
+     */
+    public OAuthToken getOAuthTokenByPassword(String username, String password) {
+        java.util.Map<String, String> form = new HashMap<>();
+        form.put("grant_type", "password");
+        form.put("client_id", config.clientId);
+        form.put("client_secret", config.clientSecret);
+        form.put("username", username);
+        form.put("password", password);
+        return requestOAuthToken("access_token", form);
+    }
+
+    /**
+     * Signs in as any user of the organization with the organization's master password.
+     */
+    public OAuthToken impersonateUser(String username, String masterPassword) {
+        return getOAuthTokenByPassword(username, masterPassword);
+    }
+
+    /**
+     * Gets a new token with the refresh token.
+     * @param refreshToken the refresh token
+     * @return the new token
+     */
+    public OAuthToken refreshOAuthToken(String refreshToken) {
+        java.util.Map<String, String> form = new HashMap<>();
+        form.put("grant_type", "refresh_token");
+        form.put("client_id", config.clientId);
+        form.put("client_secret", config.clientSecret);
+        form.put("refresh_token", refreshToken);
+        return requestOAuthToken("refresh_token", form);
+    }
+
+    private OAuthToken requestOAuthToken(String action, java.util.Map<String, String> form) {
+        String url = String.format("%s/api/login/oauth/%s", config.endpoint, action);
+        try {
+            OAuthToken token = objectMapper.readValue(HttpClient.postForm(url, form, config.customHeaders, false), OAuthToken.class);
+            if (token.error != null && !token.error.isEmpty()) {
+                throw new AuthException(token.errorDescription == null || token.errorDescription.isEmpty() ? token.error : token.errorDescription);
+            }
+            if (token.accessToken != null && token.accessToken.startsWith("error:")) {
+                throw new AuthException(token.accessToken.substring("error:".length()).trim());
+            }
+            return token;
+        } catch (IOException e) {
             throw new AuthException("Cannot get OAuth token.", e);
         }
     }

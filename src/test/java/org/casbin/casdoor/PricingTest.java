@@ -37,7 +37,7 @@ public class PricingTest {
 
         // Add a new object
         Pricing pricing = new Pricing(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

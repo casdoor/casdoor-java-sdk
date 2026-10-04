@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.InvitationOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -37,11 +39,36 @@ public class InvitationService extends Service {
         return response.getData();
     }
 
+    public java.util.Map<String, Object> getPaginationInvitations(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Invitation[], Object> casdoorResponse = doGet("get-invitations",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Invitation[], Object>>() {
+                });
+
+        return Map.of("casdoorInvitations", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
+    }
+
     public Invitation getInvitation(String name) throws IOException {
         CasdoorResponse<Invitation, Object> response = doGet("get-invitation",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Invitation, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Invitation, Object>>() {
                 });
         return response.getData();
+    }
+
+    /**
+     * Gets the invitation of the invitation code for the application.
+     */
+    public Invitation getInvitationInfo(String code, String applicationName) throws IOException {
+        CasdoorResponse<Invitation, Object> response = doGet("get-invitation-info",
+                Map.of("applicationId", "admin/" + applicationName, "code", code),
+                new TypeReference<CasdoorResponse<Invitation, Object>>() {
+                });
+        return response.getData();
+    }
+
+    public CasdoorResponse<String, Object> updateInvitationForColumns(Invitation invitation, String... columns) throws IOException {
+        return modifyInvitation(InvitationOperations.UPDATE_INVITATION, invitation, Map.of("columns", joinColumns(columns)));
     }
 
     public CasdoorResponse<String, Object> addInvitation(Invitation invitation) throws IOException {
@@ -57,8 +84,8 @@ public class InvitationService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyInvitation(InvitationOperations method, Invitation invitation, java.util.Map<String, String> queryMap) throws IOException {
+        invitation.owner = getOwner(invitation.owner, config.organizationName);
         String id = invitation.owner + "/" + invitation.name;
-        invitation.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(invitation);
 
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,

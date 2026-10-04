@@ -60,6 +60,14 @@ public class Provider implements Serializable {
     public String issuerUrl;
     public boolean enableSignAuthnRequest;
     public String providerUrl;
+    public String customLogoutUrl;
+    public java.util.Map<String, String> httpHeaders;
+    public String sslMode;
+    public String emailRegex;
+    public boolean enableProxy;
+    public boolean enablePkce;
+    public boolean requireMessageAuthenticator;
+    public String state;
 
     public Provider() {
     }

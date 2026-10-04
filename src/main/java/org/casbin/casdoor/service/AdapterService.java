@@ -23,6 +23,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 
 public class AdapterService extends Service {
@@ -33,7 +35,7 @@ public class AdapterService extends Service {
 
     public Adapter getAdapter(String name) throws IOException {
         CasdoorResponse<Adapter, Object> response = doGet("get-adapter",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Adapter, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Adapter, Object>>() {
                 });
         return response.getData();
     }
@@ -43,6 +45,16 @@ public class AdapterService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Adapter>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationAdapters(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Adapter[], Object> casdoorResponse = doGet("get-adapters",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Adapter[], Object>>() {
+                });
+
+        return Map.of("casdoorAdapters", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addAdapter(Adapter adapter) throws IOException {
@@ -58,8 +70,8 @@ public class AdapterService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyAdapter(AdapterOperations method, Adapter adapter, java.util.Map<String, String> queryMap) throws IOException {
+        adapter.owner = getOwner(adapter.owner, config.organizationName);
         String id = adapter.owner + "/" + adapter.name;
-        adapter.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(adapter);
 
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,

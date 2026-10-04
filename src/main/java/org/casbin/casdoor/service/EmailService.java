@@ -17,6 +17,7 @@ package org.casbin.casdoor.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.EmailForm;
+import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
 import java.io.IOException;
@@ -31,5 +32,14 @@ public class EmailService extends Service {
         String emailFormStr = objectMapper.writeValueAsString(emailForm);
 
         return doPost("send-email", null, emailFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
+    }
+
+    /**
+     * Sends the email by the given email provider instead of the application's default one.
+     */
+    public CasdoorResponse sendEmailByProvider(String title, String content, String sender, String provider, String... receivers) throws IOException {
+        EmailForm emailForm = new EmailForm(title, content, sender, receivers);
+        String emailFormStr = objectMapper.writeValueAsString(emailForm);
+        return doPost("send-email", Map.of("provider", provider), emailFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
     }
 }

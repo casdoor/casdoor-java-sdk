@@ -45,6 +45,11 @@ public class Payment {
     public String payUrl;
     public String state;
     public String message;
+    public String[] products;
+    public String productsDisplayName;
+    public String order;
+    public Order orderObj;
+    public String successUrl;
 
     public Payment() {
     }

@@ -51,7 +51,7 @@ public class RecordService extends Service {
 
     public Record getRecord(String name) throws IOException {
         CasdoorResponse<Record, Object> response = doGet("get-record",
-                Map.of("id", config.organizationName + "/" + name),
+                Map.of("id", getId(name)),
                 new TypeReference<CasdoorResponse<Record, Object>>() {});
 
         return response.getData();

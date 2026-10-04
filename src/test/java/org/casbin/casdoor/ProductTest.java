@@ -37,7 +37,7 @@ public class ProductTest {
 
         // Add a new object
         Product product = new Product(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

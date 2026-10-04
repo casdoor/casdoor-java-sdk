@@ -16,6 +16,7 @@ package org.casbin.casdoor.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 
@@ -36,6 +37,8 @@ public class Plan {
 
     public String role;
     public String[] options;
+    @JsonProperty("isExclusive")
+    public boolean isExclusive;
 
     public Plan(String owner, String name, String createdTime, String displayName, String description) {
         this.owner = owner;

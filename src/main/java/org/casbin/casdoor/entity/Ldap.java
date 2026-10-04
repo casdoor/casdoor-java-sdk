@@ -36,6 +36,12 @@ public class Ldap {
     public String defaultGroup;
     public int autoSync;
     public String lastSync;
+    public boolean allowSelfSignedCert;
+    public String[] defaultGroups;
+    public String passwordType;
+    public java.util.Map<String, String> customAttributes;
+    public boolean enableGroups;
+    public boolean enablePasswordReset;
 
     public Ldap(String owner, String serverName, String host, int port, String username, String password, String baseDn, int autoSync) {
         this.owner = owner;

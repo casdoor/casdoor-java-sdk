@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.ProductOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class ProductService extends Service {
 
     public Product getProduct(String name) throws IOException {
         CasdoorResponse<Product, Object> response = doGet("get-product",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Product, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Product, Object>>() {
                 });
         return response.getData();
     }
@@ -42,6 +44,16 @@ public class ProductService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Product>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationProducts(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Product[], Object> casdoorResponse = doGet("get-products",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Product[], Object>>() {
+                });
+
+        return Map.of("casdoorProducts", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addProduct(Product product) throws IOException {
@@ -58,7 +70,7 @@ public class ProductService extends Service {
 
     public Product buyProduct(String name, String providerName, String userName) throws IOException {
         java.util.Map<String, String> queryMap = Map.of(
-                "id", config.organizationName + "/" + name,
+                "id", getId(name),
                 "providerName", providerName,
                 "userName", userName
         );
@@ -68,8 +80,8 @@ public class ProductService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyProduct(ProductOperations method, Product product, java.util.Map<String, String> queryMap) throws IOException {
+        product.owner = getOwner(product.owner, config.organizationName);
         String id = product.owner + "/" + product.name;
-        product.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(product);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

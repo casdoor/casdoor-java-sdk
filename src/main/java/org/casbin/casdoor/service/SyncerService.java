@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.SyncerOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class SyncerService extends Service {
 
     public Syncer getSyncer(String name) throws IOException {
         CasdoorResponse<Syncer, Object> response = doGet("get-syncer",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Syncer, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Syncer, Object>>() {
                 });
         return response.getData();
     }
@@ -41,6 +43,16 @@ public class SyncerService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Syncer>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationSyncers(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Syncer[], Object> casdoorResponse = doGet("get-syncers",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Syncer[], Object>>() {
+                });
+
+        return Map.of("casdoorSyncers", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addSyncer(Syncer syncer) throws IOException {
@@ -56,8 +68,8 @@ public class SyncerService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySyncer(SyncerOperations method, Syncer syncer, java.util.Map<String, String> queryMap) throws IOException {
+        syncer.owner = getOwner(syncer.owner, config.organizationName);
         String id = syncer.owner + "/" + syncer.name;
-        syncer.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(syncer);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

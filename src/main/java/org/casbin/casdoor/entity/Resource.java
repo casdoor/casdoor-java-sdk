@@ -27,6 +27,18 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Resource implements Serializable {
+    public String createdTime;
+    public String user;
+    public String provider;
+    public String application;
+    public String tag;
+    public String parent;
+    public String fileName;
+    public String fileType;
+    public String fileFormat;
+    public int fileSize;
+    public String url;
+    public String description;
         public String owner;
         public String name;
 

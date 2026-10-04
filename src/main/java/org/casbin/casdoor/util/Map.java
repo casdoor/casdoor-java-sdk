@@ -4,6 +4,9 @@ package org.casbin.casdoor.util;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -16,8 +19,16 @@ public class Map {
         return map.entrySet()
                 .stream()
                 .filter(entry -> entry.getValue() != null)
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .map(entry -> encode(entry.getKey()) + "=" + encode(entry.getValue()))
                 .collect(Collectors.joining("&"));
+    }
+
+    private static String encode(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Nonnull

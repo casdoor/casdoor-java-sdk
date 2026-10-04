@@ -36,6 +36,8 @@ public class Transaction {
     public String application;
     public String payment;
     public String state;
+    public String domain;
+    public String subtype;
 
     public Transaction(String owner, String name, String displayName, String provider, String category, String type, String productName, String productDisplayName, String detail) {
         this.owner = owner;

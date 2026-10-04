@@ -16,6 +16,7 @@ package org.casbin.casdoor.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 
@@ -37,6 +38,12 @@ public class Product {
     public String returnUrl;
     public String state;
     public List<Provider> providerObjs;
+    @JsonProperty("isRecharge")
+    public boolean isRecharge;
+    public double[] rechargeOptions;
+    public boolean disableCustomRecharge;
+    public String successUrl;
+    public java.util.Map<String, String> properties;
 
     public Product() {
     }

@@ -43,6 +43,13 @@ public class Syncer {
     public int syncInterval;
     public boolean isReadOnly;
     public boolean isEnabled;
+    public String sslMode;
+    public String sshType;
+    public String sshHost;
+    public int sshPort;
+    public String sshUser;
+    public String sshPassword;
+    public String cert;
 
     public Syncer() {
     }

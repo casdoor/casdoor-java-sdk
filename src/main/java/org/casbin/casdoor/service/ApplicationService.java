@@ -32,7 +32,7 @@ public class ApplicationService extends Service {
 
     public Application getApplication(String name) throws IOException {
         CasdoorResponse<Application, Object> response = doGet("get-application",
-                Map.of("id", "admin/" + name), new TypeReference<CasdoorResponse<Application, Object>>() {
+                Map.of("id", getAdminId(name)), new TypeReference<CasdoorResponse<Application, Object>>() {
                 });
         return response.getData();
     }
@@ -53,17 +53,17 @@ public class ApplicationService extends Service {
     }
 
     public CasdoorResponse<String, Object> addApplication(Application application) throws IOException {
-        application.owner = "admin";
+        application.owner = getOwner(application.owner, "admin");
         return modifyApplication(ApplicationOperations.ADD_APPLICATION, application, null);
     }
 
     public CasdoorResponse<String, Object> deleteApplication(Application application) throws IOException {
-        application.owner = "admin";
+        application.owner = getOwner(application.owner, "admin");
         return modifyApplication(ApplicationOperations.DELETE_APPLICATION, application, null);
     }
 
     public CasdoorResponse<String, Object> updateApplication(Application application) throws IOException {
-        application.owner = "admin";
+        application.owner = getOwner(application.owner, "admin");
         return modifyApplication(ApplicationOperations.UPDATE_APPLICATION, application, null);
     }
 

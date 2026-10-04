@@ -48,7 +48,7 @@ public class TestDefaultConfig {
     private static final String TEST_CASDOOR_ENDPOINT = getEnv("CASDOOR_TEST_ENDPOINT", "http://localhost:8000");
     private static final String TEST_CLIENT_ID = getEnv("CASDOOR_TEST_CLIENT_ID", "casdoor-java-sdk-ci-client");
     private static final String TEST_CLIENT_SECRET = getEnv("CASDOOR_TEST_CLIENT_SECRET", "casdoor-java-sdk-ci-secret");
-    private static final String TEST_CASDOOR_ORGANIZATION = getEnv("CASDOOR_TEST_ORGANIZATION", "casbin");
+    public static final String TEST_CASDOOR_ORGANIZATION = getEnv("CASDOOR_TEST_ORGANIZATION", "casbin");
     private static final String TEST_CASDOOR_APPLICATION = getEnv("CASDOOR_TEST_APPLICATION", "app-vue-python-example");
     private static final String TEST_CASDOOR_CERTIFICATE =
             "MIIE+TCCAuGgAwIBAgIDAeJAMA0GCSqGSIb3DQEBCwUAMDYxHTAbBgNVBAoTFENh\n" +

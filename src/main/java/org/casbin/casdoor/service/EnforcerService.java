@@ -23,6 +23,8 @@ import org.casbin.casdoor.util.EnforcerOperations;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -35,7 +37,7 @@ public class EnforcerService extends Service {
 
     public Enforcer getEnforcer(String name) throws IOException {
         CasdoorResponse<Enforcer, Object> response = doGet("get-enforcer",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Enforcer, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Enforcer, Object>>() {
                 });
         return response.getData();
     }
@@ -45,6 +47,16 @@ public class EnforcerService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Enforcer>, Object>>() {
                 });
         return resp.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationEnforcers(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Enforcer[], Object> casdoorResponse = doGet("get-enforcers",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Enforcer[], Object>>() {
+                });
+
+        return Map.of("casdoorEnforcers", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<Object, String> addEnforcer(Enforcer enforcer) throws IOException {
@@ -66,7 +78,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[], Object> response = doPost("enforce",
                 Map.of(
-                        "permissionId", permissionId != null ? config.organizationName + "/" + permissionId : null,
+                        "permissionId", permissionId != null ? getId(permissionId) : null,
                         "modelId", modelId,
                         "resourceId", resourceId,
                         "enforcerId", enforcerId,
@@ -92,7 +104,7 @@ public class EnforcerService extends Service {
         }
         CasdoorResponse<Boolean[][], Object> response = doPost("batch-enforce",
                 Map.of(
-                        "permissionId", permissionId != null ? config.organizationName + "/" + permissionId : null,
+                        "permissionId", permissionId != null ? getId(permissionId) : null,
                         "modelId", modelId,
                         "resourceId", resourceId
                 ),
@@ -104,12 +116,12 @@ public class EnforcerService extends Service {
         return response.getData();
     }
 
-    private <T1, T2> CasdoorResponse<T1, T2> modifyEnforcer(EnforcerOperations method, Enforcer enforcer) throws IOException {
+    private <T1, T2> CasdoorResponse<T1, T2> modifyEnforcer(EnforcerOperations method, Enforcer enforcer, String... columns) throws IOException {
+        enforcer.owner = getOwner(enforcer.owner, config.organizationName);
         String id = enforcer.owner + "/" + enforcer.name;
-        enforcer.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(enforcer);
         return doPost(method.getOperation(),
-                Map.of("id", id),
+                Map.of("id", id, "columns", joinColumns(columns)),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {
                 });
     }

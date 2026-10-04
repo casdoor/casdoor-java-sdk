@@ -15,6 +15,7 @@
 package org.casbin.casdoor.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -65,6 +66,58 @@ public class Application implements Serializable {
     public List<SigninMethod> signinMethods;
     public List<SigninItem> signinItems;
     public List<SignupItem> signupItems;
+    public String category;
+    public Object[] scopes;
+    public String logoDark;
+    public String title;
+    public String favicon;
+    public int order;
+    public String defaultGroup;
+    public String defaultTag;
+    public String headerHtml;
+    public String pageHtml;
+    public boolean enableGuestSignin;
+    public boolean disableSignin;
+    public boolean enableExclusiveSignin;
+    public int maxSessions;
+    public boolean enableSamlC14n10;
+    public boolean enableSamlPostBinding;
+    public boolean disableSamlAttributes;
+    public boolean enableSamlAssertionSignature;
+    public boolean useEmailAsSamlNameId;
+    public String samlSingleLogoutUrl;
+    public Organization organizationObj;
+    public String certPublicKey;
+    public Object[] samlAttributes;
+    public String samlHashAlgorithm;
+    public String samlC14nPrefix;
+    @JsonProperty("isShared")
+    public boolean isShared;
+    public String ipRestriction;
+    public String clientCert;
+    public String backchannelLogoutUri;
+    public String forcedRedirectOrigin;
+    public String tokenSigningMethod;
+    public String[] tokenFields;
+    public Object[] tokenAttributes;
+    public String tokenGroupFormat;
+    public long cookieExpireInHours;
+    public String ipWhitelist;
+    public ThemeData themeData;
+    public String footerHtml;
+    public String formBackgroundUrlMobile;
+    public int failedSigninLimit;
+    public int failedSigninFrozenTime;
+    public int codeResendTimeout;
+    public Object[] customScopes;
+    public String domain;
+    public String[] otherDomains;
+    public String upstreamHost;
+    public String sslMode;
+    public String sslCert;
+    @JsonProperty("CertObj")
+    public Cert certObj;
+    public String registrationAccessToken;
 
     public Application() {
     }

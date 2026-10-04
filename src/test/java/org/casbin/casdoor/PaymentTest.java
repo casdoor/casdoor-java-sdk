@@ -34,7 +34,7 @@ public class PaymentTest {
 
         // Add a new object
         Payment payment = new Payment(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

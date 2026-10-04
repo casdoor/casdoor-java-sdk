@@ -45,7 +45,7 @@ public class SessionService extends Service {
     }
     public Session getSession(String name,String application) throws IOException {
         CasdoorResponse<Session, Object> response = doGet("get-session",
-                Map.of("sessionPkId", config.organizationName + "/" + name + "/" + application), new TypeReference<CasdoorResponse<Session, Object>>() {});
+                Map.of("sessionPkId", getId(name) + "/" + application), new TypeReference<CasdoorResponse<Session, Object>>() {});
         return response.getData();
     }
 
@@ -66,8 +66,8 @@ public class SessionService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySession(SessionOperations method, Session session) throws IOException {
+        session.owner = getOwner(session.owner, config.organizationName);
         String id = session.owner + "/" + session.name;
-        session.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(session);
         return doPost(method.getOperation(), Map.of("id",id), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});

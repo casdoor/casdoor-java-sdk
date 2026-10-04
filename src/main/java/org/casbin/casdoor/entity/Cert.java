@@ -38,6 +38,12 @@ public class Cert implements Serializable {
     public String privateKey;
     public String authorityPublicKey;
     public String authorityRootPublicKey;
+    public String expireTime;
+    public String domainExpireTime;
+    public String provider;
+    public String account;
+    public String accessKey;
+    public String accessSecret;
 
     public Cert(String owner, String name, String createdTime, String displayName, String scope, String type, String cryptoAlgorithm, int bitSize, int expireInYears) {
         this.owner = owner;

@@ -48,7 +48,7 @@ public class UserService extends Service {
      * @throws IOException if failed to get users
      */
     public List<User> getSortedUsers(String sorter, int limit) throws IOException {
-        CasdoorResponse<List<User>, Object> resp = doGet("get-users",
+        CasdoorResponse<List<User>, Object> resp = doGet("get-sorted-users",
                 Map.of("owner", config.organizationName,
                         "sorter", sorter,
                         "limit", limit > 0 ? Integer.toString(limit) : ""), new TypeReference<CasdoorResponse<List<User>, Object>>() {});
@@ -64,7 +64,7 @@ public class UserService extends Service {
 
     public User getUser(String name) throws IOException {
         CasdoorResponse<User, Object> resp = doGet("get-user",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<User, Object>>() {});
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<User, Object>>() {});
         return objectMapper.convertValue(resp.getData(), User.class);
     }
 
@@ -73,6 +73,55 @@ public class UserService extends Service {
                 Map.of("owner", config.organizationName,
                         "email", email), new TypeReference<CasdoorResponse<User, Object>>() {});
         return resp.getData();
+    }
+
+    public User getUserByPhone(String phone) throws IOException {
+        CasdoorResponse<User, Object> resp = doGet("get-user",
+                Map.of("owner", config.organizationName,
+                        "phone", phone), new TypeReference<CasdoorResponse<User, Object>>() {});
+        return resp.getData();
+    }
+
+    public User getUserByUserId(String userId) throws IOException {
+        CasdoorResponse<User, Object> resp = doGet("get-user",
+                Map.of("owner", config.organizationName,
+                        "userId", userId), new TypeReference<CasdoorResponse<User, Object>>() {});
+        return resp.getData();
+    }
+
+    /**
+     * Gets the user of the access token, i.e. "who am I", the config must be created by Config.withAccessToken().
+     */
+    public User getAccount() throws IOException {
+        CasdoorResponse<User, Object> resp = doGet("get-account", null, new TypeReference<CasdoorResponse<User, Object>>() {});
+        return resp.getData();
+    }
+
+    public CasdoorResponse<String, Object> updateUserForColumns(User user, String... columns) throws IOException {
+        user.owner = getOwner(user.owner, config.organizationName);
+        return modifyUserById(UserOperations.UPDATE_USER.getOperation(), user.owner + "/" + user.name, user, columns);
+    }
+
+    /**
+     * Updates the user identified by its user ID (the "id" field of the user).
+     */
+    public CasdoorResponse<String, Object> updateUserByUserId(String owner, String userId, User user) throws IOException {
+        return doPost(UserOperations.UPDATE_USER.getOperation(), Map.of("owner", owner, "userId", userId),
+                objectMapper.writeValueAsString(user), new TypeReference<CasdoorResponse<String, Object>>() {});
+    }
+
+    /**
+     * Checks if user.password is the password of the user.
+     */
+    public boolean checkUserPassword(User user) throws IOException {
+        user.owner = getOwner(user.owner, config.organizationName);
+        try {
+            doPost("check-user-password", Map.of("id", user.owner + "/" + user.name),
+                    objectMapper.writeValueAsString(user), new TypeReference<CasdoorResponse<Object, Object>>() {});
+            return true;
+        } catch (org.casbin.casdoor.exception.Exception e) {
+            return false;
+        }
     }
 
     public CasdoorResponse<String, Object> updateUser(User user) throws IOException {
@@ -87,14 +136,22 @@ public class UserService extends Service {
         return modifyUser(UserOperations.DELETE_USER, user);
     }
 
+    /**
+     * Updates the user identified by its "owner/name" ID, so the user can be renamed.
+     */
     public CasdoorResponse<String, Object> updateUserById(String id, User user) throws IOException {
-        user.id = id;
-        return updateUser(user);
+        user.owner = getOwner(user.owner, config.organizationName);
+        return modifyUserById(UserOperations.UPDATE_USER.getOperation(), id, user);
+    }
+
+    private CasdoorResponse<String, Object> modifyUserById(String action, String id, User user, String... columns) throws IOException {
+        return doPost(action, Map.of("id", id, "columns", joinColumns(columns)),
+                objectMapper.writeValueAsString(user), new TypeReference<CasdoorResponse<String, Object>>() {});
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyUser(UserOperations method, User user) throws IOException {
+        user.owner = getOwner(user.owner, config.organizationName);
         String id = user.owner + "/" + user.name;
-        user.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(user);
         return doPost(method.getOperation(), Map.of(
                 "id", id

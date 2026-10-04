@@ -39,7 +39,7 @@ public class LdapService extends Service {
 
     public Ldap getLdap(String id) throws IOException {
         CasdoorResponse<Ldap, Object> response = doGet("get-ldap",
-                Map.of("id", config.organizationName + "/" + id), new TypeReference<CasdoorResponse<Ldap, Object>>() {
+                Map.of("id", getId(id)), new TypeReference<CasdoorResponse<Ldap, Object>>() {
                 });
         return response.getData();
     }
@@ -56,9 +56,38 @@ public class LdapService extends Service {
         return modifyLdap(LdapOperations.UPDATE_LDAP, ldap, null);
     }
 
+    /**
+     * Gets the users of the LDAP server, the result has "users" and "existUuids".
+     */
+    public java.util.Map<String, Object> getLdapUsers(String id) throws IOException {
+        CasdoorResponse<java.util.Map<String, Object>, Object> response = doGet("get-ldap-users",
+                Map.of("id", getId(id)), new TypeReference<CasdoorResponse<java.util.Map<String, Object>, Object>>() {
+                });
+        return response.getData();
+    }
+
+    /**
+     * Syncs the LDAP users into Casdoor, the result has the "exist" and the "failed" users.
+     */
+    public java.util.Map<String, Object> syncLdapUsers(String id, Object users) throws IOException {
+        CasdoorResponse<java.util.Map<String, Object>, Object> response = doPost("sync-ldap-users",
+                Map.of("id", getId(id)), objectMapper.writeValueAsString(users),
+                new TypeReference<CasdoorResponse<java.util.Map<String, Object>, Object>>() {
+                });
+        return response.getData();
+    }
+
+    /**
+     * Fetches all the users from the LDAP server and syncs them into Casdoor.
+     */
+    public java.util.Map<String, Object> syncLdapUsersFromServer(String id) throws IOException {
+        Object users = getLdapUsers(id).get("users");
+        return syncLdapUsers(id, users == null ? new Object[0] : users);
+    }
+
     private <T1, T2> CasdoorResponse<T1, T2> modifyLdap(LdapOperations method, Ldap ldap, java.util.Map<String, String> queryMap) throws IOException {
+        ldap.owner = getOwner(ldap.owner, config.organizationName);
         String id = ldap.owner + "/" + ldap.id;
-        ldap.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(ldap);
 
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,

@@ -34,4 +34,8 @@ public class Record implements Serializable {
     public String action;
     public String object;
     public boolean isTriggered;
+    public String language;
+    public String response;
+    public int statusCode;
+    public String detail;
 }

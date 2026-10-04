@@ -185,6 +185,55 @@ public class User implements Serializable {
 
     public String lastSigninWrongTime = "";
     public int signinWrongTimes;
+    public String deletedTime;
+    public Object[] addresses;
+    public String realName;
+    @JsonProperty("isVerified")
+    public boolean isVerified;
+    public double balance;
+    public double balanceCredit;
+    public String currency;
+    public String balanceCurrency;
+    public String registerType;
+    public String registerSource;
+    public String accessToken;
+    public String originalToken;
+    public String originalRefreshToken;
+    public String azureadb2c;
+    public String kwai;
+    public String telegram;
+    public String oidc;
+    public String custom2;
+    public String custom3;
+    public String custom4;
+    public String custom5;
+    public String custom6;
+    public String custom7;
+    public String custom8;
+    public String custom9;
+    public String custom10;
+    public Object webauthnCredentials;
+    public boolean mfaRadiusEnabled;
+    public String mfaRadiusUsername;
+    public String mfaRadiusProvider;
+    public boolean mfaPushEnabled;
+    public String mfaPushReceiver;
+    public String mfaPushProvider;
+    public Object[] multiFactorAuths;
+    public String invitation;
+    public String invitationCode;
+    public Object[] faceIds;
+    public ProductInfo[] cart;
+    public int uidNumber;
+    public Object[] thirdPartyLinks;
+    public String lastChangePasswordTime;
+    public Object[] managedAccounts;
+    public Object[] mfaAccounts;
+    public MfaItem[] mfaItems;
+    public String mfaRememberDeadline;
+    public boolean needUpdatePassword;
+    public String ipWhitelist;
+    public Object[] applicationScopes;
 
 
     @JsonGetter("isOnline")

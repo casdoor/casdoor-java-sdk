@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,35 +13,36 @@
 // limitations under the License.
 
 package org.casbin.casdoor.entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 
+/**
+ * ProductInfo has the same definition as ProductInfo of casdoor-go-sdk.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Adapter {
+public class ProductInfo implements Serializable {
     public String owner;
     public String name;
     public String createdTime;
-    public String type;
-    public String databaseType;
-    public String host;
-    public int port;
-    public String user;
-    public String password;
-    public String database;
-    public String table;
-    public String tableNamePrefix;
-    public boolean isEnabled;
-    public boolean useSameDb;
+    public String displayName;
+    public String image;
+    public String detail;
+    public double price;
+    public String currency;
+    @JsonProperty("isRecharge")
+    public boolean isRecharge;
+    public int quantity;
+    public String pricingName;
+    public String planName;
 
-
-    public Adapter() {
+    public ProductInfo() {
     }
 
-    public Adapter(String owner, String name, String createdTime, String user, String host) {
-        this.owner = owner;
+    public ProductInfo(String name, int quantity) {
         this.name = name;
-        this.createdTime = createdTime;
-        this.host = host;
-        this.user = user;
+        this.quantity = quantity;
     }
 }

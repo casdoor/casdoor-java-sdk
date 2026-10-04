@@ -37,7 +37,7 @@ public class RoleTest {
 
         // Add a new object
         Role role = new Role(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
                 name,

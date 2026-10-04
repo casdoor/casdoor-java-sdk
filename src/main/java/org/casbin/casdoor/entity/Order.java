@@ -1,4 +1,4 @@
-// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+// Copyright 2026 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,35 +13,33 @@
 // limitations under the License.
 
 package org.casbin.casdoor.entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 
+/**
+ * Order has the same definition as Order of casdoor-go-sdk.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Adapter {
+public class Order implements Serializable {
     public String owner;
     public String name;
     public String createdTime;
-    public String type;
-    public String databaseType;
-    public String host;
-    public int port;
+    public String updateTime;
+    public String displayName;
+    public String[] products;
+    public ProductInfo[] productInfos;
     public String user;
-    public String password;
-    public String database;
-    public String table;
-    public String tableNamePrefix;
-    public boolean isEnabled;
-    public boolean useSameDb;
+    public String payment;
+    public double price;
+    public String currency;
+    public String state;
+    public String message;
+    public String couponName;
+    public double couponDiscount;
 
-
-    public Adapter() {
-    }
-
-    public Adapter(String owner, String name, String createdTime, String user, String host) {
-        this.owner = owner;
-        this.name = name;
-        this.createdTime = createdTime;
-        this.host = host;
-        this.user = user;
+    public Order() {
     }
 }

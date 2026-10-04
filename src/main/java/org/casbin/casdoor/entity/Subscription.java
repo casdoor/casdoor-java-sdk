@@ -36,6 +36,12 @@ public class Subscription {
     public String approver;
     public String approveTime;
     public String state;
+    public String group;
+    public String pricing;
+    public String payment;
+    public String startTime;
+    public String endTime;
+    public String period;
 
     public Subscription() {
     }

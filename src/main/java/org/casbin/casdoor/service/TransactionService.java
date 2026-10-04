@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.TransactionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -37,11 +39,37 @@ public class TransactionService extends Service {
         return response.getData();
     }
 
+    public java.util.Map<String, Object> getPaginationTransactions(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Transaction[], Object> casdoorResponse = doGet("get-transactions",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Transaction[], Object>>() {
+                });
+
+        return Map.of("casdoorTransactions", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
+    }
+
     public Transaction getTransaction(String name) throws IOException {
         CasdoorResponse<Transaction, Object> response = doGet("get-transaction",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Transaction, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Transaction, Object>>() {
                 });
         return response.getData();
+    }
+
+    public List<Transaction> getUserTransactions(String userName) throws IOException {
+        CasdoorResponse<List<Transaction>, Object> response = doGet("get-user-transactions",
+                Map.of("owner", config.organizationName, "user", userName),
+                new TypeReference<CasdoorResponse<List<Transaction>, Object>>() {
+                });
+        return response.getData();
+    }
+
+    /**
+     * Adds the transaction, when dryRun is true it's only validated (e.g. the user's balance) and not saved.
+     * The data of the response is the name of the transaction.
+     */
+    public CasdoorResponse<String, Object> addTransactionWithDryRun(Transaction transaction, boolean dryRun) throws IOException {
+        return modifyTransaction(TransactionOperations.ADD_TRANSACTION, transaction, dryRun ? Map.of("dryRun", "1") : null);
     }
 
     public CasdoorResponse<String, Object> addTransaction(Transaction transaction) throws IOException {
@@ -57,8 +85,8 @@ public class TransactionService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyTransaction(TransactionOperations method, Transaction transaction, java.util.Map<String, String> queryMap) throws IOException {
+        transaction.owner = getOwner(transaction.owner, config.organizationName);
         String id = transaction.owner + "/" + transaction.name;
-        transaction.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(transaction);
 
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,

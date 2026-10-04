@@ -38,6 +38,14 @@ public class Token implements Serializable {
     public String codeChallenge;
     public boolean codeIsUsed;
     public long codeExpireIn;
+    public String idToken;
+    public String accessTokenHash;
+    public String refreshTokenHash;
+    public String idTokenHash;
+    public String grantType;
+    public String resource;
+    public String dPoPJkt;
+    public String sessionId;
 
     public Token() {
 

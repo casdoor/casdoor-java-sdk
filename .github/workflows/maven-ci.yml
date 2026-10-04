@@ -7,26 +7,22 @@ on:
       - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: '0'
+        uses: actions/checkout@v4
 
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
-          java-version: 1.8
-          server-username: OSSRH_JIRA_USERNAME
-          server-password: OSSRH_JIRA_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
+          distribution: temurin
+          java-version: 8
+          cache: maven
 
       - name: Build with Maven
-        run: mvn package -Dmaven.test.skip=true cobertura:cobertura
+        run: mvn -B package -Dmaven.test.skip=true
 
       - name: Start local Casdoor
         run: |
@@ -55,13 +51,28 @@ jobs:
         if: failure()
         run: docker logs casdoor
 
-      - name: Codecov
-        uses: codecov/codecov-action@v1
+  release:
+    needs: [test]
+    if: github.repository == 'casdoor/casdoor-java-sdk' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          fetch-depth: '0'
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+          server-username: OSSRH_JIRA_USERNAME
+          server-password: OSSRH_JIRA_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 

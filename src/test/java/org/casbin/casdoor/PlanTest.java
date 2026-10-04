@@ -35,7 +35,7 @@ public class PlanTest {
 
         // Add a new object
         Plan plan = new Plan(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

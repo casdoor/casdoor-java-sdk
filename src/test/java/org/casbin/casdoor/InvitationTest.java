@@ -36,7 +36,7 @@ public class InvitationTest {
 
         // Add a new object
         Invitation invitation = new Invitation(
-        "built-in",
+        TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
         name,
         LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
         "display-name",

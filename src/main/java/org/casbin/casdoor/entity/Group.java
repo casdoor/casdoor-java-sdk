@@ -38,6 +38,9 @@ public class Group {
     public List<Group> children;
     public boolean isEnabled;
     public Map<String, String> properties;
+    public String parentName;
+    public boolean haveChildren;
+    public int gidNumber;
 
     public Group(String owner, String name, String createdTime, String displayName) {
         this.owner = owner;

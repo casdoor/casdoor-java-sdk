@@ -22,4 +22,6 @@ public class AccountItem {
     public boolean visible;
     public String viewRule;
     public String modifyRule;
+    public String regex;
+    public String tab;
 }

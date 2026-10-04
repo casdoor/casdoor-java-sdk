@@ -32,7 +32,7 @@ public class RoleService extends Service {
 
     public Role getRole(String name) throws IOException {
         CasdoorResponse<Role, Object> resp = doGet("get-role",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Role, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Role, Object>>() {
                 });
         return resp.getData();
     }
@@ -59,7 +59,7 @@ public class RoleService extends Service {
     }
 
     public CasdoorResponse<String, Object> updateRoleForColumns(Role role, String... columns) throws IOException {
-        return modifyRole(RoleOperations.UPDATE_ROLE, role);
+        return modifyRole(RoleOperations.UPDATE_ROLE, role, columns);
     }
 
     public CasdoorResponse<String, Object> addRole(Role role) throws IOException {
@@ -70,12 +70,12 @@ public class RoleService extends Service {
         return modifyRole(RoleOperations.DELETE_ROLE, role);
     }
 
-    private <T1, T2> CasdoorResponse<T1, T2> modifyRole(RoleOperations method, Role role) throws IOException {
+    private <T1, T2> CasdoorResponse<T1, T2> modifyRole(RoleOperations method, Role role, String... columns) throws IOException {
+        role.owner = getOwner(role.owner, config.organizationName);
         String id = role.owner + "/" + role.name;
-        role.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(role);
         return doPost(method.getOperation(),
-                Map.of("id", id), payload
+                Map.of("id", id, "columns", joinColumns(columns)), payload
                 , new TypeReference<CasdoorResponse<T1, T2>>() {
                 });
     }

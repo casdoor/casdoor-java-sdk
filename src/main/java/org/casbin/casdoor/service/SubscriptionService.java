@@ -21,6 +21,8 @@ import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.SubscriptionOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class SubscriptionService extends Service {
 
     public Subscription getSubscription(String name) throws IOException {
         CasdoorResponse<Subscription, Object> response = doGet("get-subscription",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Subscription, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Subscription, Object>>() {
                 });
         return response.getData();
     }
@@ -42,6 +44,16 @@ public class SubscriptionService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Subscription>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationSubscriptions(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Subscription[], Object> casdoorResponse = doGet("get-subscriptions",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Subscription[], Object>>() {
+                });
+
+        return Map.of("casdoorSubscriptions", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addSubscription(Subscription subscription) throws IOException {
@@ -57,8 +69,8 @@ public class SubscriptionService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifySubscription(SubscriptionOperations method, Subscription subscription, java.util.Map<String, String> queryMap) throws IOException {
+        subscription.owner = getOwner(subscription.owner, config.organizationName);
         String id = subscription.owner + "/" + subscription.name;
-        subscription.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(subscription);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {

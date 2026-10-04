@@ -35,7 +35,7 @@ public class TransactionTest {
 
         // Add a new object
         Transaction transaction = new Transaction(
-        "built-in",
+        TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
         name,
         "display-name",
         "provider_pay_paypal",

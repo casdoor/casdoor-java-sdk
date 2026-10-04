@@ -27,6 +27,7 @@ public class Enforcer {
     public String model;
     public String adapter;
     public boolean isEnabled;
+    public java.util.Map<String, String> modelCfg;
 
     public Enforcer(String owner, String name, String createdTime, String displayName, String model, String adapter, String description) {
         this.owner = owner;

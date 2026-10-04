@@ -18,34 +18,43 @@ import org.casbin.casdoor.entity.Resource;
 import org.casbin.casdoor.service.ResourceService;
 import org.casbin.casdoor.support.TestDefaultConfig;
 import org.casbin.casdoor.util.http.CasdoorResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceTest {
-
-    private ResourceService resourceService = new ResourceService(
-            TestDefaultConfig.InitConfig());
+    private final ResourceService resourceService = new ResourceService(TestDefaultConfig.InitConfig());
 
     @Test
     public void testResource() throws IOException {
-        // uploadResource
-        String filename = "/casbinTest.svg";
-        File data = new File(this.getClass().getResource(filename).getFile());
-        String name = String.format("/casdoor/%s", filename);
-        Resource resource = new Resource(
-                "casbin",
-                name
-        );
-        CasdoorResponse<String, Object> response = resourceService.uploadResource(resource.owner, name, "", filename, data);
-        Assertions.assertEquals("ok", response.getStatus());
+        String filename = "casbinTest.svg";
+        File data = new File(this.getClass().getResource("/" + filename).getFile());
+        String tag = String.format("/casdoor/%s", TestDefaultConfig.getRandomName("resource"));
+        String owner = TestDefaultConfig.TEST_CASDOOR_ORGANIZATION;
 
-        // Delete the resource
-        CasdoorResponse<String, Object> deleteResource = resourceService.deleteResource(name);
-        Assertions.assertEquals("ok", deleteResource.getStatus());
-        // There is no get method
-        // so there is no way to test the effect of deletion, only to assert the returned status code
+        // Upload a file, data is the file URL and data2 is the name of the resource
+        CasdoorResponse<String, Object> response = resourceService.uploadResource(owner, tag, "", filename, data);
+        assertEquals("ok", response.getStatus());
+        String name = (String) response.getData2();
+        assertNotNull(name);
+
+        // Get all objects, check if our added object is inside the list
+        List<Resource> resources = resourceService.getResources(owner, owner, "", "", "", "");
+        assertTrue(resources.stream().anyMatch(item -> tag.equals(item.tag)), "Added object not found in list");
+
+        List<Resource> page = resourceService.getPaginationResources(owner, owner, "", "", 10, 1, "", "");
+        assertFalse(page.isEmpty());
+
+        // Get the object
+        Resource resource = resourceService.getResourceEx(owner, name);
+        assertEquals(tag, resource.tag);
+
+        // Delete the object
+        assertEquals("ok", resourceService.deleteResource(resource).getStatus());
+        assertNull(resourceService.getResource(owner + "/" + name));
     }
 }

@@ -33,7 +33,7 @@ public class ProviderService extends Service {
 
     public Provider getProvider(String name) throws IOException {
         CasdoorResponse<Provider, Object> response = doGet("get-provider",
-                Map.of("id", config.organizationName + "/" + name),
+                Map.of("id", getId(name)),
                 new TypeReference<CasdoorResponse<Provider, Object>>() {});
         return response.getData();
     }
@@ -67,8 +67,8 @@ public class ProviderService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyProvider(ProviderOperations method, Provider provider, java.util.Map<String, String> queryMap) throws IOException {
+        provider.owner = getOwner(provider.owner, config.organizationName);
         String id = provider.owner + "/" + provider.name;
-        provider.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(provider);
         return doPost(method.getOperation(), Map.mergeMap(Map.of("id", id), queryMap), payload,
                 new TypeReference<CasdoorResponse<T1, T2>>() {});

@@ -23,6 +23,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
+
 import java.io.IOException;
 
 public class PlanService extends Service {
@@ -33,7 +35,7 @@ public class PlanService extends Service {
 
     public Plan getPlan(String name) throws IOException {
         CasdoorResponse<Plan, Object> response = doGet("get-plan",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Plan, Object>>() {
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Plan, Object>>() {
                 });
         return response.getData();
     }
@@ -43,6 +45,16 @@ public class PlanService extends Service {
                 Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Plan>, Object>>() {
                 });
         return response.getData();
+    }
+
+    public java.util.Map<String, Object> getPaginationPlans(int p, int pageSize, @Nullable java.util.Map<String, String> queryMap) throws IOException {
+        CasdoorResponse<Plan[], Object> casdoorResponse = doGet("get-plans",
+                Map.mergeMap(Map.of("owner", config.organizationName,
+                        "p", Integer.toString(p),
+                        "pageSize", Integer.toString(pageSize)), queryMap), new TypeReference<CasdoorResponse<Plan[], Object>>() {
+                });
+
+        return Map.of("casdoorPlans", casdoorResponse.getData(), "data2", casdoorResponse.getData2());
     }
 
     public CasdoorResponse<String, Object> addPlan(Plan plan) throws IOException {
@@ -58,8 +70,8 @@ public class PlanService extends Service {
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyPlan(PlanOperations method, Plan plan, java.util.Map<String, String> queryMap) throws IOException {
+        plan.owner = getOwner(plan.owner, config.organizationName);
         String id = plan.owner + "/" + plan.name;
-        plan.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(plan);
         return doPost(method.getOperation(),
                 Map.of("id", id), payload,

@@ -36,7 +36,7 @@ public class SubscriptionTest {
 
         // Add a new object
         Subscription subscription = new Subscription(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name,

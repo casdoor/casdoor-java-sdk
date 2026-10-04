@@ -33,4 +33,13 @@ public class SmsService extends Service {
 
         return doPost("send-sms", Map.of(), smsFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
     }
+
+    /**
+     * Sends the SMS by the given SMS provider instead of the application's default one.
+     */
+    public CasdoorResponse sendSmsByProvider(String content, String provider, String... receivers) throws IOException {
+        SmsForm smsForm = new SmsForm(content, receivers);
+        String smsFormStr = objectMapper.writeValueAsString(smsForm);
+        return doPost("send-sms", Map.of("provider", provider), smsFormStr, new TypeReference<CasdoorResponse<Object, Object>>() {});
+    }
 }

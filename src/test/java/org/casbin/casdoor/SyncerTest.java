@@ -35,7 +35,7 @@ public class SyncerTest {
 
         // Add a new object
         Syncer syncer = new Syncer(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 "casbin",

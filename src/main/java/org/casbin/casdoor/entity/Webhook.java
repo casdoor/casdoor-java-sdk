@@ -16,6 +16,7 @@ package org.casbin.casdoor.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 
@@ -43,6 +44,19 @@ public class Webhook {
     public int syncInterval;
     public boolean isReadOnly;
     public boolean isEnabled;
+    public String url;
+    public String method;
+    public String contentType;
+    public Object[] headers;
+    public String[] events;
+    public String[] tokenFields;
+    public String[] objectFields;
+    @JsonProperty("isUserExtended")
+    public boolean isUserExtended;
+    public boolean singleOrgOnly;
+    public int maxRetries;
+    public int retryInterval;
+    public boolean useExponentialBackoff;
 
     public Webhook() {
     }

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.casbin.casdoor.config.Config;
 import org.casbin.casdoor.entity.CasbinRule;
 import org.casbin.casdoor.entity.Enforcer;
+import org.casbin.casdoor.entity.PolicyFilter;
 import org.casbin.casdoor.util.Map;
 import org.casbin.casdoor.util.PolicyOperations;
 import org.casbin.casdoor.util.http.CasdoorResponse;
@@ -31,9 +32,20 @@ public class PolicyService  extends Service{
     }
 
     public List<CasbinRule> getPolicies(String enforcerName, String adapterId) throws IOException {
-        String id = config.organizationName + "/" + enforcerName;
+        String id = getId(enforcerName);
         CasdoorResponse<List<CasbinRule>, Object> resp = doGet("get-policies",
                 Map.of("id", id, "adapterId", adapterId), new TypeReference<CasdoorResponse<List<CasbinRule>, Object>>() {
+                });
+        return resp.getData();
+    }
+
+    /**
+     * Gets the policies of the enforcer that match all the filters.
+     */
+    public List<CasbinRule> getFilteredPolicies(String enforcerId, PolicyFilter... filters) throws IOException {
+        CasdoorResponse<List<CasbinRule>, Object> resp = doPost("get-filtered-policies",
+                Map.of("id", getId(enforcerId)), objectMapper.writeValueAsString(filters),
+                new TypeReference<CasdoorResponse<List<CasbinRule>, Object>>() {
                 });
         return resp.getData();
     }
@@ -58,7 +70,7 @@ public class PolicyService  extends Service{
     }
 
     private <T1, T2> CasdoorResponse<T1, T2> modifyPolicy(PolicyOperations method, Enforcer enforcer, CasbinRule[] policies) throws IOException {
-        enforcer.owner = config.organizationName;
+        enforcer.owner = getOwner(enforcer.owner, config.organizationName);
         String id = enforcer.owner + "/" + enforcer.name;
         String payload = "";
         if (method == PolicyOperations.UPDATE_Policy){

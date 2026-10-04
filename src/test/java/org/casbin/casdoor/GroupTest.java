@@ -34,7 +34,7 @@ public class GroupTest {
 
         // Add a new object
         Group group = new Group(
-                "admin",
+                TestDefaultConfig.TEST_CASDOOR_ORGANIZATION,
                 name,
                 LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 name

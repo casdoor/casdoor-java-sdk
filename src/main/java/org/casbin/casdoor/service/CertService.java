@@ -41,12 +41,12 @@ public class CertService extends Service {
 
     public Cert getCert(String name) throws IOException {
         CasdoorResponse<Cert, Object> response = doGet("get-cert",
-                Map.of("id", config.organizationName + "/" + name), new TypeReference<CasdoorResponse<Cert, Object>>() {});
+                Map.of("id", getId(name)), new TypeReference<CasdoorResponse<Cert, Object>>() {});
         return response.getData();
     }
 
     public List<Cert> getGlobalCerts() throws IOException {
-        CasdoorResponse<List<Cert>, Object> response = doGet("get-globle-certs",null,
+        CasdoorResponse<List<Cert>, Object> response = doGet("get-global-certs",null,
                 new TypeReference<CasdoorResponse<List<Cert>, Object>>() {});
 
         return response.getData();
@@ -68,12 +68,12 @@ public class CertService extends Service {
      * modifyCert is an encapsulation of Cert CUD(Create, Update, Delete) operations.
      * Possible actions are `add-Cert`, `update-Cert`, `delete-Cert`.
      */
-    private <T1, T2> CasdoorResponse<T1, T2> modifyCert(CertOperations method, Cert cert) throws IOException {
+    private <T1, T2> CasdoorResponse<T1, T2> modifyCert(CertOperations method, Cert cert, String... columns) throws IOException {
+        cert.owner = getOwner(cert.owner, config.organizationName);
         String id = cert.owner + "/" + cert.name;
-        cert.owner = config.organizationName;
         String payload = objectMapper.writeValueAsString(cert);
         return doPost(method.getOperation(),
-                Map.of("id", id),
+                Map.of("id", id, "columns", joinColumns(columns)),
                 payload, new TypeReference<CasdoorResponse<T1, T2>>() {});
     }
 
