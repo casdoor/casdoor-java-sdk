@@ -54,16 +54,16 @@ public class OrganizationTest {
         assertDoesNotThrow(() -> organizationService.addOrganization(organization));
 
         // Get all objects, check if our added object is inside the list
-//        List<Organization> organizations;
-//        try {
-//            organizations = organizationService.getOrganizations();
-//        } catch (Exception e) {
-//            fail("Failed to get objects: " + e.getMessage());
-//            return;
-//        }
-//
-//        boolean found = organizations.stream().anyMatch(item -> item.name.equals(name));
-//        assertTrue(found, "Added object not found in list");
+        List<Organization> organizations;
+        try {
+            organizations = organizationService.getOrganizations();
+        } catch (Exception e) {
+            fail("Failed to get objects: " + e.getMessage());
+            return;
+        }
+
+        boolean found = organizations.stream().anyMatch(item -> item.name.equals(name));
+        assertTrue(found, "Added object not found in list");
 
         // Get the object
         Organization retrievedOrganization;

@@ -38,7 +38,7 @@ public class OrganizationService extends Service {
 
     public List<Organization> getOrganizations() throws IOException {
         CasdoorResponse<List<Organization>, Object> resp = doGet("get-organizations",
-                Map.of("owner", config.organizationName), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
+                Map.of("owner", "admin"), new TypeReference<CasdoorResponse<List<Organization>, Object>>() {
                 });
         return resp.getData();
     }
